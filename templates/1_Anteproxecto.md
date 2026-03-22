@@ -25,9 +25,9 @@ O proxecto xorde para cubrir un oco no sector dos viaxes cunha aplicación web d
 
 | **Alternativa** | **Viabilidade técnica** | **Viabilidade económica** | **Temporalidade** | **Valoración Global** |
 | :--- | :--- | :--- | :--- | :--- |
-| **A1: Java Spring Boot + Angular(TypeScript)** | **Alta (6/10):** **Fortalezas**:Lenguaxe e aplicacións usadas durante o proceso das practicas. **Debilidades** Curva de aprendizaxe alta e configuración complexa. | **Media (5/10):** Hosting máis caro debido ao uso de servidores Java/VPS. | **Baixa (5/10):** Longa duración (4-6 meses). | **5/10** |
+| **A1: Java Spring Boot + Angular(TypeScript)** | **Alta (7/10):** **Fortalezas**:Lenguaxe e aplicacións usadas durante o proceso das practicas. **Debilidades** Curva de aprendizaxe alta e configuración complexa. | **Media (6/10):** Hosting máis caro debido ao uso de servidores Java/VPS. | **Baixa (7/10):** Longa duración (4-6 meses). | **7/10** |
 | **A2: PHP (Laravel) + Blade/JS** | **Baixa (2/10):** **Fortalezas**: Framework e linguaxe coñecidos e rapidez de execución con ferramentas integradas. **Debilidades**:Aprender un novo framework  | **Alta (8/10):** Hosting compartido moi barato (2–5 €/mes). | **Alta (8/10):** Desenvolvemento rápido (2-3 meses). | **6/10** |
-| **A3: Node.js + React** | **Baixa (2/10):** **Fortalezas**:Coñecemento dos linguaxes **Debilidades**: require máis tempo para estruturar ben o proxecto dende cero e total descoñecemento. | **Alta (8/10):** Despregue en plataformas como Vercel ou Render con baixo custo. | **Media (6/10):** Duración media (3-4 meses). | **7/10** |
+| **A3: Node.js + React** | **Baixa (2/10):** **Fortalezas**:Coñecemento dos linguaxes **Debilidades**: require máis tempo para estruturar ben o proxecto dende cero e total descoñecemento. | **Alta (7/10):** Despregue en plataformas como Vercel ou Render con baixo custo. | **Media (6/10):** Duración media (3-4 meses). | **5/10** |
 
 ### 3.2 Xustificación da alternativa
 
