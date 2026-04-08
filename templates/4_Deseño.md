@@ -11,7 +11,7 @@
 
 ## 1- Diagrama da arquitectura
 
-```Mermaid
+```mermaid
 flowchart LR
 
 %% ===== CLIENTES =====
@@ -87,7 +87,7 @@ style AWS fill:#FEF9E7,stroke:#333,stroke-width:2px
 ```
 
 ## 2- Casos de uso
-```Mermaid
+```mermaid
 flowchart TB
 
 %% ===== SISTEMA (ARRIBA) =====
@@ -146,7 +146,7 @@ linkStyle 9 stroke:#43A047,stroke-width:2px
 
 ## 3- Diagrama de Base de Datos
 ### 3-1 Modelo entidad/relacion
-```Mermaid
+```mermaid
 graph TD
 
 %% ENTIDADES
@@ -201,7 +201,7 @@ style Rel5 fill:#F9E79F,stroke:#333,stroke-width:2px
 style Rel6 fill:#F9E79F,stroke:#333,stroke-width:2px
 ```
 ### 3-3 Modelo relacional
-```Mermaid
+```mermaid
 erDiagram
     ROL ||--o{ USUARIO_ROL : tiene
     USUARIO ||--o{ USUARIO_ROL : asignado
