@@ -54,3 +54,5 @@ Garantirase o tratamento seguro dos datos dos usuarios.
 - Sistema de valoracións e opinións
 - Integración con máis provedores de viaxes
 - Suxestión de viaxes personalizadas
+  
+[**<-Anterior**](../README.md)

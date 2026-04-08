@@ -261,4 +261,4 @@ erDiagram
 
 [Link a figma](https://www.figma.com/design/uKYEPh0pMD1AgcECwWXYnQ/Explora?m=auto&t=a0tfpmG0vNbS0ALR-1)
 >
-[**<-Anterior**](../../README.md)
+[**<-Anterior**](../README.md)
