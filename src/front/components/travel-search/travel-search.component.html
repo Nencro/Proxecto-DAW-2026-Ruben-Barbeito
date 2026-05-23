@@ -1,33 +1,115 @@
 <div class="travel-search-container">
-  <app-carousel></app-carousel>
+  <div class="search-tabs" role="tablist" aria-label="Tipo de búsqueda">
+    <button
+      type="button"
+      class="tab-button"
+      [class.active]="pestanaActiva === 'vuelos'"
+      (click)="cambiarPestana('vuelos')"
+      role="tab"
+      [attr.aria-selected]="pestanaActiva === 'vuelos'"
+    >
+      Vuelos
+    </button>
+    <button
+      type="button"
+      class="tab-button"
+      [class.active]="pestanaActiva === 'hoteles'"
+      (click)="cambiarPestana('hoteles')"
+      role="tab"
+      [attr.aria-selected]="pestanaActiva === 'hoteles'"
+    >
+      Hoteles
+    </button>
+  </div>
 
-  <h2 class="search-title">Encuentra tu próximo viaje</h2>
-
-  <form (ngSubmit)="handleSubmit()" #formularioViaje="ngForm" class="travel-search-bar">
-    <div class="search-field">
-      <label for="origen">Origen</label>
+  <form
+    (ngSubmit)="handleSubmit()"
+    #formularioViaje="ngForm"
+    class="travel-search-bar"
+    [hidden]="pestanaActiva !== 'vuelos'"
+  >
+    <div class="search-field" cdkOverlayOrigin #origenOrigin="cdkOverlayOrigin">
+      <label for="origenTexto">Origen</label>
       <input
         type="text"
-        id="origen"
-        name="origen"
-        placeholder="¿Desde dónde viajas?"
-        [(ngModel)]="datosBusqueda.origen"
+        id="origenTexto"
+        name="origenTexto"
+        class="select-search-input"
+        placeholder="Selecciona o escribe origen"
+        autocomplete="off"
+        [(ngModel)]="textoOrigen"
+        (focus)="abrirPanel('origen')"
+        (input)="buscarOpciones('origen')"
+        (blur)="cerrarPanel()"
+        [disabled]="cargandoReferencias"
         required
       />
+      <input type="hidden" name="origen" [(ngModel)]="datosBusqueda.origen" required />
+
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="origenOrigin"
+        [cdkConnectedOverlayOpen]="panelAbierto === 'origen'"
+        [cdkConnectedOverlayWidth]="origenOrigin.elementRef.nativeElement.offsetWidth"
+      >
+        <div class="select-options-panel" role="listbox">
+          @for (aeropuerto of aeropuertosOrigen; track getTrackReferencia(aeropuerto, $index)) {
+            <button
+              type="button"
+              class="select-option"
+              role="option"
+              (mousedown)="seleccionarAeropuerto('origen', aeropuerto)"
+            >
+              {{ getEtiquetaReferencia(aeropuerto) }}
+            </button>
+          } @empty {
+            <p class="select-option-empty">Sin resultados</p>
+          }
+        </div>
+      </ng-template>
     </div>
 
     <div class="field-divider"></div>
 
-    <div class="search-field">
-      <label for="destino">Destino</label>
+    <div class="search-field" cdkOverlayOrigin #destinoOrigin="cdkOverlayOrigin">
+      <label for="destinoTexto">Destino</label>
       <input
         type="text"
-        id="destino"
-        name="destino"
-        placeholder="¿A dónde vas?"
-        [(ngModel)]="datosBusqueda.destino"
+        id="destinoTexto"
+        name="destinoTexto"
+        class="select-search-input"
+        placeholder="Selecciona o escribe destino"
+        autocomplete="off"
+        [(ngModel)]="textoDestino"
+        (focus)="abrirPanel('destino')"
+        (input)="buscarOpciones('destino')"
+        (blur)="cerrarPanel()"
+        [disabled]="cargandoReferencias"
         required
       />
+      <input type="hidden" name="destino" [(ngModel)]="datosBusqueda.destino" required />
+
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="destinoOrigin"
+        [cdkConnectedOverlayOpen]="panelAbierto === 'destino'"
+        [cdkConnectedOverlayWidth]="destinoOrigin.elementRef.nativeElement.offsetWidth"
+      >
+        <div class="select-options-panel" role="listbox">
+          @for (aeropuerto of aeropuertosDestino; track getTrackReferencia(aeropuerto, $index)) {
+            <button
+              type="button"
+              class="select-option"
+              role="option"
+              (mousedown)="seleccionarAeropuerto('destino', aeropuerto)"
+            >
+              {{ getEtiquetaReferencia(aeropuerto) }}
+            </button>
+          } @empty {
+            <p class="select-option-empty">Sin resultados</p>
+          }
+        </div>
+      </ng-template>
     </div>
 
     <div class="field-divider"></div>
@@ -41,25 +123,101 @@
 
     <div class="search-field">
       <label for="fechaVuelta">Vuelta</label>
-      <input type="date" id="fechaVuelta" name="fechaVuelta" [(ngModel)]="datosBusqueda.fechaVuelta" required />
+      <input type="date" id="fechaVuelta" name="fechaVuelta" [(ngModel)]="datosBusqueda.fechaVuelta" />
     </div>
 
     <div class="field-divider"></div>
 
     <div class="search-field">
       <label for="viajeros">Viajeros</label>
-      <input
-        type="number"
-        id="viajeros"
-        name="viajeros"
-        min="1"
-        [(ngModel)]="datosBusqueda.viajeros"
-        required
-      />
+      <input type="number" id="viajeros" name="viajeros" min="1" [(ngModel)]="datosBusqueda.viajeros" required />
     </div>
 
     <button type="submit" class="search-button" [disabled]="!formularioViaje.valid">
       Buscar
     </button>
   </form>
+
+  <form
+    (ngSubmit)="handleHotelSubmit()"
+    #formularioHoteles="ngForm"
+    class="travel-search-bar"
+    [hidden]="pestanaActiva !== 'hoteles'"
+  >
+    <div class="search-field search-field-wide" cdkOverlayOrigin #hotelDestinoOrigin="cdkOverlayOrigin">
+      <label for="hotelDestinoTexto">Destino</label>
+      <input
+        type="text"
+        id="hotelDestinoTexto"
+        name="hotelDestinoTexto"
+        class="select-search-input"
+        placeholder="Selecciona o escribe ciudad"
+        autocomplete="off"
+        [(ngModel)]="textoHotelDestino"
+        (focus)="abrirPanel('hotelDestino')"
+        (input)="buscarOpciones('hotelDestino')"
+        (blur)="cerrarPanel()"
+        [disabled]="cargandoReferencias"
+        required
+      />
+      <input type="hidden" name="hotelDestino" [(ngModel)]="datosBusquedaHotel.destino" required />
+
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="hotelDestinoOrigin"
+        [cdkConnectedOverlayOpen]="panelAbierto === 'hotelDestino'"
+        [cdkConnectedOverlayWidth]="hotelDestinoOrigin.elementRef.nativeElement.offsetWidth"
+      >
+        <div class="select-options-panel" role="listbox">
+          @for (ciudad of ciudadesDestinoHotel; track getTrackReferencia(ciudad, $index)) {
+            <button type="button" class="select-option" role="option" (mousedown)="seleccionarCiudad(ciudad)">
+              {{ getEtiquetaReferencia(ciudad) }}
+            </button>
+          } @empty {
+            <p class="select-option-empty">Sin resultados</p>
+          }
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field">
+      <label for="fechaEntrada">Entrada</label>
+      <input type="date" id="fechaEntrada" name="fechaEntrada" [(ngModel)]="datosBusquedaHotel.fechaEntrada" required />
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field">
+      <label for="fechaSalida">Salida</label>
+      <input type="date" id="fechaSalida" name="fechaSalida" [(ngModel)]="datosBusquedaHotel.fechaSalida" required />
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field">
+      <label for="huespedes">Huéspedes</label>
+      <input type="number" id="huespedes" name="huespedes" min="1" [(ngModel)]="datosBusquedaHotel.huespedes" required />
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field">
+      <label for="habitaciones">Habitaciones</label>
+      <input type="number" id="habitaciones" name="habitaciones" min="1" [(ngModel)]="datosBusquedaHotel.habitaciones" required />
+    </div>
+
+    <button type="submit" class="search-button" [disabled]="!formularioHoteles.valid">
+      Buscar
+    </button>
+  </form>
+
+  @if (cargandoReferencias) {
+    <p class="reference-status">Cargando datos de Travelpayouts...</p>
+  }
+
+  @if (errorReferencias) {
+    <p class="reference-status reference-status-error">{{ errorReferencias }}</p>
+  }
 </div>

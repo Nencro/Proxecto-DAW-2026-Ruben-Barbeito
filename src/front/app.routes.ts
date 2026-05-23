@@ -4,14 +4,14 @@ import { ProfileTravelsComponent } from './components/profile-travels/profile-tr
 import { ProfileComponent } from './components/profile/profile.component';
 import { RegisterComponent } from './components/register/register.component';
 import { SearchComponent } from './components/search/search.component';
-import { TravelSearchComponent } from './components/travel-search/travel-search.component';
+import { HomeComponent } from './components/home/home.component';
 import { authGuard } from './guards/auth.guard';
 import { guestGuard } from './guards/guest.guard';
 
 export const rutas: Routes = [
   {
     path: '',
-    component: TravelSearchComponent
+    component: HomeComponent
   },
   {
     path: 'profile',
@@ -34,6 +34,14 @@ export const rutas: Routes = [
   },
   {
     path: 'search',
+    component: SearchComponent
+  },
+  {
+    path: 'fly/search',
+    component: SearchComponent
+  },
+  {
+    path: 'hotel/search',
     component: SearchComponent
   }
 ];

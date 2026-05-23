@@ -1,12 +1,16 @@
 <section class="search-page">
+  <app-travel-search></app-travel-search>
+
   <div class="search-summary">
     <div>
-      <h1>Resultados de busqueda</h1>
+      <h1>{{ tipoBusqueda === 'hoteles' ? 'Resultados de hoteles' : 'Resultados de vuelos' }}</h1>
       <p>
-        @if (criterios.destino) {
-          Viajes a <strong>{{ criterios.destino }}</strong>
+        @if (tipoBusqueda === 'hoteles' && criteriosHoteles.destino) {
+          Hoteles en <strong>{{ criteriosHoteles.destino }}</strong>
+        } @else if (criterios.origen && criterios.destino) {
+          De <strong>{{ criterios.origen }}</strong> a <strong>{{ criterios.destino }}</strong>
         } @else {
-          Selecciona un destino para afinar la busqueda
+          Completa la busqueda para ver resultados
         }
       </p>
     </div>
@@ -14,25 +18,108 @@
     <a class="edit-search-link" routerLink="/">Editar busqueda</a>
   </div>
 
-  <div class="criteria-list">
-    <div class="criteria-item">
-      <span>Destino</span>
-      <strong>{{ criterios.destino || 'Sin destino' }}</strong>
-    </div>
+  @if (tipoBusqueda === 'hoteles') {
+    <div class="criteria-list">
+      <div class="criteria-item">
+        <span>Destino</span>
+        <strong>{{ criteriosHoteles.destino || 'Sin destino' }}</strong>
+      </div>
 
-    <div class="criteria-item">
-      <span>Ida</span>
-      <strong>{{ criterios.fechaIda || 'Sin fecha' }}</strong>
-    </div>
+      <div class="criteria-item">
+        <span>Entrada</span>
+        <strong>{{ criteriosHoteles.fechaEntrada || 'Sin fecha' }}</strong>
+      </div>
 
-    <div class="criteria-item">
-      <span>Vuelta</span>
-      <strong>{{ criterios.fechaVuelta || 'Sin fecha' }}</strong>
-    </div>
-  </div>
+      <div class="criteria-item">
+        <span>Salida</span>
+        <strong>{{ criteriosHoteles.fechaSalida || 'Sin fecha' }}</strong>
+      </div>
 
-  <div class="results-empty">
-    <h2>Busqueda preparada</h2>
-    <p>Aqui se mostraran los resultados cuando conectes el buscador con datos reales.</p>
-  </div>
+      <div class="criteria-item">
+        <span>Huespedes</span>
+        <strong>{{ criteriosHoteles.huespedes }}</strong>
+      </div>
+    </div>
+  } @else {
+    <div class="criteria-list">
+      <div class="criteria-item">
+        <span>Origen</span>
+        <strong>{{ criterios.origen || 'Sin origen' }}</strong>
+      </div>
+
+      <div class="criteria-item">
+        <span>Destino</span>
+        <strong>{{ criterios.destino || 'Sin destino' }}</strong>
+      </div>
+
+      <div class="criteria-item">
+        <span>Ida</span>
+        <strong>{{ criterios.fechaIda || 'Sin fecha' }}</strong>
+      </div>
+
+      <div class="criteria-item">
+        <span>Vuelta</span>
+        <strong>{{ criterios.fechaVuelta || 'Sin fecha' }}</strong>
+      </div>
+    </div>
+  }
+
+  @if (cargandoResultados) {
+    <div class="results-empty">
+      <h2>Buscando vuelos</h2>
+      <p>Consultando Travelpayouts con los datos seleccionados.</p>
+    </div>
+  } @else if (errorResultados) {
+    <div class="results-empty results-error">
+      <h2>No se pudo completar la busqueda</h2>
+      <p>{{ errorResultados }}</p>
+    </div>
+  } @else if (tipoBusqueda === 'hoteles' && resultadosHoteles.length) {
+    <div class="results-list">
+      @for (hotel of resultadosHoteles; track hotel.hotelId + hotel.nombre) {
+        <article class="result-card">
+          <div>
+            <span class="result-route">{{ criteriosHoteles.destino }}</span>
+            <h2>{{ hotel.precio !== null ? (hotel.precio + ' ' + hotel.moneda) : 'Precio no disponible' }}</h2>
+          </div>
+
+          <div class="result-details">
+            <span>Hotel: <strong>{{ hotel.nombre }}</strong></span>
+            <span>Estrellas: <strong>{{ hotel.estrellas !== null ? hotel.estrellas : 'N/D' }}</strong></span>
+            <span>Proveedor: <strong>{{ hotel.proveedor || 'N/D' }}</strong></span>
+            <span>Distancia: <strong>{{ hotel.distancia !== null ? (hotel.distancia + ' km') : 'N/D' }}</strong></span>
+            <span>Entrada: <strong>{{ criteriosHoteles.fechaEntrada }}</strong></span>
+            <span>Salida: <strong>{{ criteriosHoteles.fechaSalida }}</strong></span>
+          </div>
+        </article>
+      }
+    </div>
+  } @else if (tipoBusqueda === 'vuelos' && resultados.length) {
+    <div class="results-list">
+      @for (vuelo of resultados; track vuelo.destino + vuelo.numeroVuelo + vuelo.salida) {
+        <article class="result-card">
+          <div>
+            <span class="result-route">{{ vuelo.origen || criterios.origen || 'Origen' }} - {{ vuelo.destino || criterios.destino || 'Destino' }}</span>
+            <h2>{{ vuelo.precio !== null ? (vuelo.precio + ' ' + vuelo.moneda) : 'Precio no disponible' }}</h2>
+          </div>
+
+          <div class="result-details">
+            <span>Proveedor: <strong>{{ vuelo.proveedor || 'N/D' }}</strong></span>
+            <span>Aerolinea: <strong>{{ vuelo.aerolinea || 'No disponible' }}</strong></span>
+            <span>Vuelo: <strong>{{ vuelo.numeroVuelo || 'No disponible' }}</strong></span>
+            <span>Escalas: <strong>{{ vuelo.escalas !== null ? vuelo.escalas : 'N/D' }}</strong></span>
+            <span>Duracion: <strong>{{ vuelo.duracion !== null ? (vuelo.duracion + ' min') : 'N/D' }}</strong></span>
+            <span>Distancia: <strong>{{ vuelo.distancia !== null ? (vuelo.distancia + ' km') : 'N/D' }}</strong></span>
+            <span>Salida: <strong>{{ vuelo.salida || criterios.fechaIda }}</strong></span>
+            <span>Vuelta: <strong>{{ vuelo.vuelta || criterios.fechaVuelta || 'Sin vuelta' }}</strong></span>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <div class="results-empty">
+      <h2>Sin resultados</h2>
+      <p>No hay resultados disponibles ahora mismo.</p>
+    </div>
+  }
 </section>

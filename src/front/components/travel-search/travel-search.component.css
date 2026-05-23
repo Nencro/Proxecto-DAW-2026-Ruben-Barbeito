@@ -3,20 +3,41 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin: 0 auto 40px;
+  margin: 0 auto;
 }
 
-app-carousel {
-  display: block;
-  width: inherit;
+.search-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #edf1f7;
+  border: 1px solid #dfe4ec;
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 18px;
 }
 
-.search-title {
-  font-size: 2rem;
-  margin-top: 30px;
-  margin-bottom: 25px;
+.tab-button {
+  min-width: 110px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #526071;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 10px 18px;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tab-button.active {
+  background: #ffffff;
   color: #172033;
-  text-align: center;
+  box-shadow: 0 4px 12px rgba(23, 32, 51, 0.12);
+}
+
+.tab-button:hover {
+  color: #172033;
 }
 
 .travel-search-bar {
@@ -31,11 +52,19 @@ app-carousel {
   width: 100%;
 }
 
+.travel-search-bar[hidden] {
+  display: none;
+}
+
 .search-field {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 130px;
+}
+
+.search-field-wide {
+  flex: 1.4;
 }
 
 .search-field label {
@@ -59,6 +88,64 @@ app-carousel {
 
 .search-field input::placeholder {
   color: #a0aabf;
+}
+
+.select-search-input {
+  cursor: text;
+}
+
+.select-search-input:disabled {
+  color: #9aa5b5;
+  cursor: not-allowed;
+}
+
+.select-search-input {
+  padding-right: 22px;
+}
+
+.search-field:has(.select-search-input)::after {
+  align-self: flex-end;
+  color: #7a8697;
+  content: "⌄";
+  font-size: 1rem;
+  line-height: 1;
+  margin-top: -21px;
+  pointer-events: none;
+}
+
+.select-options-panel {
+  max-height: 260px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #dfe4ec;
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(23, 32, 51, 0.16);
+  padding: 6px;
+}
+
+.select-option {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #172033;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  padding: 10px;
+  text-align: left;
+}
+
+.select-option:hover {
+  background: #edf1f7;
+}
+
+.select-option-empty {
+  margin: 0;
+  color: #5f6b7a;
+  font-size: 0.9rem;
+  padding: 10px;
 }
 
 .field-divider {
@@ -89,7 +176,28 @@ app-carousel {
   background-color: #ffb3b5;
 }
 
+.reference-status {
+  margin: 12px 0 0;
+  color: #5f6b7a;
+  font-size: 0.9rem;
+}
+
+.reference-status-error {
+  color: #c0373c;
+  font-weight: 700;
+}
+
 @media (max-width: 850px) {
+  .search-tabs {
+    width: calc(100% - 32px);
+    max-width: 420px;
+  }
+
+  .tab-button {
+    flex: 1;
+    min-width: 0;
+  }
+
   .travel-search-bar {
     flex-direction: column;
     border-radius: 20px;
