@@ -1,0 +1,29 @@
+<section class="carousel" aria-label="Imagenes destacadas">
+  <div class="carousel-track" [style.transform]="'translateX(-' + diapositivaActiva * 100 + '%)'">
+    @for (diapositiva of diapositivas; track diapositiva.src) {
+      <div class="carousel-slide">
+        <img [src]="diapositiva.src" [alt]="diapositiva.alt" />
+      </div>
+    }
+  </div>
+
+  <button class="carousel-control carousel-control--previous" type="button" aria-label="Imagen anterior" (click)="previousSlide()">
+    ‹
+  </button>
+  <button class="carousel-control carousel-control--next" type="button" aria-label="Imagen siguiente" (click)="nextSlide()">
+    ›
+  </button>
+
+  <div class="carousel-dots" aria-label="Seleccionar imagen">
+    @for (diapositiva of diapositivas; track diapositiva.src; let indice = $index) {
+      <button
+        class="carousel-dot"
+        type="button"
+        [class.carousel-dot--active]="indice === diapositivaActiva"
+        [attr.aria-label]="'Ver imagen ' + (indice + 1)"
+        [attr.aria-current]="indice === diapositivaActiva ? 'true' : null"
+        (click)="setSlide(indice)"
+      ></button>
+    }
+  </div>
+</section>

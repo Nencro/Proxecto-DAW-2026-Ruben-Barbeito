@@ -1,0 +1,67 @@
+<footer class="app-footer">
+  <div class="footer-content">
+    <div class="footer-company">
+      <a class="footer-brand" routerLink="/" aria-label="ExploraMas inicio">
+        <img class="footer-logo" src="assets/logo_exploramas.png" alt="ExploraMas" />
+      </a>
+
+      <p>
+        Agencia de viajes online para comparar destinos, fechas y escapadas de forma sencilla.
+      </p>
+    </div>
+
+    <nav class="footer-section" aria-label="ExploraMas">
+      <h2>ExploraMas</h2>
+      <a routerLink="/">Buscar viajes</a>
+      <a routerLink="/search">Resultados</a>
+      @if (servicioAuth.estaAutenticado()) {
+        <a routerLink="/profile">Mi perfil</a>
+      } @else {
+        <a routerLink="/login">Login</a>
+      }
+    </nav>
+
+    <nav class="footer-section" aria-label="Ayuda">
+      <h2>Ayuda</h2>
+      <a href="#">Centro de ayuda</a>
+      <a href="#">Contacto</a>
+      <a href="#">Gestionar reservas</a>
+      <a href="#">Preguntas frecuentes</a>
+    </nav>
+
+    <nav class="footer-section" aria-label="Legal">
+      <h2>Legal</h2>
+      <a href="#">Aviso legal</a>
+      <a href="#">Privacidad</a>
+      <a href="#">Cookies</a>
+      <a href="#">Condiciones</a>
+    </nav>
+
+    <div class="footer-section">
+      <h2>Siguenos</h2>
+
+      <nav class="footer-social" aria-label="Redes sociales">
+        <a class="social-link social-link--facebook" href="#" aria-label="Facebook">
+          <span aria-hidden="true">f</span>
+        </a>
+        <a class="social-link social-link--twitter" href="#" aria-label="Twitter">
+          <span aria-hidden="true">t</span>
+        </a>
+        <a class="social-link social-link--mail" href="#" aria-label="Correo electronico">
+          <span aria-hidden="true"></span>
+        </a>
+      </nav>
+
+      <a class="footer-email" href="mailto:info@exploramas.com">info&#64;exploramas.com</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2026 ExploraMas. Todos los derechos reservados.</p>
+    <div class="footer-bottom-links">
+      <a href="#">Mapa del sitio</a>
+      <a href="#">Accesibilidad</a>
+      <a href="#">Preferencias de cookies</a>
+    </div>
+  </div>
+</footer>

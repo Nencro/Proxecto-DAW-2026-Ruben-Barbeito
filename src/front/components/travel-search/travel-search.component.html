@@ -1,0 +1,65 @@
+<div class="travel-search-container">
+  <app-carousel></app-carousel>
+
+  <h2 class="search-title">Encuentra tu próximo viaje</h2>
+
+  <form (ngSubmit)="handleSubmit()" #formularioViaje="ngForm" class="travel-search-bar">
+    <div class="search-field">
+      <label for="origen">Origen</label>
+      <input
+        type="text"
+        id="origen"
+        name="origen"
+        placeholder="¿Desde dónde viajas?"
+        [(ngModel)]="datosBusqueda.origen"
+        required
+      />
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field">
+      <label for="destino">Destino</label>
+      <input
+        type="text"
+        id="destino"
+        name="destino"
+        placeholder="¿A dónde vas?"
+        [(ngModel)]="datosBusqueda.destino"
+        required
+      />
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field">
+      <label for="fechaIda">Ida</label>
+      <input type="date" id="fechaIda" name="fechaIda" [(ngModel)]="datosBusqueda.fechaIda" required />
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field">
+      <label for="fechaVuelta">Vuelta</label>
+      <input type="date" id="fechaVuelta" name="fechaVuelta" [(ngModel)]="datosBusqueda.fechaVuelta" required />
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field">
+      <label for="viajeros">Viajeros</label>
+      <input
+        type="number"
+        id="viajeros"
+        name="viajeros"
+        min="1"
+        [(ngModel)]="datosBusqueda.viajeros"
+        required
+      />
+    </div>
+
+    <button type="submit" class="search-button" [disabled]="!formularioViaje.valid">
+      Buscar
+    </button>
+  </form>
+</div>

@@ -1,0 +1,24 @@
+<section class="travels-page">
+  <div class="travels-heading">
+    <div>
+      <h1>Mis viajes</h1>
+      <p>Consulta tus reservas y viajes guardados.</p>
+    </div>
+
+    <a class="profile-link" routerLink="/profile">Volver al perfil</a>
+  </div>
+
+  <div class="travels-list">
+    @for (viaje of viajes; track viaje.id) {
+      <article class="travel-card">
+        <div>
+          <span class="travel-id">{{ viaje.id }}</span>
+          <h2>{{ viaje.destino }}</h2>
+          <p>{{ viaje.fechas }}</p>
+        </div>
+
+        <span class="travel-status">{{ viaje.estado }}</span>
+      </article>
+    }
+  </div>
+</section>

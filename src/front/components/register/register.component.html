@@ -1,0 +1,83 @@
+<section class="register-page">
+  <form class="register-form" (ngSubmit)="handleSubmit()" #formularioRegistro="ngForm">
+    <div class="register-heading">
+      <h1>Registro</h1>
+      <p>Crea tu cuenta de ExploraMas.</p>
+    </div>
+
+    <label class="register-field" for="usuario">
+      Usuario
+      <input
+        id="usuario"
+        type="text"
+        name="usuario"
+        autocomplete="username"
+        placeholder="Rbarbeito"
+        [(ngModel)]="usuario"
+        minlength="3"
+        maxlength="50"
+        pattern="[A-Za-z0-9._-]+"
+        required
+      />
+    </label>
+
+    <label class="register-field" for="email">
+      Correo electronico
+      <input
+        id="email"
+        type="email"
+        name="email"
+        autocomplete="email"
+        placeholder="correo-1@host.com"
+        [(ngModel)]="email"
+        maxlength="190"
+        required
+      />
+    </label>
+
+    <label class="register-field" for="password">
+      Contrasena
+      <input
+        id="password"
+        type="password"
+        name="password"
+        autocomplete="new-password"
+        placeholder="Contrasena"
+        [(ngModel)]="password"
+        minlength="6"
+        maxlength="100"
+        required
+      />
+    </label>
+
+    <label class="register-field" for="confirmarPassword">
+      Confirmar Contrasena
+      <input
+        id="confirmarPassword"
+        type="password"
+        name="confirmarPassword"
+        autocomplete="new-password"
+        placeholder="Contrasena"
+        [(ngModel)]="confirmarPassword"
+        minlength="6"
+        maxlength="100"
+        required
+      />
+    </label>
+
+    @if (passwordNoCoincide) {
+      <p class="register-error">Las contrasenas no coinciden.</p>
+    }
+
+    @if (mensajeError) {
+      <p class="register-error">{{ mensajeError }}</p>
+    }
+
+    <div class="register-actions">
+      <a class="register-button register-button--secondary" routerLink="/">Salir</a>
+      <button class="register-button register-button--primary" type="submit" [disabled]="!formularioRegistro.valid || enviando">
+        {{ enviando ? 'Registrando...' : 'Confirmar' }}
+      </button>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,44 @@
+<section class="login-page">
+  <form class="login-card" (ngSubmit)="handleSubmit()" #formularioLogin="ngForm">
+    <div class="login-heading">
+      <h1>Login</h1>
+      <p>Accede a tu cuenta de ExploraMas.</p>
+    </div>
+
+    <label class="login-field" for="email">
+      Email
+      <input
+        id="email"
+        type="email"
+        name="email"
+        autocomplete="email"
+        placeholder="tu@email.com"
+        [(ngModel)]="email"
+        required
+      />
+    </label>
+
+    <label class="login-field" for="password">
+      Contrasena
+      <input
+        id="password"
+        type="password"
+        name="password"
+        autocomplete="current-password"
+        placeholder="Tu contrasena"
+        [(ngModel)]="password"
+        required
+      />
+    </label>
+
+    @if (mensajeError) {
+      <p class="login-error">{{ mensajeError }}</p>
+    }
+
+    <button class="login-button" type="submit" [disabled]="!formularioLogin.valid || enviando">
+      {{ enviando ? 'Entrando...' : 'Entrar' }}
+    </button>
+
+    <a class="back-link" routerLink="/">Volver al buscador</a>
+  </form>
+</section>

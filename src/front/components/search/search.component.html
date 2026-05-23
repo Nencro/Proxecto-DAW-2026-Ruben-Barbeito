@@ -1,0 +1,38 @@
+<section class="search-page">
+  <div class="search-summary">
+    <div>
+      <h1>Resultados de busqueda</h1>
+      <p>
+        @if (criterios.destino) {
+          Viajes a <strong>{{ criterios.destino }}</strong>
+        } @else {
+          Selecciona un destino para afinar la busqueda
+        }
+      </p>
+    </div>
+
+    <a class="edit-search-link" routerLink="/">Editar busqueda</a>
+  </div>
+
+  <div class="criteria-list">
+    <div class="criteria-item">
+      <span>Destino</span>
+      <strong>{{ criterios.destino || 'Sin destino' }}</strong>
+    </div>
+
+    <div class="criteria-item">
+      <span>Ida</span>
+      <strong>{{ criterios.fechaIda || 'Sin fecha' }}</strong>
+    </div>
+
+    <div class="criteria-item">
+      <span>Vuelta</span>
+      <strong>{{ criterios.fechaVuelta || 'Sin fecha' }}</strong>
+    </div>
+  </div>
+
+  <div class="results-empty">
+    <h2>Busqueda preparada</h2>
+    <p>Aqui se mostraran los resultados cuando conectes el buscador con datos reales.</p>
+  </div>
+</section>

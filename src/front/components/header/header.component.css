@@ -1,0 +1,231 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.app-header {
+  width: 100%;
+  height: 60px;
+  padding: 0 8px 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #063766;
+  box-shadow: 0 2px 8px rgba(6, 55, 102, 0.25);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand-logo {
+  width: 128px;
+  height: 50px;
+  display: block;
+  object-fit: contain;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.compact-search {
+  height: 22px;
+  display: flex;
+  align-items: stretch;
+  background: #ffffff;
+  border: 1px solid #d6dbe3;
+}
+
+.compact-field {
+  width: 112px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #d6dbe3;
+}
+
+.compact-field--date {
+  width: 118px;
+  position: relative;
+}
+
+.compact-field input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0 8px;
+  border: 0;
+  outline: 0;
+  color: #172033;
+  font: inherit;
+  font-size: 12px;
+}
+
+.compact-field input[type="date"] {
+  padding-right: 4px;
+  color: #9aa4b2;
+}
+
+.compact-field input[type="date"]:valid {
+  color: #172033;
+}
+
+.compact-field input[type="date"]::-webkit-calendar-picker-indicator {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0.55;
+}
+
+.compact-field input[type="date"]::-webkit-datetime-edit {
+  color: inherit;
+}
+
+.compact-field input::placeholder {
+  color: #9aa4b2;
+  opacity: 1;
+}
+
+.compact-search-button {
+  width: 24px;
+  height: 22px;
+  border: 0;
+  position: relative;
+  flex: 0 0 24px;
+  background: #f5a11c;
+  cursor: pointer;
+}
+
+.compact-search-button::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 4px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}
+
+.compact-search-button::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 14px;
+  width: 7px;
+  height: 2px;
+  border-radius: 2px;
+  background: #ffffff;
+  transform: rotate(45deg);
+  transform-origin: left center;
+}
+
+.login-link,
+.my-travels-link {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-link:hover,
+.my-travels-link:hover {
+  text-decoration: underline;
+}
+
+.guest-links,
+.user-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.user-button__head {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.user-button__body {
+  width: 18px;
+  height: 9px;
+  border-radius: 9px 9px 3px 3px;
+  background: #ffffff;
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    height: 54px;
+    padding: 0 8px;
+  }
+
+  .brand-logo {
+    width: 106px;
+    height: 46px;
+  }
+
+  .header-actions {
+    gap: 10px;
+  }
+
+  .guest-links {
+    gap: 8px;
+  }
+
+  .user-links {
+    gap: 8px;
+  }
+
+  .login-link,
+  .my-travels-link {
+    font-size: 13px;
+  }
+
+  .compact-search {
+    max-width: 170px;
+  }
+
+  .compact-field {
+    width: 86px;
+  }
+
+  .compact-field--date {
+    display: none;
+  }
+}
+
+.visually-hidden {
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  position: absolute;
+  overflow: hidden;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}

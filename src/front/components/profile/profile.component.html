@@ -1,0 +1,134 @@
+<section class="profile-page">
+  <form class="profile-card" (ngSubmit)="saveProfile()" #formularioPerfil="ngForm">
+    <aside class="profile-summary">
+      <div class="profile-avatar" aria-hidden="true">
+        <span class="profile-avatar__head"></span>
+        <span class="profile-avatar__body"></span>
+      </div>
+
+      <div class="profile-greeting">
+        <h1>Hola, {{ nombreMostrado }}</h1>
+        <p class="profile-username" *ngIf="userNameMostrado">&#64;{{ userNameMostrado }}</p>
+        <span>{{ miembroDesde }}</span>
+      </div>
+    </aside>
+
+    <div class="profile-fields">
+      <label class="profile-field" for="profileUsername">
+        Username
+        <span class="profile-input">
+          <input
+            id="profileUsername"
+            type="text"
+            name="userName"
+            autocomplete="username"
+            placeholder="username"
+            [(ngModel)]="userName"
+            disabled
+            required
+          />
+        </span>
+      </label>
+
+      <label class="profile-field" for="profileName">
+        Nombre
+        <span class="profile-input">
+          <input
+            id="profileName"
+            type="text"
+            name="nombre"
+            autocomplete="given-name"
+            placeholder="Carlos Javier"
+            [(ngModel)]="nombre"
+            [disabled]="!editando"
+          />
+          <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
+        </span>
+      </label>
+
+      <label class="profile-field" for="profileSurname">
+        Apellidos
+        <span class="profile-input">
+          <input
+            id="profileSurname"
+            type="text"
+            name="apellidos"
+            autocomplete="family-name"
+            placeholder="Catano Dominguez"
+            [(ngModel)]="apellidos"
+            [disabled]="!editando"
+          />
+          <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
+        </span>
+      </label>
+
+      <label class="profile-field" for="profileEmail">
+        Email
+        <span class="profile-input">
+          <input
+            id="profileEmail"
+            type="email"
+            name="email"
+            autocomplete="email"
+            placeholder="correo@correo.com"
+            [(ngModel)]="email"
+            disabled
+            required
+          />
+        </span>
+      </label>
+
+      <label class="profile-field" for="profilePhone">
+        Telefono
+        <span class="profile-input">
+          <input
+            id="profilePhone"
+            type="tel"
+            name="telefono"
+            autocomplete="tel"
+            placeholder="+34 666 666 666"
+            [(ngModel)]="telefono"
+            [disabled]="!editando"
+          />
+          <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
+        </span>
+      </label>
+
+      <label class="profile-field" for="profileCountry">
+        Pais
+        <span class="profile-input">
+          <select
+            id="profileCountry"
+            name="paisId"
+            autocomplete="country-name"
+            [(ngModel)]="paisId"
+            [disabled]="!editando"
+          >
+            <option [ngValue]="null">Sin pais</option>
+            <option *ngFor="let paisDisponible of paises" [ngValue]="paisDisponible.id">
+              {{ paisDisponible.nombre }} ({{ paisDisponible.prefijo }})
+            </option>
+          </select>
+          <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
+        </span>
+      </label>
+
+      <button *ngIf="!editando" class="profile-button profile-button--primary" type="button" (click)="activarEdicion()">
+        Editar
+      </button>
+
+      <div class="profile-actions" *ngIf="editando">
+        <button class="profile-button profile-button--secondary" type="button" (click)="cancelarEdicion()" [disabled]="guardando">
+          Cancelar
+        </button>
+        <button class="profile-button profile-button--primary" type="submit" [disabled]="!formularioPerfil.valid || guardando">
+          Guardar
+        </button>
+      </div>
+
+      <button class="logout-button" type="button" (click)="logout()">
+        Cerrar sesion
+      </button>
+    </div>
+  </form>
+</section>

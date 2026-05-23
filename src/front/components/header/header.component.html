@@ -1,0 +1,43 @@
+<header class="app-header">
+  <a class="brand" routerLink="/" aria-label="ExploraMas inicio">
+    <img class="brand-logo" src="assets/logo_exploramas.png" alt="ExploraMas" />
+  </a>
+
+  <div class="header-actions">
+    <form class="compact-search" aria-label="Buscar viajes" (ngSubmit)="search()">
+      <label class="compact-field">
+        <span class="visually-hidden">Destino</span>
+        <input type="text" name="destino" placeholder="Destino" [(ngModel)]="destino" />
+      </label>
+
+      <label class="compact-field compact-field--date">
+        <span class="visually-hidden">Fecha de ida</span>
+        <input type="date" name="fechaIda" aria-label="Fecha de ida" [(ngModel)]="fechaIda" />
+      </label>
+
+      <label class="compact-field compact-field--date">
+        <span class="visually-hidden">Fecha de vuelta</span>
+        <input type="date" name="fechaVuelta" aria-label="Fecha de vuelta" [(ngModel)]="fechaVuelta" />
+      </label>
+
+      <button class="compact-search-button" type="submit" aria-label="Buscar">
+        <span aria-hidden="true"></span>
+      </button>
+    </form>
+
+    @if (servicioAuth.estaAutenticado()) {
+      <nav class="user-links" aria-label="Menu de usuario">
+        <a class="my-travels-link" routerLink="/profile/travels">Mis Viajes</a>
+        <a class="user-button" routerLink="/profile" aria-label="Abrir perfil">
+          <span class="user-button__head"></span>
+          <span class="user-button__body"></span>
+        </a>
+      </nav>
+    } @else {
+      <nav class="guest-links" aria-label="Acceso de usuario">
+        <a class="login-link" routerLink="/login">Login</a>
+        <a class="login-link" routerLink="/register">Registro</a>
+      </nav>
+    }
+  </div>
+</header>
