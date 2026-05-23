@@ -4,30 +4,22 @@
   </a>
 
   <div class="header-actions">
+    @if (servicioAuth.estaAutenticado()) {
     <form class="compact-search" aria-label="Buscar viajes" (ngSubmit)="search()">
       <label class="compact-field">
-        <span class="visually-hidden">Destino</span>
-        <input type="text" name="destino" placeholder="Destino" [(ngModel)]="destino" />
-      </label>
-
-      <label class="compact-field compact-field--date">
-        <span class="visually-hidden">Fecha de ida</span>
-        <input type="date" name="fechaIda" aria-label="Fecha de ida" [(ngModel)]="fechaIda" />
-      </label>
-
-      <label class="compact-field compact-field--date">
-        <span class="visually-hidden">Fecha de vuelta</span>
-        <input type="date" name="fechaVuelta" aria-label="Fecha de vuelta" [(ngModel)]="fechaVuelta" />
+        <span class="visually-hidden">Buscar</span>
+        <input type="text" name="textoBusqueda" placeholder="Buscar" [(ngModel)]="textoBusqueda" />
       </label>
 
       <button class="compact-search-button" type="submit" aria-label="Buscar">
         <span aria-hidden="true"></span>
       </button>
     </form>
+    }
 
     @if (servicioAuth.estaAutenticado()) {
       <nav class="user-links" aria-label="Menu de usuario">
-        <a class="my-travels-link" routerLink="/profile/travels">Mis Viajes</a>
+        <a class="my-travels-link" routerLink="/travels">Mis Viajes</a>
         <a class="user-button" routerLink="/profile" aria-label="Abrir perfil">
           <span class="user-button__head"></span>
           <span class="user-button__body"></span>
@@ -40,4 +32,29 @@
       </nav>
     }
   </div>
+
+  <button
+    type="button"
+    class="mobile-menu-button"
+    aria-label="Abrir menu"
+    [attr.aria-expanded]="menuMovilAbierto"
+    (click)="alternarMenuMovil()"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  @if (menuMovilAbierto) {
+    <nav class="mobile-menu" aria-label="Menu movil">
+      @if (servicioAuth.estaAutenticado()) {
+        <a routerLink="/search" (click)="cerrarMenuMovil()">Buscar</a>
+        <a routerLink="/travels" (click)="cerrarMenuMovil()">Mis Viajes</a>
+        <a routerLink="/profile" (click)="cerrarMenuMovil()">Perfil</a>
+      } @else {
+        <a routerLink="/register" (click)="cerrarMenuMovil()">Registrarse</a>
+        <a routerLink="/search" (click)="cerrarMenuMovil()">Buscar</a>
+      }
+    </nav>
+  }
 </header>

@@ -1,0 +1,41 @@
+<section class="search-page">
+  <app-travel-search></app-travel-search>
+
+  <div class="search-summary">
+    <div>
+      <h1>Resultados de vuelos</h1>
+    </div>
+
+    <a class="edit-search-link" routerLink="/">Editar busqueda</a>
+  </div>
+
+  <div class="criteria-list">
+    <div class="criteria-item">
+      <span>Origen</span>
+      <strong>{{ origenEtiqueta || 'Sin origen' }}</strong>
+    </div>
+
+    <div class="criteria-item">
+      <span>Destino</span>
+      <strong>{{ destinoEtiqueta || 'Sin destino' }}</strong>
+    </div>
+
+    <div class="criteria-item">
+      <span>Ida</span>
+      <strong>{{ formatearFechaCriterio(criterios.fechaIda) }}</strong>
+    </div>
+
+    <div class="criteria-item">
+      <span>Vuelta</span>
+      <strong>{{ formatearFechaCriterio(criterios.fechaVuelta) }}</strong>
+    </div>
+  </div>
+
+  <div class="contenedor-resultados">
+    <app-flight-results
+      [vuelos]="resultados"
+      [cargando]="cargandoResultados"
+      [error]="errorResultados">
+    </app-flight-results>
+  </div>
+</section>

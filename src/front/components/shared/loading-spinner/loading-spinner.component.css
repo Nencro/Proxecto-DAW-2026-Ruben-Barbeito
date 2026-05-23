@@ -1,0 +1,49 @@
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 130px;
+  color: #172033;
+}
+
+.spinner-ring {
+  position: relative;
+  width: 58px;
+  height: 58px;
+}
+
+.spinner-ring span {
+  position: absolute;
+  inset: 0;
+  border: 4px solid transparent;
+  border-top-color: #075faa;
+  border-radius: 50%;
+  animation: spinner-rotate 0.95s linear infinite;
+}
+
+.spinner-ring span:nth-child(2) {
+  inset: 8px;
+  border-top-color: #36a2a6;
+  animation-duration: 1.2s;
+  animation-direction: reverse;
+}
+
+.spinner-ring span:nth-child(3) {
+  inset: 16px;
+  border-top-color: #f2a541;
+  animation-duration: 0.75s;
+}
+
+.spinner-label {
+  color: #5f6b7a;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}

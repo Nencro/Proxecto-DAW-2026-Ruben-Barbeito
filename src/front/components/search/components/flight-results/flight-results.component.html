@@ -1,0 +1,79 @@
+@if (cargando) {
+  <div class="results-empty results-loading">
+    <app-loading-spinner label="Consultando vuelos"></app-loading-spinner>
+    <h2>Buscando vuelos</h2>
+    <p>Consultando proveedores con los datos seleccionados.</p>
+  </div>
+} @else if (error) {
+  <div class="results-empty results-error">
+    <h2>No se pudo completar la busqueda</h2>
+    <p>{{ error }}</p>
+  </div>
+} @else if (vuelos.length) {
+  <div class="results-list">
+    @for (vuelo of vuelos; track vuelo.destino + vuelo.numeroVuelo + vuelo.salida) {
+      <article class="result-card">
+        <div class="flight-airline">
+          @if (vuelo.iconoUrl) {
+            <img class="flight-icon" [src]="vuelo.iconoUrl" alt="" aria-hidden="true" />
+          }
+          <div>
+            <strong>{{ vuelo.aerolinea || 'Aerolínea no disponible' }}</strong>
+            <span>{{ vuelo.numeroVuelo || 'Vuelo no disponible' }}</span>
+          </div>
+        </div>
+
+        <div class="flight-main">
+          <div class="trip-segments">
+            <div class="trip-segment">
+              <span class="trip-segment__label">Ida</span>
+              <div class="flight-route">
+                <span class="airport-code">{{ vuelo.origen || 'Origen' }}</span>
+                <span class="route-line" aria-hidden="true"></span>
+                <span class="airport-code">{{ vuelo.destino || 'Destino' }}</span>
+              </div>
+              <div class="flight-times">
+                <span>Salida <strong>{{ formatearFecha(vuelo.salida) }}</strong></span>
+              </div>
+              <div class="flight-meta">
+                <span>{{ vuelo.escalas !== null ? (vuelo.escalas + ' escalas') : 'Escalas N/D' }}</span>
+                <span>{{ formatearDuracion(vuelo.duracion) }}</span>
+                <span>{{ vuelo.proveedor || 'Proveedor N/D' }}</span>
+              </div>
+            </div>
+
+            @if (vuelo.vuelta) {
+              <div class="trip-segment">
+                <span class="trip-segment__label">Vuelta</span>
+                <div class="flight-route">
+                  <span class="airport-code">{{ vuelo.vueltaOrigen || vuelo.destino || 'Origen' }}</span>
+                  <span class="route-line" aria-hidden="true"></span>
+                  <span class="airport-code">{{ vuelo.vueltaDestino || vuelo.origen || 'Destino' }}</span>
+                </div>
+                <div class="flight-times">
+                  <span>Salida <strong>{{ formatearFecha(vuelo.vuelta) }}</strong></span>
+                </div>
+                <div class="flight-meta">
+                  <span>{{ vuelo.vueltaEscalas !== null ? (vuelo.vueltaEscalas + ' escalas') : 'Escalas N/D' }}</span>
+                  <span>{{ formatearDuracion(vuelo.vueltaDuracion) }}</span>
+                  <span>{{ vuelo.vueltaNumeroVuelo || 'Vuelo N/D' }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="flight-price">
+          <span>Precio</span>
+          <strong>{{ vuelo.precio !== null ? (vuelo.precio + ' ' + vuelo.moneda) : 'N/D' }}</strong>
+          <small>por persona</small>
+        </div>
+      </article>
+    }
+  </div>
+} @else {
+  <div class="results-empty">
+    <h2>Sin resultados</h2>
+    <p>No hay resultados de vuelos disponibles.</p>
+  </div>
+}

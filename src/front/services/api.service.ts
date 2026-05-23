@@ -30,7 +30,7 @@ export interface PaisResponse {
   prefijo: string;
 }
 
-export interface TravelpayoutsReferenceItem {
+export interface DuffelReferenceItem {
   id?: string;
   airport_id?: string;
   code?: string;
@@ -56,23 +56,36 @@ export interface TravelpayoutsReferenceItem {
   raw?: unknown;
 }
 
-export interface TravelpayoutsFlightSearchParams {
+export interface DuffelFlightSearchParams {
   origin?: string;
   destination?: string;
   departDate?: string;
   returnDate?: string;
-  currency?: string;
+  adults?: number;
   limit?: number;
   page?: number;
 }
 
-export interface TravelpayoutsHotelSearchParams {
-  location?: string;
-  checkIn?: string;
-  checkOut?: string;
-  adults?: number;
-  limit?: number;
-  currency?: string;
+export type TravelRole = 'CREADOR' | 'PARTICIPANTE';
+
+export interface TravelResponse {
+  id: number;
+  destino: string;
+  pais: string;
+  descripcion: string;
+  fechaInicio: string;
+  fechaFin: string;
+  creadorId: number;
+  creadorUserName: string;
+  rolEnViaje: TravelRole;
+}
+
+export interface TravelCreateRequest {
+  destino: string;
+  pais: string;
+  descripcion: string;
+  fechaInicio: string;
+  fechaFin: string;
 }
 
 @Injectable({
@@ -93,35 +106,27 @@ export class ApiService {
     return this.get<PaisResponse[]>('/paises');
   }
 
-  getTravelpayoutsAirports(
+  getTravels(token?: string | null): Observable<TravelResponse[]> {
+    return this.get<TravelResponse[]>('/travels', token);
+  }
+
+  createTravel(data: TravelCreateRequest, token?: string | null): Observable<TravelResponse> {
+    return this.post<TravelResponse, TravelCreateRequest>('/travels', data, token);
+  }
+
+  getDuffelAirports(
     query = '',
-    language = 'es',
     limit = 50
-  ): Observable<TravelpayoutsReferenceItem[]> {
+  ): Observable<DuffelReferenceItem[]> {
     const params = new HttpParams()
-      .set('language', language)
       .set('query', query)
       .set('limit', limit);
 
-    return this.get<TravelpayoutsReferenceItem[]>(`/travelpayouts/reference/airports?${params.toString()}`);
+    return this.get<DuffelReferenceItem[]>(`/duffel/reference/airports?${params.toString()}`);
   }
 
-  getTravelpayoutsCities(
-    query = '',
-    language = 'es',
-    limit = 50
-  ): Observable<TravelpayoutsReferenceItem[]> {
-    const params = new HttpParams()
-      .set('language', language)
-      .set('query', query)
-      .set('limit', limit);
-
-    return this.get<TravelpayoutsReferenceItem[]>(`/travelpayouts/reference/cities?${params.toString()}`);
-  }
-
-  searchTravelpayoutsFlights(params: TravelpayoutsFlightSearchParams): Observable<unknown> {
-    let httpParams = new HttpParams()
-      .set('currency', params.currency || 'EUR');
+  searchDuffelFlights(params: DuffelFlightSearchParams): Observable<unknown> {
+    let httpParams = new HttpParams();
 
     if (params.origin) {
       httpParams = httpParams.set('origin', params.origin);
@@ -139,6 +144,10 @@ export class ApiService {
       httpParams = httpParams.set('returnDate', params.returnDate);
     }
 
+    if (params.adults) {
+      httpParams = httpParams.set('adults', params.adults);
+    }
+
     if (params.limit) {
       httpParams = httpParams.set('limit', params.limit);
     }
@@ -147,31 +156,7 @@ export class ApiService {
       httpParams = httpParams.set('page', params.page);
     }
 
-    return this.get<unknown>(`/travelpayouts/fly/search?${httpParams.toString()}`);
-  }
-
-  searchTravelpayoutsHotels(params: TravelpayoutsHotelSearchParams): Observable<unknown> {
-    let httpParams = new HttpParams()
-      .set('currency', params.currency || 'EUR')
-      .set('limit', params.limit || 50);
-
-    if (params.location) {
-      httpParams = httpParams.set('location', params.location);
-    }
-
-    if (params.checkIn) {
-      httpParams = httpParams.set('checkIn', params.checkIn);
-    }
-
-    if (params.checkOut) {
-      httpParams = httpParams.set('checkOut', params.checkOut);
-    }
-
-    if (params.adults) {
-      httpParams = httpParams.set('adults', params.adults);
-    }
-
-    return this.get<unknown>(`/travelpayouts/hotel/search?${httpParams.toString()}`);
+    return this.get<unknown>(`/duffel/fly/search?${httpParams.toString()}`);
   }
 
   get<T>(endpoint: string, token?: string | null): Observable<T> {

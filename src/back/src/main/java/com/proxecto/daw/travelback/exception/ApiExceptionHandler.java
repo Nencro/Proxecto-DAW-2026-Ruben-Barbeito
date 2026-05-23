@@ -67,6 +67,6 @@ public class ApiExceptionHandler {
     @ExceptionHandler(RestClientResponseException.class)
     public ResponseEntity<ApiErrorResponse> handleRestClientResponse(RestClientResponseException excepcion) {
         return ResponseEntity.status(excepcion.getStatusCode())
-                .body(ApiErrorResponse.withDetail(1, "Error al consultar Travelpayouts.", excepcion.getResponseBodyAsString()));
+                .body(ApiErrorResponse.withDetail(1, "Error al consultar Duffel.", excepcion.getResponseBodyAsString()));
     }
 }

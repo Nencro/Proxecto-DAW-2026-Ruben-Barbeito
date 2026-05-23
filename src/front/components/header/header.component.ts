@@ -11,9 +11,8 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  destino = '';
-  fechaIda = '';
-  fechaVuelta = '';
+  textoBusqueda = '';
+  menuMovilAbierto = false;
 
   constructor(
     public servicioAuth: AuthService,
@@ -22,12 +21,26 @@ export class HeaderComponent {
   }
 
   search(): void {
+    const query = this.textoBusqueda.trim();
+
+    if (!this.servicioAuth.estaAutenticado() || !query) {
+      return;
+    }
+
     this.router.navigate(['/search'], {
       queryParams: {
-        destino: this.destino || null,
-        fechaIda: this.fechaIda || null,
-        fechaVuelta: this.fechaVuelta || null
+        query
       }
     });
+
+    this.cerrarMenuMovil();
+  }
+
+  alternarMenuMovil(): void {
+    this.menuMovilAbierto = !this.menuMovilAbierto;
+  }
+
+  cerrarMenuMovil(): void {
+    this.menuMovilAbierto = false;
   }
 }

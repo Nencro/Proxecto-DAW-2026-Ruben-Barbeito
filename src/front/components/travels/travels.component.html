@@ -1,0 +1,64 @@
+<section class="travels-page">
+  <header class="travels-heading">
+    <div>
+      <h1>Mis viajes</h1>
+      <p>Viajes en los que participas o que has creado.</p>
+    </div>
+
+    <div class="travels-actions">
+      <a class="create-travel-link" routerLink="/travels/new">Crear viaje</a>
+      <a class="profile-link" routerLink="/profile">Volver al perfil</a>
+    </div>
+  </header>
+
+  @if (cargando) {
+    <div class="state-message">Cargando viajes...</div>
+  } @else if (error) {
+    <div class="state-message state-message--error">{{ error }}</div>
+  } @else if (!viajes.length) {
+    <div class="state-message">Todavia no tienes viajes asociados.</div>
+  } @else {
+    <div class="travels-table-wrap">
+      <table cdk-table [dataSource]="viajes" class="travels-table">
+        <ng-container cdkColumnDef="id">
+          <th cdk-header-cell *cdkHeaderCellDef>ID</th>
+          <td cdk-cell *cdkCellDef="let viaje">#{{ viaje.id }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="destino">
+          <th cdk-header-cell *cdkHeaderCellDef>Destino</th>
+          <td cdk-cell *cdkCellDef="let viaje">
+            <strong>{{ viaje.destino }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="pais">
+          <th cdk-header-cell *cdkHeaderCellDef>Pais</th>
+          <td cdk-cell *cdkCellDef="let viaje">{{ viaje.pais }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="fechas">
+          <th cdk-header-cell *cdkHeaderCellDef>Fechas</th>
+          <td cdk-cell *cdkCellDef="let viaje">{{ getFechas(viaje) }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="creador">
+          <th cdk-header-cell *cdkHeaderCellDef>Creador</th>
+          <td cdk-cell *cdkCellDef="let viaje">{{ viaje.creadorUserName }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="rol">
+          <th cdk-header-cell *cdkHeaderCellDef>Rol</th>
+          <td cdk-cell *cdkCellDef="let viaje">
+            <span class="role-badge" [class.role-badge--owner]="viaje.rolEnViaje === 'CREADOR'">
+              {{ getRolLegible(viaje) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr cdk-header-row *cdkHeaderRowDef="columnas"></tr>
+        <tr cdk-row *cdkRowDef="let row; columns: columnas"></tr>
+      </table>
+    </div>
+  }
+</section>

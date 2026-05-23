@@ -1,34 +1,10 @@
 <div class="travel-search-container">
-  <div class="search-tabs" role="tablist" aria-label="Tipo de búsqueda">
-    <button
-      type="button"
-      class="tab-button"
-      [class.active]="pestanaActiva === 'vuelos'"
-      (click)="cambiarPestana('vuelos')"
-      role="tab"
-      [attr.aria-selected]="pestanaActiva === 'vuelos'"
-    >
-      Vuelos
-    </button>
-    <button
-      type="button"
-      class="tab-button"
-      [class.active]="pestanaActiva === 'hoteles'"
-      (click)="cambiarPestana('hoteles')"
-      role="tab"
-      [attr.aria-selected]="pestanaActiva === 'hoteles'"
-    >
-      Hoteles
-    </button>
-  </div>
-
   <form
     (ngSubmit)="handleSubmit()"
     #formularioViaje="ngForm"
     class="travel-search-bar"
-    [hidden]="pestanaActiva !== 'vuelos'"
   >
-    <div class="search-field" cdkOverlayOrigin #origenOrigin="cdkOverlayOrigin">
+    <div class="search-field" [class.search-field-error]="campoVueloInvalido('origen')" cdkOverlayOrigin #origenOrigin="cdkOverlayOrigin">
       <label for="origenTexto">Origen</label>
       <input
         type="text"
@@ -39,6 +15,7 @@
         autocomplete="off"
         [(ngModel)]="textoOrigen"
         (focus)="abrirPanel('origen')"
+        (keydown)="reiniciarCampoSeleccionado('origen')"
         (input)="buscarOpciones('origen')"
         (blur)="cerrarPanel()"
         [disabled]="cargandoReferencias"
@@ -71,7 +48,7 @@
 
     <div class="field-divider"></div>
 
-    <div class="search-field" cdkOverlayOrigin #destinoOrigin="cdkOverlayOrigin">
+    <div class="search-field" [class.search-field-error]="campoVueloInvalido('destino')" cdkOverlayOrigin #destinoOrigin="cdkOverlayOrigin">
       <label for="destinoTexto">Destino</label>
       <input
         type="text"
@@ -82,6 +59,7 @@
         autocomplete="off"
         [(ngModel)]="textoDestino"
         (focus)="abrirPanel('destino')"
+        (keydown)="reiniciarCampoSeleccionado('destino')"
         (input)="buscarOpciones('destino')"
         (blur)="cerrarPanel()"
         [disabled]="cargandoReferencias"
@@ -114,14 +92,14 @@
 
     <div class="field-divider"></div>
 
-    <div class="search-field">
+    <div class="search-field" [class.search-field-error]="campoVueloInvalido('fechaIda')">
       <label for="fechaIda">Ida</label>
       <input type="date" id="fechaIda" name="fechaIda" [(ngModel)]="datosBusqueda.fechaIda" required />
     </div>
 
     <div class="field-divider"></div>
 
-    <div class="search-field">
+    <div class="search-field" [class.search-field-error]="campoVueloInvalido('fechaVuelta')">
       <label for="fechaVuelta">Vuelta</label>
       <input type="date" id="fechaVuelta" name="fechaVuelta" [(ngModel)]="datosBusqueda.fechaVuelta" />
     </div>
@@ -133,88 +111,13 @@
       <input type="number" id="viajeros" name="viajeros" min="1" [(ngModel)]="datosBusqueda.viajeros" required />
     </div>
 
-    <button type="submit" class="search-button" [disabled]="!formularioViaje.valid">
-      Buscar
-    </button>
-  </form>
-
-  <form
-    (ngSubmit)="handleHotelSubmit()"
-    #formularioHoteles="ngForm"
-    class="travel-search-bar"
-    [hidden]="pestanaActiva !== 'hoteles'"
-  >
-    <div class="search-field search-field-wide" cdkOverlayOrigin #hotelDestinoOrigin="cdkOverlayOrigin">
-      <label for="hotelDestinoTexto">Destino</label>
-      <input
-        type="text"
-        id="hotelDestinoTexto"
-        name="hotelDestinoTexto"
-        class="select-search-input"
-        placeholder="Selecciona o escribe ciudad"
-        autocomplete="off"
-        [(ngModel)]="textoHotelDestino"
-        (focus)="abrirPanel('hotelDestino')"
-        (input)="buscarOpciones('hotelDestino')"
-        (blur)="cerrarPanel()"
-        [disabled]="cargandoReferencias"
-        required
-      />
-      <input type="hidden" name="hotelDestino" [(ngModel)]="datosBusquedaHotel.destino" required />
-
-      <ng-template
-        cdkConnectedOverlay
-        [cdkConnectedOverlayOrigin]="hotelDestinoOrigin"
-        [cdkConnectedOverlayOpen]="panelAbierto === 'hotelDestino'"
-        [cdkConnectedOverlayWidth]="hotelDestinoOrigin.elementRef.nativeElement.offsetWidth"
-      >
-        <div class="select-options-panel" role="listbox">
-          @for (ciudad of ciudadesDestinoHotel; track getTrackReferencia(ciudad, $index)) {
-            <button type="button" class="select-option" role="option" (mousedown)="seleccionarCiudad(ciudad)">
-              {{ getEtiquetaReferencia(ciudad) }}
-            </button>
-          } @empty {
-            <p class="select-option-empty">Sin resultados</p>
-          }
-        </div>
-      </ng-template>
-    </div>
-
-    <div class="field-divider"></div>
-
-    <div class="search-field">
-      <label for="fechaEntrada">Entrada</label>
-      <input type="date" id="fechaEntrada" name="fechaEntrada" [(ngModel)]="datosBusquedaHotel.fechaEntrada" required />
-    </div>
-
-    <div class="field-divider"></div>
-
-    <div class="search-field">
-      <label for="fechaSalida">Salida</label>
-      <input type="date" id="fechaSalida" name="fechaSalida" [(ngModel)]="datosBusquedaHotel.fechaSalida" required />
-    </div>
-
-    <div class="field-divider"></div>
-
-    <div class="search-field">
-      <label for="huespedes">Huéspedes</label>
-      <input type="number" id="huespedes" name="huespedes" min="1" [(ngModel)]="datosBusquedaHotel.huespedes" required />
-    </div>
-
-    <div class="field-divider"></div>
-
-    <div class="search-field">
-      <label for="habitaciones">Habitaciones</label>
-      <input type="number" id="habitaciones" name="habitaciones" min="1" [(ngModel)]="datosBusquedaHotel.habitaciones" required />
-    </div>
-
-    <button type="submit" class="search-button" [disabled]="!formularioHoteles.valid">
+    <button type="submit" class="search-button">
       Buscar
     </button>
   </form>
 
   @if (cargandoReferencias) {
-    <p class="reference-status">Cargando datos de Travelpayouts...</p>
+    <p class="reference-status">Cargando datos de Duffel...</p>
   }
 
   @if (errorReferencias) {

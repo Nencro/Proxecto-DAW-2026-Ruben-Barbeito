@@ -1,0 +1,79 @@
+<section class="travel-create-page">
+  <header class="travel-create-heading">
+    <div>
+      <h1>Crear viaje</h1>
+      <p>Define el destino y las fechas del nuevo viaje.</p>
+    </div>
+
+    <a class="back-link" routerLink="/travels">Volver a mis viajes</a>
+  </header>
+
+  <form class="travel-create-form" #formularioViaje="ngForm" (ngSubmit)="crearViaje()">
+    <label class="travel-field" for="destino">
+      Destino
+      <input
+        id="destino"
+        name="destino"
+        type="text"
+        maxlength="150"
+        [(ngModel)]="viaje.destino"
+        required
+      />
+    </label>
+
+    <label class="travel-field" for="pais">
+      Pais
+      <input
+        id="pais"
+        name="pais"
+        type="text"
+        maxlength="100"
+        [(ngModel)]="viaje.pais"
+        required
+      />
+    </label>
+
+    <label class="travel-field travel-field--wide" for="descripcion">
+      Descripcion
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        rows="4"
+        maxlength="4000"
+        [(ngModel)]="viaje.descripcion"
+      ></textarea>
+    </label>
+
+    <label class="travel-field" for="fechaInicio">
+      Fecha inicio
+      <input
+        id="fechaInicio"
+        name="fechaInicio"
+        type="date"
+        [(ngModel)]="viaje.fechaInicio"
+        required
+      />
+    </label>
+
+    <label class="travel-field" for="fechaFin">
+      Fecha fin
+      <input
+        id="fechaFin"
+        name="fechaFin"
+        type="date"
+        [(ngModel)]="viaje.fechaFin"
+        required
+      />
+    </label>
+
+    @if (error) {
+      <p class="form-error">{{ error }}</p>
+    }
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="enviando || formularioViaje.invalid">
+        {{ enviando ? 'Creando...' : 'Crear viaje' }}
+      </button>
+    </div>
+  </form>
+</section>

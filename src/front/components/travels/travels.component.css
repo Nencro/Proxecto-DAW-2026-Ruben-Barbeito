@@ -1,0 +1,139 @@
+.travels-page {
+  max-width: 1080px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.travels-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.travels-heading h1 {
+  margin: 0 0 8px;
+  color: #172033;
+  font-size: 28px;
+}
+
+.travels-heading p {
+  margin: 0;
+  color: #5f6b7a;
+  font-size: 16px;
+}
+
+.travels-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.create-travel-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  color: #ffffff;
+  background: #0b72c8;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.create-travel-link:hover {
+  background: #075faa;
+}
+
+.profile-link {
+  color: #075faa;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.profile-link:hover {
+  text-decoration: underline;
+}
+
+.state-message {
+  padding: 22px;
+  color: #405061;
+  background: #ffffff;
+  border: 1px solid #d8e3ef;
+  border-radius: 8px;
+}
+
+.state-message--error {
+  color: #a12d2d;
+  border-color: #efb8b8;
+  background: #fff4f4;
+}
+
+.travels-table-wrap {
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #d8e3ef;
+  border-radius: 8px;
+}
+
+.travels-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #172033;
+}
+
+.travels-table th,
+.travels-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e5edf5;
+  white-space: nowrap;
+}
+
+.travels-table th {
+  color: #5f6b7a;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.travels-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 104px;
+  padding: 7px 10px;
+  color: #075faa;
+  background: #eaf3fb;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.role-badge--owner {
+  color: #38660d;
+  background: #edf7e4;
+}
+
+@media (max-width: 640px) {
+  .travels-heading,
+  .travels-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .travels-table th,
+  .travels-table td {
+    padding: 12px;
+  }
+}
