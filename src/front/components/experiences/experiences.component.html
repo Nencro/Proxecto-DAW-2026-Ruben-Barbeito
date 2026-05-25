@@ -1,9 +1,9 @@
 <section class="experiences-page">
   <header class="experiences-header">
     <span>Experiencias</span>
-    <h1>Encuentra planes para tu proximo viaje</h1>
+    <h1>Encuentra planes para tu próximo viaje</h1>
     <p>
-      Busca experiencias por nombre, lugar o pais y descubre actividades con precio por persona.
+      Busca experiencias por nombre, lugar o país y descubre actividades con precio por persona.
     </p>
   </header>
 
@@ -29,11 +29,11 @@
     </label>
 
     <label>
-      Pais
+      País
       <input
         type="search"
         name="pais"
-        placeholder="Ej. Espana, Francia, JP..."
+        placeholder="Ej. España, Francia, JP..."
         [(ngModel)]="pais"
       />
     </label>
@@ -58,7 +58,7 @@
 
   @if (puedeCrearExperiencias) {
     <div class="experience-create-panel">
-      <a class="app-button" routerLink="/experiences/new">Anadir experiencia</a>
+      <a class="app-button" routerLink="/experiences/new">Añadir experiencia</a>
     </div>
   }
 
@@ -69,7 +69,7 @@
   } @else if (error) {
     <div class="experiences-state experiences-state--error">{{ error }}</div>
   } @else if (!experiences.length) {
-    <div class="experiences-state">No hay experiencias que coincidan con la busqueda.</div>
+    <div class="experiences-state">No hay experiencias que coincidan con la búsqueda.</div>
   } @else {
     <div class="experiences-grid">
       @for (experience of experiences; track experience.id) {

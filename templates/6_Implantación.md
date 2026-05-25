@@ -119,6 +119,164 @@ http://localhost:4200
 npx tsc -p tsconfig.app.json --noEmit
 ```
 
+Configuracion da maquina Ubuntu en AWS:
+
+Para a implantacion en producion pódese empregar unha instancia EC2 con Ubuntu Server LTS. Unha configuracion inicial suficiente para o proxecto seria unha instancia `t3.small` ou similar, xa que a base de datos esta nun servizo externo e a maquina executaria principalmente Nginx e a API de Spring Boot.
+
+No grupo de seguridade de AWS deben abrirse so os portos necesarios:
+
+- `22`: SSH, restrinxido ao enderezo IP do administrador.
+- `80`: HTTP, aberto para redireccionar a HTTPS.
+- `443`: HTTPS, aberto para servir a aplicacion.
+
+Non se deben abrir publicamente os portos `8080`, `3306` nin `4000`. O porto `8080` queda so para comunicacion interna entre Nginx e Spring Boot, e a conexion coa base de datos externa faise desde a aplicacion usando as credenciais do ficheiro `.env`.
+
+Paquetes basicos da maquina:
+
+```bash
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y nginx openjdk-17-jre git curl
+```
+
+Estrutura recomendada na maquina:
+
+```text
+/var/www/exploramas        -> frontend Angular compilado
+/opt/exploramas/back       -> backend Spring Boot e ficheiro .env
+```
+
+O backend pode executarse como servizo de sistema. Un exemplo de unidade `systemd` seria:
+
+```ini
+[Unit]
+Description=ExploraMas Spring Boot Backend
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/opt/exploramas/back
+EnvironmentFile=/opt/exploramas/back/.env
+ExecStart=/usr/bin/java -jar /opt/exploramas/back/app.jar
+SuccessExitStatus=143
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Despois de crear o ficheiro en `/etc/systemd/system/exploramas-back.service`, activaríase con:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable exploramas-back
+sudo systemctl start exploramas-back
+sudo systemctl status exploramas-back
+```
+
+Configuracion de Nginx:
+
+Nginx encárgase de servir o frontend Angular e de reenviar as chamadas `/api` ao backend Spring Boot. Deste xeito, Spring Boot non queda exposto directamente a internet.
+
+Exemplo de configuracion en `/etc/nginx/sites-available/exploramas`:
+
+```nginx
+server {
+    listen 80;
+    server_name dominio-exemplo.com www.dominio-exemplo.com;
+
+    root /var/www/exploramas;
+    index index.html;
+
+    server_tokens off;
+    client_max_body_size 10M;
+
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080/api/;
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_connect_timeout 10s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+
+    location ~* \.(env|log|sql|bak|config|properties|yml|yaml)$ {
+        deny all;
+    }
+
+    location ~ /\. {
+        deny all;
+    }
+}
+```
+
+Activacion da configuracion:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/exploramas /etc/nginx/sites-enabled/exploramas
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+Para HTTPS recoméndase empregar Certbot. Unha vez o dominio apunte á instancia:
+
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d dominio-exemplo.com -d www.dominio-exemplo.com
+```
+
+Cando HTTPS funcione correctamente, pódese engadir a cabeceira HSTS:
+
+```nginx
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+```
+
+Tamén se pode engadir limitacion basica de peticions para reducir ataques de forza bruta ou abuso da API:
+
+```nginx
+limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
+limit_req_zone $binary_remote_addr zone=login_limit:10m rate=3r/m;
+```
+
+E dentro do bloque `server`:
+
+```nginx
+location /api/auth/login {
+    limit_req zone=login_limit burst=5 nodelay;
+    proxy_pass http://127.0.0.1:8080/api/auth/login;
+}
+
+location /api/ {
+    limit_req zone=api_limit burst=30 nodelay;
+    proxy_pass http://127.0.0.1:8080/api/;
+}
+```
+
+Comprobacions finais da implantacion:
+
+```bash
+sudo nginx -t
+sudo systemctl status nginx
+sudo systemctl status exploramas-back
+curl -I https://dominio-exemplo.com
+curl https://dominio-exemplo.com/api/experiences
+```
+
 Usuarios iniciais:
 
 O script `init.sql` crea os roles base da aplicacion:
@@ -266,7 +424,6 @@ Posibles melloras para version posteriores:
 - Engadir reservas reais de experiencias.
 - Crear panel de administracion completo.
 - Engadir internacionalizacion da interface.
-- Mellorar a accesibilidade con probas WCAG completas.
 - Crear despregue automatizado con Docker e CI/CD.
 - Engadir logs estruturados e monitorizacion.
 - Permitir que os participantes comenten ou voten actividades dentro dun viaxe.

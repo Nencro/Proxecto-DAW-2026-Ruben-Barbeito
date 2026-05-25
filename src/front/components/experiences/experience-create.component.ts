@@ -121,7 +121,7 @@ export class ExperienceCreateComponent implements OnInit {
     }
 
     if (!file.type.startsWith('image/')) {
-      this.error = 'Selecciona un archivo de imagen valido.';
+      this.error = 'Selecciona un archivo de imagen válido.';
       input.value = '';
       return;
     }
@@ -136,7 +136,7 @@ export class ExperienceCreateComponent implements OnInit {
     this.compressImage(file)
       .then((result) => {
         if (result.bytes > this.maxCompressedImageBytes) {
-          this.error = 'La imagen comprimida sigue siendo demasiado grande. Usa una imagen mas ligera.';
+          this.error = 'La imagen comprimida sigue siendo demasiado grande. Usa una imagen más ligera.';
           this.experiencia.imagen = '';
           this.experiencia.imagenTipo = '';
           input.value = '';
@@ -160,17 +160,17 @@ export class ExperienceCreateComponent implements OnInit {
     this.error = '';
 
     if (!this.experiencia.pais || !this.experiencia.codigoPais) {
-      this.error = 'Selecciona un pais valido de la lista.';
+      this.error = 'Selecciona un país válido de la lista.';
       return;
     }
 
     if (this.experiencia.tamanioMaximo < this.experiencia.tamanioMinimo) {
-      this.error = 'El tamano maximo no puede ser menor que el tamano minimo.';
+      this.error = 'El tamaño máximo no puede ser menor que el tamaño mínimo.';
       return;
     }
 
     if (this.comprimiendoImagen) {
-      this.error = 'Espera a que termine la compresion de la imagen.';
+      this.error = 'Espera a que termine la compresión de la imagen.';
       return;
     }
 

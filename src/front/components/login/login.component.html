@@ -19,13 +19,13 @@
     </label>
 
     <label class="login-field" for="password">
-      Contrasena
+      Contraseña
       <input
         id="password"
         type="password"
         name="password"
         autocomplete="current-password"
-        placeholder="Tu contrasena"
+        placeholder="Tu contraseña"
         [(ngModel)]="password"
         required
       />
@@ -39,7 +39,7 @@
       {{ enviando ? 'Entrando...' : 'Entrar' }}
     </button>
 
-    <a class="recover-link" routerLink="/password/recover">¿Quieres recuperar tu contrasena?</a>
+    <a class="recover-link" routerLink="/password/recover">¿Quieres recuperar tu contraseña?</a>
     <a class="back-link" routerLink="/">Volver al buscador</a>
   </form>
 </section>

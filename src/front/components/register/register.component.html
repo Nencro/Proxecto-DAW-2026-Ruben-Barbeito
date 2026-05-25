@@ -51,13 +51,13 @@
     </label>
 
     <label class="register-field" for="password">
-      Contrasena
+      Contraseña
       <input
         id="password"
         type="password"
         name="password"
         autocomplete="new-password"
-        placeholder="Contrasena"
+        placeholder="Contraseña"
         [(ngModel)]="password"
         (ngModelChange)="limpiarErrorPassword()"
         [class.field-invalid]="errorPassword"
@@ -66,11 +66,11 @@
         minlength="6"
         maxlength="100"
         pattern="^(?=.*[A-Za-z])(?=.*\\d).{6,100}$"
-        title="La contrasena debe tener entre 6 y 100 caracteres e incluir al menos una letra y un numero."
+        title="La contraseña debe tener entre 6 y 100 caracteres e incluir al menos una letra y un número."
         required
       />
       <span id="passwordHelp" class="password-help">
-        Debe tener entre 6 y 100 caracteres, al menos una letra y al menos un numero.
+        Debe tener entre 6 y 100 caracteres, al menos una letra y al menos un número.
       </span>
       @if (errorPassword) {
         <span id="passwordError" class="field-error">{{ errorPassword }}</span>
@@ -78,13 +78,13 @@
     </label>
 
     <label class="register-field" for="confirmarPassword">
-      Confirmar Contrasena
+      Confirmar contraseña
       <input
         id="confirmarPassword"
         type="password"
         name="confirmarPassword"
         autocomplete="new-password"
-        placeholder="Contrasena"
+        placeholder="Contraseña"
         [(ngModel)]="confirmarPassword"
         (ngModelChange)="limpiarErrorPassword()"
         [class.field-invalid]="errorConfirmarPassword"
@@ -93,7 +93,7 @@
         minlength="6"
         maxlength="100"
         pattern="^(?=.*[A-Za-z])(?=.*\\d).{6,100}$"
-        title="La contrasena debe tener entre 6 y 100 caracteres e incluir al menos una letra y un numero."
+        title="La contraseña debe tener entre 6 y 100 caracteres e incluir al menos una letra y un número."
         required
       />
       @if (errorConfirmarPassword) {
@@ -102,7 +102,7 @@
     </label>
 
     @if (passwordNoCoincide && !errorConfirmarPassword) {
-      <p class="register-error">Las contrasenas no coinciden.</p>
+      <p class="register-error">Las contraseñas no coinciden.</p>
     }
 
     @if (mensajeError && !errorUsuario && !errorEmail) {

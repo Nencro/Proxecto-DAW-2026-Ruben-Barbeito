@@ -58,7 +58,7 @@ export class ExperienceDetailsComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) {
-      this.error = 'No se encontro la experiencia.';
+      this.error = 'No se encontró la experiencia.';
       return;
     }
 
@@ -113,12 +113,12 @@ export class ExperienceDetailsComponent implements OnInit {
     this.error = '';
 
     if (!this.editable.pais || !this.editable.codigoPais) {
-      this.error = 'Selecciona un pais valido de la lista.';
+      this.error = 'Selecciona un país válido de la lista.';
       return;
     }
 
     if (this.editable.tamanioMaximo < this.editable.tamanioMinimo) {
-      this.error = 'El tamano maximo no puede ser menor que el tamano minimo.';
+      this.error = 'El tamaño máximo no puede ser menor que el tamaño mínimo.';
       return;
     }
 
@@ -152,8 +152,8 @@ export class ExperienceDetailsComponent implements OnInit {
     const dialogRef = this.dialog.open<boolean, ConfirmDialogData>(ConfirmDialogComponent, {
       data: {
         title: '¿Seguro que quieres borrar esta experiencia?',
-        message: 'Esta accion eliminara la experiencia definitivamente.',
-        confirmText: 'Si, borrar',
+        message: 'Esta acción eliminará la experiencia definitivamente.',
+        confirmText: 'Sí, borrar',
         cancelText: 'No'
       },
       hasBackdrop: true,
@@ -224,7 +224,7 @@ export class ExperienceDetailsComponent implements OnInit {
     }
 
     if (!file.type.startsWith('image/')) {
-      this.error = 'Selecciona un archivo de imagen valido.';
+      this.error = 'Selecciona un archivo de imagen válido.';
       input.value = '';
       return;
     }
@@ -239,7 +239,7 @@ export class ExperienceDetailsComponent implements OnInit {
     this.compressImage(file)
       .then((result) => {
         if (result.bytes > this.maxCompressedImageBytes) {
-          this.error = 'La imagen comprimida sigue siendo demasiado grande. Usa una imagen mas ligera.';
+          this.error = 'La imagen comprimida sigue siendo demasiado grande. Usa una imagen más ligera.';
           input.value = '';
           return;
         }

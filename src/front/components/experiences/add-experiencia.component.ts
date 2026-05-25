@@ -36,7 +36,7 @@ export class AddExperienciaComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.auth.validateSession()) {
-      this.error = 'Inicia sesion para anadir experiencias a tus viajes.';
+      this.error = 'Inicia sesión para añadir experiencias a tus viajes.';
       return;
     }
 
@@ -121,12 +121,12 @@ export class AddExperienciaComponent implements OnInit {
     }, this.auth.getToken()).subscribe({
       next: () => {
         estado.guardando = false;
-        estado.mensaje = 'Experiencia anadida al viaje.';
+        estado.mensaje = 'Experiencia añadida al viaje.';
         this.dialogRef.close();
       },
       error: () => {
         estado.guardando = false;
-        estado.error = 'No se pudo anadir la experiencia.';
+        estado.error = 'No se pudo añadir la experiencia.';
       }
     });
   }

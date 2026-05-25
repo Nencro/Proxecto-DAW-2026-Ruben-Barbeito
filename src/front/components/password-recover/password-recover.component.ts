@@ -40,7 +40,7 @@ export class PasswordRecoverComponent {
     }
 
     if (this.passwordsNoCoinciden) {
-      this.mensajeError = 'Las contrasenas no coinciden.';
+      this.mensajeError = 'Las contraseñas no coinciden.';
       return;
     }
 
@@ -51,7 +51,7 @@ export class PasswordRecoverComponent {
       newPassword: this.newPassword
     }).subscribe({
       next: () => {
-        this.mensajeExito = 'Contrasena actualizada. Ya puedes iniciar sesion.';
+        this.mensajeExito = 'Contraseña actualizada. Ya puedes iniciar sesión.';
         window.setTimeout(() => this.router.navigate(['/login']), 1200);
       },
       error: (error: HttpErrorResponse) => {
@@ -70,6 +70,6 @@ export class PasswordRecoverComponent {
       return error.error.mensaje;
     }
 
-    return 'No se pudo recuperar la contrasena.';
+    return 'No se pudo recuperar la contraseña.';
   }
 }

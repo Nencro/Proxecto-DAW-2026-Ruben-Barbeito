@@ -18,7 +18,7 @@
         maxlength="150"
         minlength="2"
         pattern="^[A-Za-zÀ-ÿ0-9.,'\\- ]{2,150}$"
-        title="Introduce un destino valido."
+        title="Introduce un destino válido."
         autocomplete="off"
         [(ngModel)]="viaje.destino"
         (ngModelChange)="buscarDestinos()"
@@ -50,14 +50,14 @@
     </div>
 
     <div class="travel-field travel-autocomplete">
-      <label for="pais">Pais</label>
+      <label for="pais">País</label>
       <input
         id="pais"
         name="pais"
         type="text"
         maxlength="100"
         pattern="^[A-Za-zÀ-ÿ'\\- ]+ \\([A-Z]{2}\\)$"
-        title="Selecciona un pais de la lista, por ejemplo Espana (ES)."
+        title="Selecciona un país de la lista, por ejemplo España (ES)."
         autocomplete="off"
         placeholder="Ej. Espana (ES)"
         [(ngModel)]="paisBusqueda"
@@ -72,7 +72,7 @@
       />
 
       @if (mostrarSugerenciasPais) {
-        <div id="paisSugerencias" class="destination-suggestions" role="listbox" aria-label="Sugerencias de pais">
+        <div id="paisSugerencias" class="destination-suggestions" role="listbox" aria-label="Sugerencias de país">
           @if (sugerenciasPais.length) {
             @for (pais of sugerenciasPais; track pais.code) {
               <button type="button" class="destination-suggestion" role="option" (mousedown)="seleccionarPais(pais)">
@@ -88,7 +88,7 @@
     </div>
 
     <label class="travel-field travel-field--wide" for="descripcion">
-      Descripcion
+      Descripción
       <textarea
         id="descripcion"
         name="descripcion"

@@ -46,6 +46,22 @@ public class TravelService {
         return jdbcTemplate.query(
                 getTravelsSql("""
                 WHERE usuario_actual.username = ?
+                  AND (
+                      EXISTS (
+                          SELECT 1
+                          FROM usuario_rol ur_admin
+                          INNER JOIN rol r_admin ON r_admin.id = ur_admin.rol_id
+                          WHERE ur_admin.usuario_id = usuario_actual.id
+                            AND r_admin.nombre = 'ADMIN'
+                      )
+                      OR v.id_creador = usuario_actual.id
+                      OR EXISTS (
+                          SELECT 1
+                          FROM participante_viaje pv
+                          WHERE pv.viaje_id = v.id
+                            AND pv.usuario_id = usuario_actual.id
+                      )
+                  )
                 ORDER BY v.fecha_inicio DESC, v.id DESC
                 """),
                 this::mapTravel,
@@ -108,9 +124,9 @@ public class TravelService {
                 SELECT i.id, i.viaje_id, i.fecha, i.hora, i.coste, i.descripcion
                 FROM itinerario i
                 INNER JOIN viaje v ON v.id = i.viaje_id
-                INNER JOIN usuario usuario_actual
-                    ON usuario_actual.username = ?
-                    AND (
+                INNER JOIN usuario usuario_actual ON usuario_actual.username = ?
+                WHERE i.viaje_id = ?
+                  AND (
                         EXISTS (
                             SELECT 1
                             FROM usuario_rol ur_admin
@@ -125,8 +141,7 @@ public class TravelService {
                             WHERE pv.viaje_id = v.id
                               AND pv.usuario_id = usuario_actual.id
                         )
-                    )
-                WHERE i.viaje_id = ?
+                  )
                 ORDER BY i.fecha ASC, i.hora ASC, i.id ASC
                 """,
                 this::mapActivity,
@@ -393,21 +408,36 @@ public class TravelService {
     private List<TravelParticipantResponse> getTravelParticipantsByTravelId(Long travelId) {
         return jdbcTemplate.query(
                 """
-                SELECT u.id, u.username, u.nombre, u.apellidos, u.email,
-                       CASE WHEN v.id_creador = u.id THEN 'CREADOR' ELSE 'PARTICIPANTE' END AS rol_en_viaje
-                FROM viaje v
-                INNER JOIN usuario u
-                    ON u.id = v.id_creador
-                    OR EXISTS (
-                        SELECT 1
-                        FROM participante_viaje pv
-                        WHERE pv.viaje_id = v.id
-                          AND pv.usuario_id = u.id
-                    )
-                WHERE v.id = ?
-                ORDER BY CASE WHEN v.id_creador = u.id THEN 0 ELSE 1 END, u.username ASC
+                SELECT participantes.id,
+                       participantes.username,
+                       participantes.nombre,
+                       participantes.apellidos,
+                       participantes.email,
+                       participantes.rol_en_viaje
+                FROM (
+                    SELECT u.id, u.username, u.nombre, u.apellidos, u.email, 'CREADOR' AS rol_en_viaje
+                    FROM viaje v
+                    INNER JOIN usuario u ON u.id = v.id_creador
+                    WHERE v.id = ?
+
+                    UNION ALL
+
+                    SELECT u.id, u.username, u.nombre, u.apellidos, u.email, 'PARTICIPANTE' AS rol_en_viaje
+                    FROM participante_viaje pv
+                    INNER JOIN usuario u ON u.id = pv.usuario_id
+                    WHERE pv.viaje_id = ?
+                      AND pv.usuario_id <> (
+                          SELECT v.id_creador
+                          FROM viaje v
+                          WHERE v.id = ?
+                      )
+                ) participantes
+                ORDER BY CASE WHEN participantes.rol_en_viaje = 'CREADOR' THEN 0 ELSE 1 END,
+                         participantes.username ASC
                 """,
                 this::mapParticipant,
+                travelId,
+                travelId,
                 travelId
         );
     }
@@ -418,6 +448,22 @@ public class TravelService {
                     getTravelsSql("""
                     WHERE usuario_actual.username = ?
                       AND v.id = ?
+                      AND (
+                          EXISTS (
+                              SELECT 1
+                              FROM usuario_rol ur_admin
+                              INNER JOIN rol r_admin ON r_admin.id = ur_admin.rol_id
+                              WHERE ur_admin.usuario_id = usuario_actual.id
+                                AND r_admin.nombre = 'ADMIN'
+                          )
+                          OR v.id_creador = usuario_actual.id
+                          OR EXISTS (
+                              SELECT 1
+                              FROM participante_viaje pv
+                              WHERE pv.viaje_id = v.id
+                                AND pv.usuario_id = usuario_actual.id
+                          )
+                      )
                     """),
                     this::mapTravel,
                     userName,
@@ -551,9 +597,10 @@ public class TravelService {
                 SELECT i.id, i.viaje_id, i.fecha, i.hora, i.coste, i.descripcion
                 FROM itinerario i
                 INNER JOIN viaje v ON v.id = i.viaje_id
-                INNER JOIN usuario usuario_actual
-                    ON usuario_actual.username = ?
-                    AND (
+                INNER JOIN usuario usuario_actual ON usuario_actual.username = ?
+                WHERE i.viaje_id = ?
+                  AND i.id = ?
+                  AND (
                         EXISTS (
                             SELECT 1
                             FROM usuario_rol ur_admin
@@ -568,9 +615,7 @@ public class TravelService {
                             WHERE pv.viaje_id = v.id
                               AND pv.usuario_id = usuario_actual.id
                         )
-                    )
-                WHERE i.viaje_id = ?
-                  AND i.id = ?
+                  )
                 """,
                 this::mapActivity,
                 userName,
@@ -610,21 +655,7 @@ public class TravelService {
                         ELSE 'PARTICIPANTE'
                     END AS rol_en_viaje
                 FROM usuario usuario_actual
-                INNER JOIN viaje v
-                    ON EXISTS (
-                        SELECT 1
-                        FROM usuario_rol ur_admin
-                        INNER JOIN rol r_admin ON r_admin.id = ur_admin.rol_id
-                        WHERE ur_admin.usuario_id = usuario_actual.id
-                          AND r_admin.nombre = 'ADMIN'
-                    )
-                    OR v.id_creador = usuario_actual.id
-                    OR EXISTS (
-                        SELECT 1
-                        FROM participante_viaje pv
-                        WHERE pv.viaje_id = v.id
-                          AND pv.usuario_id = usuario_actual.id
-                    )
+                INNER JOIN viaje v ON 1 = 1
                 INNER JOIN destino d ON d.id = v.destino_id
                 INNER JOIN pais p ON p.id = d.pais_id
                 INNER JOIN usuario creador ON creador.id = v.id_creador

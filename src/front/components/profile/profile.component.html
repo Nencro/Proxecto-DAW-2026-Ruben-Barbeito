@@ -50,7 +50,7 @@
             minlength="2"
             maxlength="100"
             pattern="^[A-Za-zÀ-ÿ]+(?:[ '\\-][A-Za-zÀ-ÿ]+)*$"
-            title="Introduce un nombre valido."
+            title="Introduce un nombre válido."
           />
           <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
         </span>
@@ -69,7 +69,7 @@
             [disabled]="!editando"
             maxlength="150"
             pattern="^[A-Za-zÀ-ÿ]+(?:[ '\\-][A-Za-zÀ-ÿ]+)*$"
-            title="Introduce apellidos validos."
+            title="Introduce apellidos válidos."
           />
           <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
         </span>
@@ -104,14 +104,14 @@
             [(ngModel)]="telefono"
             [disabled]="!editando"
             pattern="^[0-9+()\\s-]{7,20}$"
-            title="Introduce un telefono valido."
+            title="Introduce un teléfono válido."
           />
           <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
         </span>
       </label>
 
       <label class="profile-field profile-country-field" for="profileCountry">
-        Pais
+        País
         <span class="profile-input">
           <input
             id="profileCountry"
@@ -125,7 +125,7 @@
             (blur)="ocultarSugerenciasPais()"
             [disabled]="!editando"
             pattern="^[A-Za-zÀ-ÿ'\\- ]+ \\([A-Z]{2}\\)$"
-            title="Selecciona un pais de la lista, por ejemplo Espana (ES)."
+            title="Selecciona un país de la lista, por ejemplo España (ES)."
             role="combobox"
             aria-autocomplete="list"
             aria-controls="profileCountrySuggestions"
@@ -134,7 +134,7 @@
           <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
         </span>
 
-        <div *ngIf="mostrarSugerenciasPais" id="profileCountrySuggestions" class="country-suggestions" role="listbox" aria-label="Sugerencias de pais">
+        <div *ngIf="mostrarSugerenciasPais" id="profileCountrySuggestions" class="country-suggestions" role="listbox" aria-label="Sugerencias de país">
           <button
             *ngFor="let paisDisponible of sugerenciasPais"
             type="button"
@@ -189,7 +189,7 @@
       </div>
 
       <button *ngIf="puedeEditarPerfil" class="logout-button app-button app-button--danger" type="button" (click)="logout()">
-        Cerrar sesion
+        Cerrar sesión
       </button>
     </div>
   </form>

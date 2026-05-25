@@ -42,7 +42,7 @@
           @if (perfilMenuAbierto) {
             <div id="profileMenu" class="profile-dropdown" role="menu">
               <a routerLink="/profile" role="menuitem" (click)="cerrarMenuPerfil()">Ver perfil</a>
-              <button type="button" role="menuitem" (click)="logout()">Cerrar sesion</button>
+              <button type="button" role="menuitem" (click)="logout()">Cerrar sesión</button>
             </div>
           }
         </div>
@@ -71,7 +71,7 @@
         <a routerLink="/experiences" (click)="cerrarMenuMovil()">Experiencias</a>
         <a routerLink="/travels" (click)="cerrarMenuMovil()">Mis Viajes</a>
         <a routerLink="/profile" (click)="cerrarMenuMovil()">Perfil</a>
-        <button type="button" class="mobile-menu-logout" aria-label="Cerrar sesion" (click)="logout()">Cerrar sesión</button>
+        <button type="button" class="mobile-menu-logout" aria-label="Cerrar sesión" (click)="logout()">Cerrar sesión</button>
       } @else {
         <a routerLink="/experiences" (click)="cerrarMenuMovil()">Experiencias</a>
         <a routerLink="/register" (click)="cerrarMenuMovil()">Registro</a>

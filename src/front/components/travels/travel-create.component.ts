@@ -165,7 +165,7 @@ export class TravelCreateComponent implements OnInit {
     this.error = '';
 
     if (!this.viaje.destino.trim() || !this.viaje.pais.trim() || !this.viaje.codigoPais?.trim() || !this.viaje.fechaInicio || !this.viaje.fechaFin) {
-      this.error = 'Completa destino, pais, codigo de pais y fechas para crear el viaje.';
+      this.error = 'Completa destino, país, código de país y fechas para crear el viaje.';
       return;
     }
 

@@ -29,9 +29,9 @@
 
         <div class="experience-actions">
           @if (usuarioLogeado) {
-            <button class="app-button" type="button" (click)="abrirModal($event)">Anadir a un viaje</button>
+            <button class="app-button" type="button" (click)="abrirModal($event)">Añadir a un viaje</button>
           } @else {
-            <a class="app-button" routerLink="/login">Inicia sesion para anadir</a>
+            <a class="app-button" routerLink="/login">Inicia sesión para añadir</a>
           }
         </div>
       </div>
@@ -41,7 +41,7 @@
       <section class="experience-management">
         <header>
           <h2>Editar experiencia</h2>
-          <p>Estos cambios afectaran a la experiencia que ven los usuarios.</p>
+          <p>Estos cambios afectarán a la experiencia que ven los usuarios.</p>
         </header>
 
         <form class="experience-edit-form" #formularioExperiencia="ngForm" (ngSubmit)="guardar()">
@@ -76,14 +76,14 @@
           </label>
 
           <div class="experience-field experience-autocomplete">
-            <label for="paisExperiencia">Pais</label>
+            <label for="paisExperiencia">País</label>
             <input
               id="paisExperiencia"
               name="pais"
               type="text"
               maxlength="100"
               pattern="^[A-Za-zÀ-ÿ'\\- ]+ \\([A-Z]{2}\\)$"
-              title="Selecciona un pais de la lista, por ejemplo Espana (ES)."
+              title="Selecciona un país de la lista, por ejemplo España (ES)."
               autocomplete="off"
               [(ngModel)]="paisBusqueda"
               (ngModelChange)="buscarPaises()"
@@ -97,7 +97,7 @@
             />
 
             @if (mostrarSugerenciasPais) {
-              <div id="paisExperienciaDetalleSugerencias" class="country-suggestions" role="listbox" aria-label="Sugerencias de pais">
+              <div id="paisExperienciaDetalleSugerencias" class="country-suggestions" role="listbox" aria-label="Sugerencias de país">
                 @if (sugerenciasPais.length) {
                   @for (pais of sugerenciasPais; track pais.code) {
                     <button type="button" class="country-suggestion" role="option" (mousedown)="seleccionarPais(pais)">
@@ -113,17 +113,17 @@
           </div>
 
           <label class="experience-field" for="minimoExperiencia">
-            Tamano minimo
+            Tamaño mínimo
             <input id="minimoExperiencia" name="minimo" type="number" min="1" max="999" pattern="^[0-9]+$" [(ngModel)]="editable.tamanioMinimo" required />
           </label>
 
           <label class="experience-field" for="maximoExperiencia">
-            Tamano maximo
+            Tamaño máximo
             <input id="maximoExperiencia" name="maximo" type="number" min="1" max="999" pattern="^[0-9]+$" [(ngModel)]="editable.tamanioMaximo" required />
           </label>
 
           <label class="experience-field" for="duracionExperiencia">
-            Duracion en minutos
+            Duración en minutos
             <input id="duracionExperiencia" name="duracion" type="number" min="1" max="10080" pattern="^[0-9]+$" [(ngModel)]="editable.duracionMinutos" required />
           </label>
 
@@ -133,14 +133,14 @@
           </label>
 
           <label class="experience-field experience-field--wide" for="descripcionExperiencia">
-            Descripcion
+            Descripción
             <textarea id="descripcionExperiencia" name="descripcion" rows="5" [(ngModel)]="editable.descripcion" required></textarea>
           </label>
 
           <label class="experience-field experience-field--wide" for="imagenExperiencia">
             Imagen
             <input id="imagenExperiencia" name="imagen" type="file" accept="image/*" (change)="cargarImagen($event)" />
-            <small>Maximo 5 MB. Se comprimira automaticamente antes de subirla.</small>
+            <small>Máximo 5 MB. Se comprimirá automáticamente antes de subirla.</small>
           </label>
 
           @if (imagenInfo) {
@@ -161,7 +161,7 @@
         <div class="danger-zone">
           <div>
             <h2>Borrar experiencia</h2>
-            <p>La experiencia se eliminara definitivamente.</p>
+            <p>La experiencia se eliminará definitivamente.</p>
           </div>
 
           <button class="app-button app-button--danger" type="button" [disabled]="borrando" (click)="solicitarBorrado()">

@@ -1,7 +1,7 @@
 <section class="experience-create-page">
   <header class="experience-create-heading">
     <div>
-      <h1>Anadir experiencia</h1>
+      <h1>Añadir experiencia</h1>
       <p>Crea una experiencia para que aparezca en ExploraMas.</p>
     </div>
 
@@ -40,16 +40,16 @@
     </label>
 
     <div class="experience-field experience-autocomplete">
-      <label for="pais">Pais</label>
+      <label for="pais">País</label>
       <input
         id="pais"
         name="pais"
         type="text"
         maxlength="100"
         pattern="^[A-Za-zÀ-ÿ'\\- ]+ \\([A-Z]{2}\\)$"
-        title="Selecciona un pais de la lista, por ejemplo Espana (ES)."
+        title="Selecciona un país de la lista, por ejemplo España (ES)."
         autocomplete="off"
-        placeholder="Ej. Espana (ES)"
+        placeholder="Ej. España (ES)"
         [(ngModel)]="paisBusqueda"
         (ngModelChange)="buscarPaises()"
         (focus)="buscarPaises()"
@@ -62,7 +62,7 @@
       />
 
       @if (mostrarSugerenciasPais) {
-        <div id="paisExperienciaSugerencias" class="country-suggestions" role="listbox" aria-label="Sugerencias de pais">
+        <div id="paisExperienciaSugerencias" class="country-suggestions" role="listbox" aria-label="Sugerencias de país">
           @if (sugerenciasPais.length) {
             @for (pais of sugerenciasPais; track pais.code) {
               <button type="button" class="country-suggestion" role="option" (mousedown)="seleccionarPais(pais)">
@@ -78,17 +78,17 @@
     </div>
 
     <label class="experience-field" for="minimo">
-      Tamano minimo
+      Tamaño mínimo
       <input id="minimo" name="minimo" type="number" min="1" max="999" pattern="^[0-9]+$" [(ngModel)]="experiencia.tamanioMinimo" required />
     </label>
 
     <label class="experience-field" for="maximo">
-      Tamano maximo
+      Tamaño máximo
       <input id="maximo" name="maximo" type="number" min="1" max="999" pattern="^[0-9]+$" [(ngModel)]="experiencia.tamanioMaximo" required />
     </label>
 
     <label class="experience-field" for="duracion">
-      Duracion en minutos
+      Duración en minutos
       <input id="duracion" name="duracion" type="number" min="1" max="10080" pattern="^[0-9]+$" [(ngModel)]="experiencia.duracionMinutos" required />
     </label>
 
@@ -98,14 +98,14 @@
     </label>
 
     <label class="experience-field experience-field--wide" for="descripcion">
-      Descripcion
+      Descripción
       <textarea id="descripcion" name="descripcion" rows="5" [(ngModel)]="experiencia.descripcion" required></textarea>
     </label>
 
     <label class="experience-field experience-field--wide" for="imagen">
       Imagen
       <input id="imagen" name="imagen" type="file" accept="image/*" (change)="cargarImagen($event)" />
-      <small>Maximo 5 MB. Se comprimira automaticamente antes de subirla.</small>
+      <small>Máximo 5 MB. Se comprimirá automáticamente antes de subirla.</small>
     </label>
 
     @if (imagenInfo) {

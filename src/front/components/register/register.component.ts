@@ -97,18 +97,18 @@ export class RegisterComponent {
     }
 
     if (!patronEmail.test(email)) {
-      this.errorEmail = 'Introduce un correo electronico valido.';
+      this.errorEmail = 'Introduce un correo electrónico válido.';
     }
 
     if (!patronPassword.test(this.password)) {
-      this.errorPassword = 'La contrasena debe tener al menos 6 caracteres e incluir una letra y un numero.';
+      this.errorPassword = 'La contraseña debe tener al menos 6 caracteres e incluir una letra y un número.';
     }
 
     if (!this.confirmarPassword) {
-      this.errorConfirmarPassword = 'Repite la contrasena.';
+      this.errorConfirmarPassword = 'Repite la contraseña.';
     } else if (this.password !== this.confirmarPassword) {
       this.passwordNoCoincide = true;
-      this.errorConfirmarPassword = 'Las contrasenas no coinciden.';
+      this.errorConfirmarPassword = 'Las contraseñas no coinciden.';
     }
 
     return !this.errorUsuario && !this.errorEmail && !this.errorPassword && !this.errorConfirmarPassword;
@@ -126,7 +126,7 @@ export class RegisterComponent {
     }
 
     if (error.error?.codigo === 3) {
-      this.errorEmail = 'El correo electronico ya esta en uso.';
+      this.errorEmail = 'El correo electrónico ya está en uso.';
       return;
     }
 

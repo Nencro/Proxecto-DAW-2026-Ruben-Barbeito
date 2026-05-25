@@ -22,7 +22,7 @@
   } @else {
     <form class="travels-search-form" role="search" (submit)="$event.preventDefault()">
       <label class="travels-search-field" for="busquedaViajes">
-        Buscar por pais o destino
+        Buscar por país o destino
         <input
           id="busquedaViajes"
           name="busquedaViajes"
@@ -34,7 +34,7 @@
     </form>
 
     @if (!viajesFiltrados.length) {
-      <div class="state-message">No hay viajes que coincidan con la busqueda.</div>
+      <div class="state-message">No hay viajes que coincidan con la búsqueda.</div>
     } @else {
     <div class="travels-table-wrap">
       <table cdk-table [dataSource]="viajesFiltrados" class="travels-table">
@@ -47,7 +47,7 @@
         </ng-container>
 
         <ng-container cdkColumnDef="pais">
-          <th cdk-header-cell *cdkHeaderCellDef>Pais</th>
+          <th cdk-header-cell *cdkHeaderCellDef>País</th>
           <td cdk-cell *cdkCellDef="let viaje">
             {{ viaje.pais }}
             @if (viaje.codigoPais) {
