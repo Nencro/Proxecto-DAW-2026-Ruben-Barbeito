@@ -96,7 +96,7 @@ app-carousel {
 
 .section-title {
   margin: 0 0 10px;
-  color: var(--color-accent);
+  color: var(--color-primary);
   font-size: 28px;
   font-weight: 900;
 }

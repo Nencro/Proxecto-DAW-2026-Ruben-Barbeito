@@ -61,7 +61,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalState(IllegalStateException excepcion) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiErrorResponse.withDetail(1, "Error de configuracion del servidor.", excepcion.getMessage()));
+                .body(ApiErrorResponse.of(1, "Error de servidor."));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

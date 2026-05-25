@@ -130,8 +130,9 @@
 }
 
 .footer-bottom p {
-  color: var(--color-text-subtle);
+  color: var(--color-header-text);
   font-size: 13px;
+  font-weight: 800;
 }
 
 .footer-bottom-links {

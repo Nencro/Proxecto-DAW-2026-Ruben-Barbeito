@@ -69,6 +69,13 @@
   font-weight: 800;
 }
 
+.password-help {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
 .register-error {
   margin: 0;
   color: var(--color-danger-strong);
@@ -141,6 +148,11 @@
   }
 
   .register-error {
+    font-size: 11px;
+  }
+
+  .password-help,
+  .field-error {
     font-size: 11px;
   }
 

@@ -62,13 +62,16 @@
         (ngModelChange)="limpiarErrorPassword()"
         [class.field-invalid]="errorPassword"
         [attr.aria-invalid]="errorPassword ? 'true' : null"
-        [attr.aria-describedby]="errorPassword ? 'passwordError' : null"
+        [attr.aria-describedby]="errorPassword ? 'passwordHelp passwordError' : 'passwordHelp'"
         minlength="6"
         maxlength="100"
         pattern="^(?=.*[A-Za-z])(?=.*\\d).{6,100}$"
         title="La contrasena debe tener entre 6 y 100 caracteres e incluir al menos una letra y un numero."
         required
       />
+      <span id="passwordHelp" class="password-help">
+        Debe tener entre 6 y 100 caracteres, al menos una letra y al menos un numero.
+      </span>
       @if (errorPassword) {
         <span id="passwordError" class="field-error">{{ errorPassword }}</span>
       }

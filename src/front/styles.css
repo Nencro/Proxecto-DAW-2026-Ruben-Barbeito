@@ -203,6 +203,7 @@ img {
 .app-button--search {
   min-height: 48px;
   padding-inline: 28px;
+  color: var(--color-black);
   background: var(--color-search-action);
   border-radius: 50px;
   font-size: 1.1rem;
@@ -210,6 +211,7 @@ img {
 }
 
 .app-button--search:hover:not(:disabled) {
+  color: var(--color-black);
   background: var(--color-search-action-hover);
   transform: scale(1.02);
 }
@@ -247,6 +249,17 @@ img {
   border: 0;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+}
+
+.offscreen-empty-heading {
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: -200vw;
+  overflow: hidden;
+  border: 0;
 }
 
 .app-icon-button {
