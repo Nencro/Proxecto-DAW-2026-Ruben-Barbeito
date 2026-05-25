@@ -2,6 +2,7 @@ package com.proxecto.daw.travelback.controller;
 
 import com.proxecto.daw.travelback.dto.LoginRequest;
 import com.proxecto.daw.travelback.dto.LoginResponse;
+import com.proxecto.daw.travelback.dto.PasswordRecoverRequest;
 import com.proxecto.daw.travelback.dto.RegisterRequest;
 import com.proxecto.daw.travelback.dto.RegisterResponse;
 import com.proxecto.daw.travelback.service.UserService;
@@ -32,5 +33,10 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest peticion) {
         return servicioUsuarios.login(peticion);
+    }
+
+    @PostMapping("/password/recover")
+    public void recoverPassword(@Valid @RequestBody PasswordRecoverRequest peticion) {
+        servicioUsuarios.recoverPassword(peticion);
     }
 }

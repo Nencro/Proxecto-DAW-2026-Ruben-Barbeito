@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable } from 'rxjs';
+import { APP_RUNTIME_CONFIG } from '../app-runtime-config';
 
 export interface AuthUser {
   id: string;
@@ -11,6 +12,8 @@ export interface AuthUser {
   telefono?: string;
   paisId?: number | null;
   pais?: string;
+  codigoPais?: string;
+  prefijoPais?: string;
   fechaRegistro?: string;
   roles?: string[];
 }
@@ -23,6 +26,12 @@ export interface LoginData {
 export interface LoginRequest {
   email: string;
   password: string;
+}
+
+export interface PasswordRecoverRequest {
+  userName: string;
+  email: string;
+  newPassword: string;
 }
 
 export interface LoginResponse {
@@ -57,7 +66,6 @@ export interface RegisterResponse {
 
 const CLAVE_TOKEN_AUTH = 'exploramas_auth_token';
 const CLAVE_USUARIO_AUTH = 'exploramas_auth_user';
-const URL_API = 'http://localhost:8080/api';
 
 @Injectable({
   providedIn: 'root'
@@ -68,16 +76,20 @@ export class AuthService {
 
   readonly token = this.senalToken.asReadonly();
   readonly usuario = this.senalUsuario.asReadonly();
-  readonly estaAutenticado = computed(() => Boolean(this.senalToken()));
+  readonly estaAutenticado = computed(() => Boolean(this.senalToken()) && !this.isTokenExpired(this.senalToken()));
 
   constructor(private readonly http: HttpClient) {}
 
   register(data: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${URL_API}/auth/register`, data);
+    return this.http.post<RegisterResponse>(`${APP_RUNTIME_CONFIG.apiBaseUrl}/auth/register`, data);
   }
 
   authenticate(data: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${URL_API}/auth/login`, data);
+    return this.http.post<LoginResponse>(`${APP_RUNTIME_CONFIG.apiBaseUrl}/auth/login`, data);
+  }
+
+  recoverPassword(data: PasswordRecoverRequest): Observable<void> {
+    return this.http.post<void>(`${APP_RUNTIME_CONFIG.apiBaseUrl}/auth/password/recover`, data);
   }
 
   login(data: LoginData): void {
@@ -89,6 +101,21 @@ export class AuthService {
   }
 
   logout(): void {
+    this.clearSession();
+  }
+
+  clearExpiredSession(): void {
+    if (this.isTokenExpired(this.senalToken())) {
+      this.clearSession();
+    }
+  }
+
+  validateSession(): boolean {
+    this.clearExpiredSession();
+    return this.estaAutenticado();
+  }
+
+  clearSession(): void {
     this.senalToken.set(null);
     this.senalUsuario.set(null);
 
@@ -116,7 +143,7 @@ export class AuthService {
       return null;
     }
 
-    if (!this.hasJwtFormat(tokenGuardado)) {
+    if (!this.hasJwtFormat(tokenGuardado) || this.isTokenExpired(tokenGuardado)) {
       localStorage.removeItem(CLAVE_TOKEN_AUTH);
       localStorage.removeItem(CLAVE_USUARIO_AUTH);
       return null;
@@ -142,5 +169,32 @@ export class AuthService {
 
   private hasJwtFormat(token: string): boolean {
     return token.split('.').length === 3;
+  }
+
+  private isTokenExpired(token: string | null): boolean {
+    if (!token || !this.hasJwtFormat(token)) {
+      return true;
+    }
+
+    try {
+      const payload = JSON.parse(this.decodeJwtPayload(token)) as { exp?: number };
+
+      if (!payload.exp) {
+        return false;
+      }
+
+      return payload.exp * 1000 <= Date.now();
+    } catch {
+      return true;
+    }
+  }
+
+  private decodeJwtPayload(token: string): string {
+    const payload = token.split('.')[1]
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+    const paddedPayload = payload.padEnd(Math.ceil(payload.length / 4) * 4, '=');
+
+    return atob(paddedPayload);
   }
 }

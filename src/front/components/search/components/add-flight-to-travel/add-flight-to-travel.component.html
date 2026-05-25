@@ -1,0 +1,39 @@
+<section class="add-flight-modal" role="dialog" aria-modal="true" aria-labelledby="addFlightTitle">
+  <header class="add-flight-header">
+    <div>
+      <span>Anadir vuelo</span>
+      <h2 id="addFlightTitle">{{ vuelo.destino || 'Destino' }}</h2>
+      <p>{{ formatearPrecio() }} por persona</p>
+    </div>
+
+    <button type="button" class="add-flight-close" aria-label="Cerrar" (click)="cerrar()">x</button>
+  </header>
+
+  @if (cargando) {
+    <div class="add-flight-state">
+      <app-loading-spinner label="Cargando viajes"></app-loading-spinner>
+    </div>
+  } @else if (error) {
+    <p class="add-flight-state add-flight-state--error">{{ error }}</p>
+  } @else if (!vuelo.precio) {
+    <p class="add-flight-state">Este vuelo no tiene precio disponible.</p>
+  } @else if (!viajes.length) {
+    <p class="add-flight-state">No tienes viajes futuros al pais de destino de este vuelo.</p>
+  } @else {
+    <div class="travel-options">
+      @for (viaje of viajes; track viaje.id) {
+        <article class="travel-option-card">
+          <div>
+            <h3>{{ viaje.destino }}</h3>
+            <p>{{ viaje.pais }} ({{ viaje.codigoPais }})</p>
+            <span>{{ getFechas(viaje) }}</span>
+          </div>
+
+          <button class="app-button" type="button" [disabled]="guardandoViajeId === viaje.id" [attr.aria-label]="'Anadir precio del vuelo al viaje ' + viaje.destino" (click)="anadirPrecio(viaje)">
+            {{ guardandoViajeId === viaje.id ? 'Anadiendo...' : 'Anadir' }}
+          </button>
+        </article>
+      }
+    </div>
+  }
+</section>

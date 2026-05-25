@@ -19,12 +19,16 @@ export class RegisterComponent {
   passwordNoCoincide = false;
   enviando = false;
   mensajeError = '';
+  errorUsuario = '';
+  errorEmail = '';
+  errorPassword = '';
+  errorConfirmarPassword = '';
 
   constructor(
     private readonly servicioAuth: AuthService,
     private readonly router: Router
   ) {
-    if (this.servicioAuth.estaAutenticado()) {
+    if (this.servicioAuth.validateSession()) {
       this.router.navigate(['/profile']);
     }
   }
@@ -34,8 +38,12 @@ export class RegisterComponent {
     const email = this.email.trim();
     this.passwordNoCoincide = this.password !== this.confirmarPassword;
     this.mensajeError = '';
+    this.errorUsuario = '';
+    this.errorEmail = '';
+    this.errorPassword = '';
+    this.errorConfirmarPassword = '';
 
-    if (!userName || !email || !this.password || this.passwordNoCoincide) {
+    if (!this.validarCampos(userName, email)) {
       return;
     }
 
@@ -60,40 +68,91 @@ export class RegisterComponent {
       },
       error: (error: HttpErrorResponse) => {
         this.enviando = false;
-        this.mensajeError = this.getErrorMessage(error);
+        this.asignarErrorRegistro(error);
       }
     });
   }
 
-  private getErrorMessage(error: HttpErrorResponse): string {
+  limpiarErrorUsuario(): void {
+    this.errorUsuario = '';
+  }
+
+  limpiarErrorEmail(): void {
+    this.errorEmail = '';
+  }
+
+  limpiarErrorPassword(): void {
+    this.errorPassword = '';
+    this.errorConfirmarPassword = '';
+    this.passwordNoCoincide = false;
+  }
+
+  private validarCampos(userName: string, email: string): boolean {
+    const patronUsuario = /^[A-Za-z0-9._-]{3,50}$/;
+    const patronEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const patronPassword = /^(?=.*[A-Za-z])(?=.*\d).{6,100}$/;
+
+    if (!patronUsuario.test(userName)) {
+      this.errorUsuario = 'El usuario debe tener entre 3 y 50 caracteres y solo puede usar letras, numeros, puntos, guiones y guiones bajos.';
+    }
+
+    if (!patronEmail.test(email)) {
+      this.errorEmail = 'Introduce un correo electronico valido.';
+    }
+
+    if (!patronPassword.test(this.password)) {
+      this.errorPassword = 'La contrasena debe tener al menos 6 caracteres e incluir una letra y un numero.';
+    }
+
+    if (!this.confirmarPassword) {
+      this.errorConfirmarPassword = 'Repite la contrasena.';
+    } else if (this.password !== this.confirmarPassword) {
+      this.passwordNoCoincide = true;
+      this.errorConfirmarPassword = 'Las contrasenas no coinciden.';
+    }
+
+    return !this.errorUsuario && !this.errorEmail && !this.errorPassword && !this.errorConfirmarPassword;
+  }
+
+  private asignarErrorRegistro(error: HttpErrorResponse): void {
     if (error.status === 0) {
-      return 'No se pudo conectar con el servidor.';
+      this.mensajeError = 'No se pudo conectar con el servidor.';
+      return;
     }
 
     if (error.error?.codigo === 2) {
-      return 'El usuario ya existe.';
+      this.errorUsuario = 'El usuario ya existe.';
+      return;
     }
 
     if (error.error?.codigo === 3) {
-      return 'El email ya esta registrado.';
+      this.errorEmail = 'El correo electronico ya esta en uso.';
+      return;
     }
 
     if (error.error?.codigo === 1 && error.error?.errores && typeof error.error.errores === 'object') {
-      return Object.values(error.error.errores).join(' ');
+      const errores = error.error.errores as Record<string, string>;
+      this.errorUsuario = errores['userName'] || errores['usuario'] || '';
+      this.errorEmail = errores['email'] || '';
+      this.mensajeError = Object.values(errores).filter(Boolean).join(' ');
+      return;
     }
 
     if (typeof error.error?.mensaje === 'string') {
       if (typeof error.error?.detalle === 'string') {
-        return `${error.error.mensaje} ${error.error.detalle}`;
+        this.mensajeError = `${error.error.mensaje} ${error.error.detalle}`;
+        return;
       }
 
-      return error.error.mensaje;
+      this.mensajeError = error.error.mensaje;
+      return;
     }
 
     if (error.error && typeof error.error === 'object') {
-      return Object.values(error.error).join(' ');
+      this.mensajeError = Object.values(error.error).join(' ');
+      return;
     }
 
-    return 'No se pudo completar el registro.';
+    this.mensajeError = 'No se pudo completar el registro.';
   }
 }

@@ -9,29 +9,83 @@
   </header>
 
   <form class="travel-create-form" #formularioViaje="ngForm" (ngSubmit)="crearViaje()">
-    <label class="travel-field" for="destino">
-      Destino
+    <div class="travel-field travel-autocomplete">
+      <label for="destino">Destino</label>
       <input
         id="destino"
         name="destino"
         type="text"
         maxlength="150"
+        minlength="2"
+        pattern="^[A-Za-zÀ-ÿ0-9.,'\\- ]{2,150}$"
+        title="Introduce un destino valido."
+        autocomplete="off"
         [(ngModel)]="viaje.destino"
+        (ngModelChange)="buscarDestinos()"
+        (focus)="buscarDestinos()"
+        (blur)="ocultarSugerenciasDestino()"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="destinoSugerencias"
+        [attr.aria-expanded]="mostrarSugerencias"
         required
       />
-    </label>
 
-    <label class="travel-field" for="pais">
-      Pais
+      @if (mostrarSugerencias) {
+        <div id="destinoSugerencias" class="destination-suggestions" role="listbox" aria-label="Sugerencias de destino">
+          @if (cargandoSugerencias) {
+            <p class="destination-suggestion-status">Buscando destinos...</p>
+          } @else if (sugerenciasDestino.length) {
+            @for (sugerencia of sugerenciasDestino; track sugerencia.id) {
+              <button type="button" class="destination-suggestion" role="option" (mousedown)="seleccionarDestino(sugerencia)">
+                <span>{{ sugerencia.destino }}</span>
+                <small>{{ sugerencia.pais }} · {{ sugerencia.codigoPais }}</small>
+              </button>
+            }
+          } @else {
+            <p class="destination-suggestion-status">No hay coincidencias.</p>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="travel-field travel-autocomplete">
+      <label for="pais">Pais</label>
       <input
         id="pais"
         name="pais"
         type="text"
         maxlength="100"
-        [(ngModel)]="viaje.pais"
+        pattern="^[A-Za-zÀ-ÿ'\\- ]+ \\([A-Z]{2}\\)$"
+        title="Selecciona un pais de la lista, por ejemplo Espana (ES)."
+        autocomplete="off"
+        placeholder="Ej. Espana (ES)"
+        [(ngModel)]="paisBusqueda"
+        (ngModelChange)="buscarPaises()"
+        (focus)="buscarPaises()"
+        (blur)="ocultarSugerenciasPais()"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="paisSugerencias"
+        [attr.aria-expanded]="mostrarSugerenciasPais"
         required
       />
-    </label>
+
+      @if (mostrarSugerenciasPais) {
+        <div id="paisSugerencias" class="destination-suggestions" role="listbox" aria-label="Sugerencias de pais">
+          @if (sugerenciasPais.length) {
+            @for (pais of sugerenciasPais; track pais.code) {
+              <button type="button" class="destination-suggestion" role="option" (mousedown)="seleccionarPais(pais)">
+                <span>{{ pais.name }}</span>
+                <small>{{ pais.code }}</small>
+              </button>
+            }
+          } @else {
+            <p class="destination-suggestion-status">No hay coincidencias.</p>
+          }
+        </div>
+      }
+    </div>
 
     <label class="travel-field travel-field--wide" for="descripcion">
       Descripcion
@@ -71,7 +125,7 @@
     }
 
     <div class="form-actions">
-      <button type="submit" [disabled]="enviando || formularioViaje.invalid">
+      <button type="submit" class="app-button" [disabled]="enviando || formularioViaje.invalid">
         {{ enviando ? 'Creando...' : 'Crear viaje' }}
       </button>
     </div>

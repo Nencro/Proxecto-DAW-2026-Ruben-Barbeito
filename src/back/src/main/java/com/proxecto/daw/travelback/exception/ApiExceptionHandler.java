@@ -44,6 +44,12 @@ public class ApiExceptionHandler {
                 .body(ApiErrorResponse.of(excepcion.getCodigo(), excepcion.getMessage()));
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNotFound(ResourceNotFoundException excepcion) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiErrorResponse.of(1, excepcion.getMessage()));
+    }
+
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ApiErrorResponse> handleDataAccess(DataAccessException excepcion) {
         String detalle = excepcion.getMostSpecificCause().getMessage();

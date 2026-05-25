@@ -1,0 +1,63 @@
+<section class="add-experience-modal" role="dialog" aria-modal="true" aria-labelledby="addExperienceTitle">
+  <header class="add-experience-header">
+    <div>
+      <span>Anadir experiencia</span>
+      <h2 id="addExperienceTitle">{{ experience.nombre }}</h2>
+      <p>
+        {{ experience.localidad }} · {{ experience.pais }}
+        @if (experience.codigoPais) {
+          <span>({{ experience.codigoPais }})</span>
+        }
+      </p>
+    </div>
+
+    <button type="button" class="add-experience-close" aria-label="Cerrar" (click)="cerrar()">x</button>
+  </header>
+
+  @if (cargando) {
+    <div class="add-experience-state">
+      <app-loading-spinner label="Cargando viajes"></app-loading-spinner>
+    </div>
+  } @else if (error) {
+    <p class="add-experience-state add-experience-state--error">{{ error }}</p>
+  } @else if (!viajes.length) {
+    <p class="add-experience-state">No tienes viajes futuros para el pais de esta experiencia.</p>
+  } @else {
+    <div class="travel-options">
+      @for (viaje of viajes; track viaje.id) {
+        <article class="travel-option-card">
+          <div class="travel-option-info">
+            <h3>{{ viaje.destino }}</h3>
+            <p>{{ getFechas(viaje) }}</p>
+          </div>
+
+          <label>
+            Fecha
+            <select [(ngModel)]="getEstado(viaje).fecha" name="fecha-{{ viaje.id }}">
+              @for (dia of getDiasViaje(viaje); track dia) {
+                <option [value]="dia">{{ formatearFecha(dia) }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            Hora
+            <input type="time" [(ngModel)]="getEstado(viaje).hora" name="hora-{{ viaje.id }}" />
+          </label>
+
+          <button class="app-button" type="button" [disabled]="getEstado(viaje).guardando" [attr.aria-label]="'Anadir experiencia al viaje ' + viaje.destino" (click)="anadirExperiencia(viaje)">
+            {{ getEstado(viaje).guardando ? 'Anadiendo...' : 'Anadir' }}
+          </button>
+
+          @if (getEstado(viaje).error) {
+            <p class="travel-option-error">{{ getEstado(viaje).error }}</p>
+          }
+
+          @if (getEstado(viaje).mensaje) {
+            <p class="travel-option-success">{{ getEstado(viaje).mensaje }}</p>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

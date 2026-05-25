@@ -14,11 +14,19 @@
         autocomplete="username"
         placeholder="Rbarbeito"
         [(ngModel)]="usuario"
+        (ngModelChange)="limpiarErrorUsuario()"
+        [class.field-invalid]="errorUsuario"
+        [attr.aria-invalid]="errorUsuario ? 'true' : null"
+        [attr.aria-describedby]="errorUsuario ? 'usuarioError' : null"
         minlength="3"
         maxlength="50"
         pattern="[A-Za-z0-9._-]+"
+        title="Solo letras, numeros, puntos, guiones y guiones bajos."
         required
       />
+      @if (errorUsuario) {
+        <span id="usuarioError" class="field-error">{{ errorUsuario }}</span>
+      }
     </label>
 
     <label class="register-field" for="email">
@@ -30,9 +38,16 @@
         autocomplete="email"
         placeholder="correo-1@host.com"
         [(ngModel)]="email"
+        (ngModelChange)="limpiarErrorEmail()"
+        [class.field-invalid]="errorEmail"
+        [attr.aria-invalid]="errorEmail ? 'true' : null"
+        [attr.aria-describedby]="errorEmail ? 'emailError' : null"
         maxlength="190"
         required
       />
+      @if (errorEmail) {
+        <span id="emailError" class="field-error">{{ errorEmail }}</span>
+      }
     </label>
 
     <label class="register-field" for="password">
@@ -44,10 +59,19 @@
         autocomplete="new-password"
         placeholder="Contrasena"
         [(ngModel)]="password"
+        (ngModelChange)="limpiarErrorPassword()"
+        [class.field-invalid]="errorPassword"
+        [attr.aria-invalid]="errorPassword ? 'true' : null"
+        [attr.aria-describedby]="errorPassword ? 'passwordError' : null"
         minlength="6"
         maxlength="100"
+        pattern="^(?=.*[A-Za-z])(?=.*\\d).{6,100}$"
+        title="La contrasena debe tener entre 6 y 100 caracteres e incluir al menos una letra y un numero."
         required
       />
+      @if (errorPassword) {
+        <span id="passwordError" class="field-error">{{ errorPassword }}</span>
+      }
     </label>
 
     <label class="register-field" for="confirmarPassword">
@@ -59,23 +83,32 @@
         autocomplete="new-password"
         placeholder="Contrasena"
         [(ngModel)]="confirmarPassword"
+        (ngModelChange)="limpiarErrorPassword()"
+        [class.field-invalid]="errorConfirmarPassword"
+        [attr.aria-invalid]="errorConfirmarPassword ? 'true' : null"
+        [attr.aria-describedby]="errorConfirmarPassword ? 'confirmarPasswordError' : null"
         minlength="6"
         maxlength="100"
+        pattern="^(?=.*[A-Za-z])(?=.*\\d).{6,100}$"
+        title="La contrasena debe tener entre 6 y 100 caracteres e incluir al menos una letra y un numero."
         required
       />
+      @if (errorConfirmarPassword) {
+        <span id="confirmarPasswordError" class="field-error">{{ errorConfirmarPassword }}</span>
+      }
     </label>
 
-    @if (passwordNoCoincide) {
+    @if (passwordNoCoincide && !errorConfirmarPassword) {
       <p class="register-error">Las contrasenas no coinciden.</p>
     }
 
-    @if (mensajeError) {
+    @if (mensajeError && !errorUsuario && !errorEmail) {
       <p class="register-error">{{ mensajeError }}</p>
     }
 
     <div class="register-actions">
-      <a class="register-button register-button--secondary" routerLink="/">Salir</a>
-      <button class="register-button register-button--primary" type="submit" [disabled]="!formularioRegistro.valid || enviando">
+      <a class="register-button app-button app-button--secondary" routerLink="/">Salir</a>
+      <button class="register-button app-button app-button--primary" type="submit" [disabled]="enviando">
         {{ enviando ? 'Registrando...' : 'Confirmar' }}
       </button>
     </div>

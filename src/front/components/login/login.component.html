@@ -35,10 +35,11 @@
       <p class="login-error">{{ mensajeError }}</p>
     }
 
-    <button class="login-button" type="submit" [disabled]="!formularioLogin.valid || enviando">
+    <button class="login-button app-button app-button--primary" type="submit" [disabled]="!formularioLogin.valid || enviando">
       {{ enviando ? 'Entrando...' : 'Entrar' }}
     </button>
 
+    <a class="recover-link" routerLink="/password/recover">¿Quieres recuperar tu contrasena?</a>
     <a class="back-link" routerLink="/">Volver al buscador</a>
   </form>
 </section>

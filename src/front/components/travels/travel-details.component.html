@@ -1,0 +1,319 @@
+<section class="travel-details-page">
+  <a class="back-link" routerLink="/travels">Volver a mis viajes</a>
+
+  @if (cargando) {
+    <div class="loading-panel">
+      <app-loading-spinner label="Cargando viaje"></app-loading-spinner>
+    </div>
+  } @else if (error && !viaje) {
+    <div class="state-message state-message--error">{{ error }}</div>
+  } @else if (viaje) {
+    <article class="travel-detail">
+      <header>
+        <h1>{{ viaje.destino }}</h1>
+        <p>
+          {{ viaje.pais }}
+          @if (viaje.codigoPais) {
+            <span class="country-code">({{ viaje.codigoPais }})</span>
+          }
+        </p>
+      </header>
+
+      @if (error) {
+        <div class="inline-error-message">{{ error }}</div>
+      }
+
+      @if (puedeEditar) {
+        <section class="invite-section">
+          <button type="button" class="invite-button app-button" [disabled]="generandoInvitacion" (click)="crearEnlaceInvitacion()">
+            {{ generandoInvitacion ? 'Generando...' : 'Crear enlace de invitacion' }}
+          </button>
+
+          @if (enlaceInvitacion) {
+            <label class="invite-link-field" for="enlaceInvitacion">
+              Enlace valido durante 3 dias
+              <span class="invite-link-row">
+                <input id="enlaceInvitacion" type="text" [value]="enlaceInvitacion" readonly />
+
+                <button
+                  type="button"
+                  class="invite-icon-button app-icon-button"
+                  title="Compartir enlace"
+                  aria-label="Compartir enlace"
+                  (click)="compartirEnlaceInvitacion()"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M18 8a3 3 0 1 0-2.83-4H15a3 3 0 0 0 .43 1.55L8.91 9.26a3 3 0 1 0 0 5.48l6.52 3.71A3 3 0 1 0 16 17.1l-6.52-3.71a3.13 3.13 0 0 0 0-2.78L16 6.9A3 3 0 0 0 18 8Z" />
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  class="invite-icon-button app-icon-button"
+                  title="Copiar enlace"
+                  aria-label="Copiar enlace"
+                  (click)="copiarEnlaceInvitacion()"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M8 7a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-1v-2h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v1H8V7Z" />
+                    <path d="M4 11a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-6Zm3-1a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H7Z" />
+                  </svg>
+                </button>
+              </span>
+
+              @if (invitacionCopiada) {
+                <span class="invite-feedback">Enlace copiado</span>
+              }
+            </label>
+          }
+        </section>
+      }
+
+      @if (puedeEditar) {
+        <section class="travel-edit-section">
+          <label class="travel-edit-field travel-edit-field--wide" for="descripcionEditable">
+            Descripcion
+            <textarea
+              id="descripcionEditable"
+              rows="4"
+              maxlength="4000"
+              [(ngModel)]="descripcionEditable"
+              aria-label="Descripcion del viaje"
+            ></textarea>
+          </label>
+        </section>
+      }
+
+      <dl class="detail-grid">
+        <div>
+          <dt>Fecha inicio</dt>
+          <dd>
+            @if (puedeEditar) {
+              <input
+                class="travel-date-input"
+                type="date"
+                [(ngModel)]="fechaInicioEditable"
+                [class.field-invalid]="campoViajeInvalido('fechaInicio')"
+                [attr.aria-invalid]="campoViajeInvalido('fechaInicio') ? 'true' : null"
+              />
+            } @else {
+              {{ formatearFecha(viaje.fechaInicio) }}
+            }
+          </dd>
+        </div>
+
+        <div>
+          <dt>Fecha fin</dt>
+          <dd>
+            @if (puedeEditar) {
+              <input
+                class="travel-date-input"
+                type="date"
+                [(ngModel)]="fechaFinEditable"
+                [class.field-invalid]="campoViajeInvalido('fechaFin')"
+                [attr.aria-invalid]="campoViajeInvalido('fechaFin') ? 'true' : null"
+              />
+            } @else {
+              {{ formatearFecha(viaje.fechaFin) }}
+            }
+          </dd>
+        </div>
+
+        <div>
+          <dt>Coste billete</dt>
+          <dd>
+            @if (puedeEditar) {
+              <input class="travel-date-input" type="number" min="0" step="0.01" [(ngModel)]="costeBilleteEditable" aria-label="Coste del billete" />
+            } @else {
+              {{ formatearPrecio(viaje.costeBillete) }}
+            }
+          </dd>
+        </div>
+
+        <div>
+          <dt>Coste total</dt>
+          <dd>{{ formatearPrecio(costeTotal) }}</dd>
+        </div>
+
+        <div>
+          <dt>Creador</dt>
+          <dd>{{ viaje.creadorUserName }}</dd>
+        </div>
+
+        <div>
+          <dt>Participantes</dt>
+          <dd>
+            <span>{{ viaje.numeroParticipantes }}</span>
+            <button type="button" class="participants-button app-button app-button--secondary" [attr.aria-label]="'Ver participantes del viaje a ' + viaje.destino" (click)="verParticipantes()">
+              Ver participantes
+            </button>
+          </dd>
+        </div>
+
+        <div>
+          <dt>Tu rol</dt>
+          <dd>{{ getRolLegible(viaje) }}</dd>
+        </div>
+      </dl>
+
+      @if (puedeEditar) {
+        <div class="travel-date-actions">
+          <button type="button" class="save-dates-button app-button" [disabled]="guardandoTodo" (click)="guardarTodo()">
+            {{ guardandoTodo ? 'Guardando...' : 'Guardar todo' }}
+          </button>
+        </div>
+      }
+
+      @if (puedeBorrarViaje) {
+        <section class="danger-zone">
+          <div>
+            <h2>Borrar viaje</h2>
+            <p>El viaje y sus actividades se eliminaran definitivamente.</p>
+          </div>
+
+          <button type="button" class="app-button app-button--danger" [disabled]="borrandoViaje" (click)="borrarViaje()">
+            {{ borrandoViaje ? 'Borrando...' : 'Borrar viaje' }}
+          </button>
+        </section>
+      }
+
+      @if (!puedeEditar && viaje.descripcion) {
+        <section class="description">
+          <h2>Descripcion</h2>
+          <p>{{ viaje.descripcion }}</p>
+        </section>
+      }
+
+      <section class="activities-section">
+        <div class="activities-heading">
+          <div>
+            <h2>Actividades</h2>
+            <label class="day-selector" for="diaActividad">
+              Dia
+              <select id="diaActividad" name="diaActividad" [(ngModel)]="diaSeleccionado">
+                @for (dia of diasViaje; track dia) {
+                  <option [value]="dia">{{ formatearFecha(dia) }}</option>
+                }
+              </select>
+            </label>
+          </div>
+        </div>
+
+        @if (errorActividades) {
+          <div class="activities-validation-message">{{ errorActividades }}</div>
+        }
+
+        @if (!actividadesDelDia.length) {
+          <p class="empty-activities">Este dia todavia no tiene actividades.</p>
+        } @else {
+          <div class="activities-table-wrap">
+            <table cdk-table [dataSource]="actividadesDelDia" class="activities-table">
+              <caption class="visually-hidden">Actividades del dia seleccionado</caption>
+              <ng-container cdkColumnDef="hora">
+                <th cdk-header-cell *cdkHeaderCellDef>Hora</th>
+                <td cdk-cell *cdkCellDef="let actividad">
+                  @if (puedeEditar && actividad.editable) {
+                    <input
+                      class="activity-time-input"
+                      type="time"
+                      [(ngModel)]="actividad.hora"
+                      [disabled]="actividad.borrada"
+                      [class.field-invalid]="campoActividadInvalido(actividad, 'hora')"
+                      [attr.aria-invalid]="campoActividadInvalido(actividad, 'hora') ? 'true' : null"
+                      aria-label="Hora de la actividad"
+                    />
+                  } @else if (puedeEditar) {
+                    <input
+                      class="activity-time-input"
+                      type="time"
+                      [(ngModel)]="actividad.hora"
+                      [disabled]="actividad.borrada"
+                      [class.field-invalid]="campoActividadInvalido(actividad, 'hora')"
+                      [attr.aria-invalid]="campoActividadInvalido(actividad, 'hora') ? 'true' : null"
+                      aria-label="Hora de la actividad"
+                    />
+                  } @else {
+                    <span class="activity-readonly-value">{{ actividad.hora || '-' }}</span>
+                  }
+                </td>
+              </ng-container>
+
+              <ng-container cdkColumnDef="coste">
+                <th cdk-header-cell *cdkHeaderCellDef>Coste</th>
+                <td cdk-cell *cdkCellDef="let actividad">
+                  @if (puedeEditar) {
+                    <span class="activity-cost-field">
+                      <input
+                        class="activity-cost-input"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        [(ngModel)]="actividad.coste"
+                        [disabled]="actividad.borrada"
+                        [class.field-invalid]="campoActividadInvalido(actividad, 'coste')"
+                        [attr.aria-invalid]="campoActividadInvalido(actividad, 'coste') ? 'true' : null"
+                        aria-label="Coste de la actividad en euros"
+                      />
+                      <span aria-hidden="true">€</span>
+                    </span>
+                  } @else {
+                    <span class="activity-readonly-value">{{ formatearPrecio(actividad.coste) }}</span>
+                  }
+                </td>
+              </ng-container>
+
+              <ng-container cdkColumnDef="descripcion">
+                <th cdk-header-cell *cdkHeaderCellDef>Actividad</th>
+                <td cdk-cell *cdkCellDef="let actividad">
+                  @if (puedeEditar) {
+                    <textarea
+                      class="activity-text-input"
+                      rows="2"
+                      [(ngModel)]="actividad.descripcion"
+                      [disabled]="actividad.borrada"
+                      [class.field-invalid]="campoActividadInvalido(actividad, 'descripcion')"
+                      [attr.aria-invalid]="campoActividadInvalido(actividad, 'descripcion') ? 'true' : null"
+                      aria-label="Descripcion de la actividad"
+                    ></textarea>
+                  } @else {
+                    <p class="activity-readonly-description">{{ actividad.descripcion }}</p>
+                  }
+                </td>
+              </ng-container>
+
+              @if (puedeEditar) {
+                <ng-container cdkColumnDef="acciones">
+                  <th cdk-header-cell *cdkHeaderCellDef>Acciones</th>
+                  <td cdk-cell *cdkCellDef="let actividad">
+                    @if (actividad.borrada) {
+                      <button type="button" class="restore-activity-button app-button app-button--soft" (click)="actividad.borrada = false">
+                        Restaurar
+                      </button>
+                    } @else {
+                      <button
+                        type="button"
+                        class="delete-activity-button app-button app-button--danger"
+                        (click)="borrarActividad(actividad)"
+                      >
+                        Borrar
+                      </button>
+                    }
+                  </td>
+                </ng-container>
+              }
+
+              <tr cdk-header-row *cdkHeaderRowDef="columnasActividades"></tr>
+              <tr cdk-row *cdkRowDef="let row; columns: columnasActividades" [class.activity-row--deleted]="row.borrada"></tr>
+            </table>
+          </div>
+        }
+
+        @if (puedeEditar) {
+          <div class="activity-buttons">
+            <button type="button" class="add-activity-button app-button" (click)="anadirFilaActividad()">Anadir actividad</button>
+          </div>
+        }
+      </section>
+    </article>
+  }
+</section>

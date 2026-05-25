@@ -11,7 +11,7 @@
         id="origenTexto"
         name="origenTexto"
         class="select-search-input"
-        placeholder="Selecciona o escribe origen"
+        placeholder="Madrid"
         autocomplete="off"
         [(ngModel)]="textoOrigen"
         (focus)="abrirPanel('origen')"
@@ -19,6 +19,11 @@
         (input)="buscarOpciones('origen')"
         (blur)="cerrarPanel()"
         [disabled]="cargandoReferencias"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="origenOpciones"
+        [attr.aria-expanded]="panelAbierto === 'origen'"
+        [attr.aria-invalid]="campoVueloInvalido('origen') ? 'true' : null"
         required
       />
       <input type="hidden" name="origen" [(ngModel)]="datosBusqueda.origen" required />
@@ -29,7 +34,7 @@
         [cdkConnectedOverlayOpen]="panelAbierto === 'origen'"
         [cdkConnectedOverlayWidth]="origenOrigin.elementRef.nativeElement.offsetWidth"
       >
-        <div class="select-options-panel" role="listbox">
+        <div id="origenOpciones" class="select-options-panel" role="listbox" aria-label="Aeropuertos de origen">
           @for (aeropuerto of aeropuertosOrigen; track getTrackReferencia(aeropuerto, $index)) {
             <button
               type="button"
@@ -55,7 +60,7 @@
         id="destinoTexto"
         name="destinoTexto"
         class="select-search-input"
-        placeholder="Selecciona o escribe destino"
+        placeholder="Madrid"
         autocomplete="off"
         [(ngModel)]="textoDestino"
         (focus)="abrirPanel('destino')"
@@ -63,6 +68,11 @@
         (input)="buscarOpciones('destino')"
         (blur)="cerrarPanel()"
         [disabled]="cargandoReferencias"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="destinoOpciones"
+        [attr.aria-expanded]="panelAbierto === 'destino'"
+        [attr.aria-invalid]="campoVueloInvalido('destino') ? 'true' : null"
         required
       />
       <input type="hidden" name="destino" [(ngModel)]="datosBusqueda.destino" required />
@@ -73,7 +83,7 @@
         [cdkConnectedOverlayOpen]="panelAbierto === 'destino'"
         [cdkConnectedOverlayWidth]="destinoOrigin.elementRef.nativeElement.offsetWidth"
       >
-        <div class="select-options-panel" role="listbox">
+        <div id="destinoOpciones" class="select-options-panel" role="listbox" aria-label="Aeropuertos de destino">
           @for (aeropuerto of aeropuertosDestino; track getTrackReferencia(aeropuerto, $index)) {
             <button
               type="button"
@@ -94,14 +104,14 @@
 
     <div class="search-field" [class.search-field-error]="campoVueloInvalido('fechaIda')">
       <label for="fechaIda">Ida</label>
-      <input type="date" id="fechaIda" name="fechaIda" [(ngModel)]="datosBusqueda.fechaIda" required />
+      <input type="date" id="fechaIda" name="fechaIda" [(ngModel)]="datosBusqueda.fechaIda" [attr.aria-invalid]="campoVueloInvalido('fechaIda') ? 'true' : null" required />
     </div>
 
     <div class="field-divider"></div>
 
     <div class="search-field" [class.search-field-error]="campoVueloInvalido('fechaVuelta')">
       <label for="fechaVuelta">Vuelta</label>
-      <input type="date" id="fechaVuelta" name="fechaVuelta" [(ngModel)]="datosBusqueda.fechaVuelta" />
+      <input type="date" id="fechaVuelta" name="fechaVuelta" [(ngModel)]="datosBusqueda.fechaVuelta" [attr.aria-invalid]="campoVueloInvalido('fechaVuelta') ? 'true' : null" />
     </div>
 
     <div class="field-divider"></div>
@@ -111,7 +121,7 @@
       <input type="number" id="viajeros" name="viajeros" min="1" [(ngModel)]="datosBusqueda.viajeros" required />
     </div>
 
-    <button type="submit" class="search-button">
+    <button type="submit" class="search-button app-button app-button--search">
       Buscar
     </button>
   </form>

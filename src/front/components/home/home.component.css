@@ -8,7 +8,8 @@
 
 app-carousel {
   display: block;
-  width: inherit;
+  width: 100%;
+  margin-top: 0;
 }
 
 .home-search {
@@ -22,6 +23,153 @@ app-carousel {
   font-size: 2rem;
   margin-top: 30px;
   margin-bottom: 18px;
-  color: #172033;
+  color: var(--color-text);
   text-align: center;
+}
+
+.experiences-section,
+.about-section,
+.business-section {
+  width: min(100%, var(--page-max-width));
+  padding: 0 var(--page-padding);
+  margin-top: 42px;
+}
+
+.experiences-content,
+.about-content,
+.business-content {
+  padding: 28px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+
+.experiences-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 38%);
+  align-items: center;
+  gap: 28px;
+}
+
+.about-content {
+  display: grid;
+  grid-template-columns: minmax(240px, 38%) minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+}
+
+.about-content > :not(.about-image) {
+  grid-column: 2;
+}
+
+.experiences-text {
+  min-width: 0;
+}
+
+.experiences-image,
+.about-image {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  border-radius: var(--radius-md);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.experiences-image {
+  object-fit: contain;
+}
+
+.about-image {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.experiences-image:hover,
+.about-image:hover {
+  box-shadow: var(--shadow-card);
+  transform: scale(1.04);
+}
+
+.section-title {
+  margin: 0 0 10px;
+  color: var(--color-accent);
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.experiences-content h3,
+.about-content h3,
+.business-content h3 {
+  margin: 0 0 10px;
+  color: var(--color-text);
+  font-size: 22px;
+}
+
+.experiences-content p,
+.about-content p,
+.business-content p {
+  max-width: 720px;
+  margin: 0 auto;
+  color: var(--color-text-subtle);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.about-content p + p {
+  margin-top: 10px;
+}
+
+.experiences-link {
+  display: flex;
+  width: fit-content;
+  margin-top: 18px;
+  margin-inline: auto;
+}
+
+@media (max-width: 700px) {
+  .experiences-section,
+  .about-section,
+  .business-section {
+    margin-top: 30px;
+  }
+
+  .experiences-content,
+  .about-content,
+  .business-content {
+    padding: 20px;
+  }
+
+  .experiences-content,
+  .about-content {
+    grid-template-columns: 1fr;
+  }
+
+  .about-content > :not(.about-image) {
+    grid-column: 1;
+  }
+
+  .experiences-image,
+  .about-image {
+    max-height: 220px;
+    order: -1;
+  }
+
+  .about-image {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .section-title {
+    font-size: 22px;
+  }
+
+  .experiences-content h3,
+  .about-content h3,
+  .business-content h3 {
+    font-size: 19px;
+  }
 }

@@ -1,30 +1,39 @@
 import { Component, OnInit } from '@angular/core';
 import { CdkTableModule } from '@angular/cdk/table';
-import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService, TravelResponse } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-travels',
   standalone: true,
-  imports: [CdkTableModule, RouterLink],
+  imports: [CdkTableModule, FormsModule, LoadingSpinnerComponent, RouterLink],
   templateUrl: './travels.component.html',
   styleUrls: ['./travels.component.css']
 })
 export class TravelsComponent implements OnInit {
-  readonly columnas = ['id', 'destino', 'pais', 'fechas', 'creador', 'rol'];
+  readonly columnas = ['destino', 'pais', 'fechas', 'creador', 'participantes', 'rol'];
 
   viajes: TravelResponse[] = [];
+  busquedaViajes = '';
   cargando = false;
   error = '';
 
   constructor(
     private readonly api: ApiService,
-    private readonly auth: AuthService
+    private readonly auth: AuthService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {
   }
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.busquedaViajes = params.get('query')?.trim() ?? '';
+    });
+
     this.cargarViajes();
   }
 
@@ -45,7 +54,30 @@ export class TravelsComponent implements OnInit {
   }
 
   getRolLegible(viaje: TravelResponse): string {
+    if (viaje.rolEnViaje === 'ADMIN') {
+      return 'Administrador';
+    }
+
     return viaje.rolEnViaje === 'CREADOR' ? 'Creador' : 'Participante';
+  }
+
+  get viajesFiltrados(): TravelResponse[] {
+    const busqueda = this.normalizarTexto(this.busquedaViajes);
+
+    if (!busqueda) {
+      return this.viajes;
+    }
+
+    return this.viajes.filter((viaje) => {
+      const destino = this.normalizarTexto(viaje.destino);
+      const pais = this.normalizarTexto(viaje.pais);
+
+      return destino.includes(busqueda) || pais.includes(busqueda);
+    });
+  }
+
+  abrirDetalle(viaje: TravelResponse): void {
+    this.router.navigate(['/travels/details', viaje.id]);
   }
 
   getFechas(viaje: TravelResponse): string {
@@ -79,5 +111,13 @@ export class TravelsComponent implements OnInit {
       month: 'short',
       year: 'numeric'
     }).format(fecha);
+  }
+
+  private normalizarTexto(valor: string): string {
+    return valor
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
   }
 }

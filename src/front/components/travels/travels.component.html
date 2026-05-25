@@ -6,25 +6,39 @@
     </div>
 
     <div class="travels-actions">
-      <a class="create-travel-link" routerLink="/travels/new">Crear viaje</a>
+      <a class="create-travel-link app-button" routerLink="/travels/new">Crear viaje</a>
       <a class="profile-link" routerLink="/profile">Volver al perfil</a>
     </div>
   </header>
 
   @if (cargando) {
-    <div class="state-message">Cargando viajes...</div>
+    <div class="travels-loading-panel">
+      <app-loading-spinner label="Cargando viajes"></app-loading-spinner>
+    </div>
   } @else if (error) {
     <div class="state-message state-message--error">{{ error }}</div>
   } @else if (!viajes.length) {
     <div class="state-message">Todavia no tienes viajes asociados.</div>
   } @else {
-    <div class="travels-table-wrap">
-      <table cdk-table [dataSource]="viajes" class="travels-table">
-        <ng-container cdkColumnDef="id">
-          <th cdk-header-cell *cdkHeaderCellDef>ID</th>
-          <td cdk-cell *cdkCellDef="let viaje">#{{ viaje.id }}</td>
-        </ng-container>
+    <form class="travels-search-form" role="search" (submit)="$event.preventDefault()">
+      <label class="travels-search-field" for="busquedaViajes">
+        Buscar por pais o destino
+        <input
+          id="busquedaViajes"
+          name="busquedaViajes"
+          type="search"
+          placeholder="Ej. Espana, Madrid..."
+          [(ngModel)]="busquedaViajes"
+        />
+      </label>
+    </form>
 
+    @if (!viajesFiltrados.length) {
+      <div class="state-message">No hay viajes que coincidan con la busqueda.</div>
+    } @else {
+    <div class="travels-table-wrap">
+      <table cdk-table [dataSource]="viajesFiltrados" class="travels-table">
+        <caption class="visually-hidden">Listado de tus viajes</caption>
         <ng-container cdkColumnDef="destino">
           <th cdk-header-cell *cdkHeaderCellDef>Destino</th>
           <td cdk-cell *cdkCellDef="let viaje">
@@ -34,7 +48,12 @@
 
         <ng-container cdkColumnDef="pais">
           <th cdk-header-cell *cdkHeaderCellDef>Pais</th>
-          <td cdk-cell *cdkCellDef="let viaje">{{ viaje.pais }}</td>
+          <td cdk-cell *cdkCellDef="let viaje">
+            {{ viaje.pais }}
+            @if (viaje.codigoPais) {
+              <span class="country-code">({{ viaje.codigoPais }})</span>
+            }
+          </td>
         </ng-container>
 
         <ng-container cdkColumnDef="fechas">
@@ -47,6 +66,11 @@
           <td cdk-cell *cdkCellDef="let viaje">{{ viaje.creadorUserName }}</td>
         </ng-container>
 
+        <ng-container cdkColumnDef="participantes">
+          <th cdk-header-cell *cdkHeaderCellDef>Participantes</th>
+          <td cdk-cell *cdkCellDef="let viaje">{{ viaje.numeroParticipantes }}</td>
+        </ng-container>
+
         <ng-container cdkColumnDef="rol">
           <th cdk-header-cell *cdkHeaderCellDef>Rol</th>
           <td cdk-cell *cdkCellDef="let viaje">
@@ -57,8 +81,17 @@
         </ng-container>
 
         <tr cdk-header-row *cdkHeaderRowDef="columnas"></tr>
-        <tr cdk-row *cdkRowDef="let row; columns: columnas"></tr>
+        <tr
+          cdk-row
+          class="travel-row"
+          *cdkRowDef="let row; columns: columnas"
+          tabindex="0"
+          [attr.aria-label]="'Ver detalles del viaje a ' + row.destino"
+          (click)="abrirDetalle(row)"
+          (keydown.enter)="abrirDetalle(row)"
+        ></tr>
       </table>
     </div>
+    }
   }
 </section>

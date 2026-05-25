@@ -9,8 +9,9 @@
   display: flex;
   flex-direction: column;
   gap: 22px;
-  background: #063766;
-  color: #ffffff;
+  background: var(--color-header-bg);
+  color: var(--color-header-text);
+  border-top: 1px solid var(--color-border-soft);
 }
 
 .footer-content {
@@ -37,14 +38,6 @@
   object-fit: contain;
 }
 
-.footer-company p {
-  max-width: 280px;
-  margin-top: 12px;
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 14px;
-  line-height: 1.45;
-}
-
 .footer-section {
   display: flex;
   flex-direction: column;
@@ -53,16 +46,34 @@
 
 .footer-section h2 {
   margin-bottom: 4px;
-  color: #ffffff;
+  color: var(--color-header-text);
   font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
 }
 
+.footer-section-toggle {
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  text-transform: inherit;
+  cursor: default;
+}
+
+.footer-section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .footer-section a,
 .footer-email,
 .footer-bottom a {
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--color-header-text);
   font-size: 14px;
   text-decoration: none;
 }
@@ -70,8 +81,7 @@
 .footer-section a:hover,
 .footer-email:hover,
 .footer-bottom a:hover {
-  color: #ffffff;
-  text-decoration: underline;
+  color: var(--color-header-text-hover);
 }
 
 .footer-social {
@@ -81,81 +91,26 @@
 }
 
 .social-link {
-  position: relative;
-  width: 24px;
-  height: 24px;
-  flex: 0 0 24px;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #063766;
   text-decoration: none;
+  transition: transform 160ms ease, opacity 160ms ease;
 }
 
-.social-link--facebook {
-  border-radius: 50%;
-  background: #ffffff;
-  font-size: 24px;
-  font-family: Arial, sans-serif;
-  font-weight: 700;
-  line-height: 1;
+.social-link:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
 }
 
-.social-link--facebook span {
-  transform: translateY(4px);
-}
-
-.social-link--twitter {
-  color: #ffffff;
-  font-size: 0;
-}
-
-.social-link--twitter::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 7px;
-  width: 18px;
-  height: 10px;
-  border-radius: 70% 45% 55% 45%;
-  background: #ffffff;
-  transform: rotate(-16deg);
-}
-
-.social-link--twitter::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 5px;
-  width: 10px;
-  height: 8px;
-  background: #ffffff;
-  clip-path: polygon(0 55%, 100% 0, 62% 58%, 100% 100%);
-}
-
-.social-link--mail {
-  border: 3px solid #ffffff;
-  border-radius: 2px;
-}
-
-.social-link--mail::before,
-.social-link--mail::after {
-  content: "";
-  position: absolute;
-  top: 6px;
-  width: 13px;
-  height: 3px;
-  background: #ffffff;
-}
-
-.social-link--mail::before {
-  left: 1px;
-  transform: rotate(35deg);
-}
-
-.social-link--mail::after {
-  right: 1px;
-  transform: rotate(-35deg);
+.social-link img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .footer-email {
@@ -167,7 +122,7 @@
   max-width: 1180px;
   margin: 0 auto;
   padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-top: 1px solid var(--color-border-soft);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -175,7 +130,7 @@
 }
 
 .footer-bottom p {
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--color-text-subtle);
   font-size: 13px;
 }
 
@@ -215,7 +170,52 @@
 
   .footer-content {
     grid-template-columns: 1fr;
-    gap: 22px;
+    gap: 10px;
+  }
+
+  .footer-section {
+    gap: 0;
+    border-bottom: 1px solid var(--border-on-primary-soft);
+  }
+
+  .footer-section h2 {
+    margin: 0;
+  }
+
+  .footer-section-toggle {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--color-header-text);
+    cursor: pointer;
+  }
+
+  .footer-section-toggle::after {
+    content: "+";
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .footer-section-toggle[aria-expanded="true"]::after {
+    content: "-";
+  }
+
+  .footer-section-content {
+    display: none;
+    gap: 10px;
+    padding: 0 0 14px;
+  }
+
+  .footer-section-content--open {
+    display: flex;
+  }
+
+  .footer-section a,
+  .footer-email {
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
   }
 
   .footer-bottom {

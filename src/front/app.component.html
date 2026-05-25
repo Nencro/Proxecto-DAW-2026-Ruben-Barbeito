@@ -5,3 +5,14 @@
 </main>
 
 <app-footer></app-footer>
+
+@if (mostrarBotonSubir) {
+  <button
+    type="button"
+    class="scroll-top-button"
+    aria-label="Volver al inicio de la pagina"
+    (click)="subirInicio()"
+  >
+    <span aria-hidden="true">↑</span>
+  </button>
+}

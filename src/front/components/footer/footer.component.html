@@ -4,64 +4,130 @@
       <a class="footer-brand" routerLink="/" aria-label="ExploraMas inicio">
         <img class="footer-logo" src="assets/logo_exploramas.png" alt="ExploraMas" />
       </a>
-
-      <p>
-        Agencia de viajes online para comparar destinos, fechas y escapadas de forma sencilla.
-      </p>
     </div>
 
     <nav class="footer-section" aria-label="ExploraMas">
-      <h2>ExploraMas</h2>
-      <a routerLink="/">Buscar viajes</a>
-      <a routerLink="/search">Resultados</a>
-      @if (servicioAuth.estaAutenticado()) {
-        <a routerLink="/profile">Mi perfil</a>
-      } @else {
-        <a routerLink="/login">Login</a>
-      }
+      <h2>
+        <button
+          type="button"
+          class="footer-section-toggle"
+          aria-controls="footerExploramas"
+          [attr.aria-expanded]="seccionEstaAbierta('exploramas')"
+          (click)="alternarSeccion('exploramas')"
+        >
+          ExploraMas
+        </button>
+      </h2>
+      <div
+        id="footerExploramas"
+        class="footer-section-content"
+        [class.footer-section-content--open]="seccionEstaAbierta('exploramas')"
+      >
+        <a [routerLink]="autenticado ? '/travels' : '/'">Buscar viajes</a>
+        @if (autenticado) {
+          <a routerLink="/profile">Mi perfil</a>
+        } @else {
+          <a routerLink="/login">Login</a>
+        }
+      </div>
     </nav>
 
     <nav class="footer-section" aria-label="Ayuda">
-      <h2>Ayuda</h2>
-      <a href="#">Centro de ayuda</a>
-      <a href="#">Contacto</a>
-      <a href="#">Gestionar reservas</a>
-      <a href="#">Preguntas frecuentes</a>
+      <h2>
+        <button
+          type="button"
+          class="footer-section-toggle"
+          aria-controls="footerHelp"
+          [attr.aria-expanded]="seccionEstaAbierta('ayuda')"
+          (click)="alternarSeccion('ayuda')"
+        >
+          Ayuda
+        </button>
+      </h2>
+      <div
+        id="footerHelp"
+        class="footer-section-content"
+        [class.footer-section-content--open]="seccionEstaAbierta('ayuda')"
+      >
+        <a routerLink="/help">Centro de ayuda</a>
+        <a routerLink="/contact">Contacto</a>
+        <a routerLink="/faq">Preguntas frecuentes</a>
+      </div>
     </nav>
 
     <nav class="footer-section" aria-label="Legal">
-      <h2>Legal</h2>
-      <a href="#">Aviso legal</a>
-      <a href="#">Privacidad</a>
-      <a href="#">Cookies</a>
-      <a href="#">Condiciones</a>
+      <h2>
+        <button
+          type="button"
+          class="footer-section-toggle"
+          aria-controls="footerLegal"
+          [attr.aria-expanded]="seccionEstaAbierta('legal')"
+          (click)="alternarSeccion('legal')"
+        >
+          Legal
+        </button>
+      </h2>
+      <div
+        id="footerLegal"
+        class="footer-section-content"
+        [class.footer-section-content--open]="seccionEstaAbierta('legal')"
+      >
+        <a routerLink="/aviso-legal">Aviso legal</a>
+        <a routerLink="/cookies">Cookies</a>
+        <a routerLink="/condiciones">Condiciones</a>
+      </div>
     </nav>
 
     <div class="footer-section">
-      <h2>Siguenos</h2>
+      <h2>
+        <button
+          type="button"
+          class="footer-section-toggle"
+          aria-controls="footerSocial"
+          [attr.aria-expanded]="seccionEstaAbierta('social')"
+          (click)="alternarSeccion('social')"
+        >
+          Siguenos
+        </button>
+      </h2>
 
-      <nav class="footer-social" aria-label="Redes sociales">
-        <a class="social-link social-link--facebook" href="#" aria-label="Facebook">
-          <span aria-hidden="true">f</span>
-        </a>
-        <a class="social-link social-link--twitter" href="#" aria-label="Twitter">
-          <span aria-hidden="true">t</span>
-        </a>
-        <a class="social-link social-link--mail" href="#" aria-label="Correo electronico">
-          <span aria-hidden="true"></span>
-        </a>
-      </nav>
+      <div
+        id="footerSocial"
+        class="footer-section-content"
+        [class.footer-section-content--open]="seccionEstaAbierta('social')"
+      >
+        <nav class="footer-social" aria-label="Redes sociales">
+          <a
+            class="social-link social-link--facebook"
+            href="https://www.facebook.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+          >
+            <img src="assets/facebook.png" alt="" aria-hidden="true" />
+          </a>
+          <a
+            class="social-link social-link--x"
+            href="https://x.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="X"
+          >
+            <img src="assets/x.png" alt="" aria-hidden="true" />
+          </a>
+        </nav>
 
-      <a class="footer-email" href="mailto:info@exploramas.com">info&#64;exploramas.com</a>
+        <a class="footer-email" href="mailto:info@exploramas.com">info&#64;exploramas.com</a>
+      </div>
     </div>
   </div>
 
   <div class="footer-bottom">
     <p>&copy; 2026 ExploraMas. Todos los derechos reservados.</p>
     <div class="footer-bottom-links">
-      <a href="#">Mapa del sitio</a>
-      <a href="#">Accesibilidad</a>
-      <a href="#">Preferencias de cookies</a>
+      <a routerLink="/">Mapa del sitio</a>
+      <a routerLink="/help">Accesibilidad</a>
+      <a routerLink="/cookies">Preferencias de cookies</a>
     </div>
   </div>
 </footer>

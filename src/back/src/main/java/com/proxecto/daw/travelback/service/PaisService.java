@@ -18,13 +18,14 @@ public class PaisService {
     public List<PaisResponse> getPaises() {
         return jdbcTemplate.query(
                 """
-                SELECT id, nombre, prefijo
-                FROM paises
+                SELECT id, nombre, codigo, prefijo
+                FROM pais
                 ORDER BY nombre
                 """,
                 (resultado, fila) -> new PaisResponse(
                         resultado.getLong("id"),
                         resultado.getString("nombre"),
+                        resultado.getString("codigo"),
                         resultado.getString("prefijo")
                 )
         );

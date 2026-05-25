@@ -1,7 +1,7 @@
 .search-page {
   max-width: 1000px;
   margin: 40px auto;
-  padding: 0 20px;
+  padding: 0 var(--page-padding);
 }
 
 .search-page app-travel-search {
@@ -19,18 +19,18 @@
 
 .search-summary h1 {
   margin: 0 0 8px;
-  color: #172033;
+  color: var(--color-text);
   font-size: 28px;
 }
 
 .search-summary p {
   margin: 0;
-  color: #5f6b7a;
+  color: var(--color-text-muted);
   font-size: 16px;
 }
 
 .edit-search-link {
-  color: #075faa;
+  color: var(--color-primary);
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
@@ -50,22 +50,22 @@
 
 .criteria-item {
   padding: 18px;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .criteria-item span {
   display: block;
   margin-bottom: 6px;
-  color: #5f6b7a;
+  color: var(--color-text-muted);
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .criteria-item strong {
-  color: #172033;
+  color: var(--color-text);
   font-size: 16px;
 }
 

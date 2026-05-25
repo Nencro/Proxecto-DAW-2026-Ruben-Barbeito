@@ -127,6 +127,7 @@ export class SearchComponent {
     return {
       origen: this.texto(origin['iata_code']) || this.texto(firstSegment['origin']) || this.texto(oferta['origin']),
       destino: this.texto(destination['iata_code']) || this.texto(firstSegment['destination']) || this.texto(oferta['destination']) || destinoPorDefecto,
+      codigoPaisDestino: this.texto(destination['country_code']) || this.texto(oferta['destination_country_code']),
       precio: totalAmount,
       moneda: this.texto(oferta['total_currency']) || this.texto(oferta['base_currency']) || moneda || 'EUR',
       aerolinea: this.texto(oferta['airline']) || this.texto(marketingCarrier['name']),

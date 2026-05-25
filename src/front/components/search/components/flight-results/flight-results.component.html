@@ -67,6 +67,9 @@
           <span>Precio</span>
           <strong>{{ vuelo.precio !== null ? (vuelo.precio + ' ' + vuelo.moneda) : 'N/D' }}</strong>
           <small>por persona</small>
+          <button class="app-button add-flight-button" type="button" [disabled]="vuelo.precio === null" [attr.aria-label]="'Anadir vuelo a viaje con destino ' + (vuelo.destino || 'destino')" (click)="abrirModalAnadir(vuelo)">
+            Anadir a viaje
+          </button>
         </div>
       </article>
     }

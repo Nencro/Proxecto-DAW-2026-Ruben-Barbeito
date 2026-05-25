@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 interface DiapositivaCarrusel {
   src: string;
   alt: string;
+  titulo: string;
 }
 
 @Component({
@@ -15,15 +16,18 @@ export class CarouselComponent implements OnInit, OnDestroy {
   readonly diapositivas: DiapositivaCarrusel[] = [
     {
       src: 'assets/carrusel1.png',
-      alt: 'Destino destacado de ExploraMas'
+      alt: 'Destino destacado de ExploraMas',
+      titulo: 'El mundo es tuyo'
     },
     {
       src: 'assets/carrusel2.png',
-      alt: 'Experiencia de viaje con ExploraMas'
+      alt: 'Experiencia de viaje con ExploraMas',
+      titulo: 'MAS QUE VIAJES\nVIVE EXPERIENCIAS'
     },
     {
       src: 'assets/carrusel3.png',
-      alt: 'Paisaje recomendado por ExploraMas'
+      alt: 'Paisaje recomendado por ExploraMas',
+      titulo: 'PLANIFICA CON NOSOTROS'
     }
   ];
 

@@ -1,0 +1,218 @@
+.experiences-page {
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 42px var(--page-padding);
+}
+
+.experiences-header {
+  max-width: 760px;
+  margin: 0 auto 28px;
+  text-align: center;
+}
+
+.experiences-header span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-accent);
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.experiences-header h1 {
+  margin: 0 0 12px;
+  color: var(--color-text);
+  font-size: 32px;
+}
+
+.experiences-header p {
+  margin: 0;
+  color: var(--color-text-subtle);
+  line-height: 1.55;
+}
+
+.experiences-search {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto;
+  gap: 14px;
+  align-items: end;
+  margin-bottom: 28px;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.experiences-search label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.experiences-search input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  color: var(--color-text);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+}
+
+.experiences-checkbox {
+  min-height: 42px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.experiences-checkbox input {
+  width: auto;
+  min-height: auto;
+  accent-color: var(--color-primary-action);
+}
+
+.experiences-search-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.experience-create-panel {
+  margin-bottom: 28px;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.experiences-state {
+  padding: 24px;
+  color: var(--color-text-subtle);
+  text-align: center;
+}
+
+.experiences-state--error {
+  color: var(--color-danger);
+}
+
+.experiences-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.experience-card {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.experience-card:hover {
+  box-shadow: var(--shadow-popover);
+  transform: scale(1.015);
+}
+
+.experience-card img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  display: block;
+  object-fit: cover;
+}
+
+.experience-card-content {
+  height: 100%;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.experience-country {
+  color: var(--color-accent);
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.experience-card h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 20px;
+}
+
+.experience-locality {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.experience-card p {
+  margin: 0;
+  color: var(--color-text-subtle);
+  line-height: 1.5;
+}
+
+.experience-meta {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--color-text-subtle);
+}
+
+.experience-meta strong {
+  color: var(--color-text);
+}
+
+.experience-add-button {
+  position: relative;
+  z-index: 1;
+  width: fit-content;
+  min-height: 38px;
+  margin-top: 6px;
+  padding-inline: 18px;
+  align-self: flex-start;
+}
+
+@media (max-width: 920px) {
+  .experiences-search,
+  .experiences-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .experiences-search-actions {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .experiences-page {
+    padding: 28px var(--page-padding);
+  }
+
+  .experiences-header h1 {
+    font-size: 26px;
+  }
+
+  .experiences-search,
+  .experiences-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .experiences-search-actions {
+    flex-direction: column;
+  }
+}

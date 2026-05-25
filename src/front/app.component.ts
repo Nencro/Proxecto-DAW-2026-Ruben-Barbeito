@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -10,4 +10,17 @@ import { HeaderComponent } from './components/header/header.component';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  mostrarBotonSubir = false;
+
+  @HostListener('window:scroll')
+  onScroll(): void {
+    this.mostrarBotonSubir = window.scrollY > 320;
+  }
+
+  subirInicio(): void {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
 }

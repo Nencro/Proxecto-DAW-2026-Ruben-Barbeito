@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 
@@ -19,7 +19,8 @@ export class LoginComponent {
 
   constructor(
     private readonly servicioAuth: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {
   }
 
@@ -48,7 +49,7 @@ export class LoginComponent {
           }
         });
 
-        this.router.navigate(['/profile']);
+        this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl') || '/profile');
       },
       error: (error: HttpErrorResponse) => {
         this.enviando = false;

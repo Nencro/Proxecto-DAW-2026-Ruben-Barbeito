@@ -1,0 +1,637 @@
+.travel-details-page {
+  max-width: 920px;
+  margin: 40px auto;
+  padding: 0 var(--page-padding);
+}
+
+.back-link {
+  display: inline-flex;
+  margin-bottom: 18px;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.state-message {
+  padding: 22px;
+  color: var(--color-text-subtle);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.state-message--error {
+  color: var(--color-danger);
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-bg);
+}
+
+.inline-error-message {
+  margin-top: 18px;
+  padding: 12px 14px;
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.loading-panel {
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.travel-detail {
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.travel-detail h1 {
+  margin: 0 0 8px;
+  color: var(--color-text);
+  font-size: 30px;
+}
+
+.travel-detail header p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.country-code {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.invite-section {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 16px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+}
+
+.invite-button {
+  justify-self: start;
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 14px;
+}
+
+.invite-link-field {
+  display: grid;
+  gap: 7px;
+  color: var(--color-text-subtle);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.invite-link-field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 11px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 600;
+}
+
+.invite-link-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px 40px;
+  gap: 8px;
+  align-items: center;
+}
+
+.invite-icon-button {
+  width: 40px;
+  height: 40px;
+}
+
+.invite-icon-button svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+}
+
+.invite-feedback {
+  color: var(--color-success);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.travel-edit-section {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+  padding: 16px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+}
+
+.travel-edit-field {
+  display: grid;
+  gap: 7px;
+  color: var(--color-text-subtle);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.travel-edit-field--wide {
+  grid-column: 1 / -1;
+}
+
+.travel-edit-field input,
+.travel-edit-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 11px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 600;
+}
+
+.travel-edit-field textarea {
+  resize: vertical;
+}
+
+.travel-edit-field input:focus,
+.travel-edit-field textarea:focus {
+  outline: var(--outline-focus);
+  border-color: var(--color-primary-action);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 24px 0 0;
+}
+
+.detail-grid div {
+  padding: 14px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+}
+
+.detail-grid dt {
+  margin-bottom: 6px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.detail-grid dd {
+  margin: 0;
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+.detail-grid dd:has(.participants-button) {
+  display: grid;
+  gap: 8px;
+}
+
+.participants-button {
+  width: fit-content;
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.travel-date-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 700;
+}
+
+.travel-date-input:focus {
+  outline: var(--outline-focus);
+  border-color: var(--color-primary-action);
+}
+
+.travel-date-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.save-dates-button {
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 14px;
+}
+
+.danger-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 16px;
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+}
+
+.danger-zone h2 {
+  margin: 0 0 6px;
+  color: var(--color-danger);
+  font-size: 18px;
+}
+
+.danger-zone p {
+  margin: 0;
+  color: var(--color-danger-text-muted);
+  font-weight: 700;
+}
+
+.description {
+  margin-top: 24px;
+}
+
+.description h2,
+.activities-section h2 {
+  margin: 0 0 8px;
+  color: var(--color-text);
+  font-size: 18px;
+}
+
+.description p {
+  margin: 0;
+  color: var(--color-text-subtle);
+  line-height: 1.55;
+}
+
+.activities-section {
+  margin-top: 26px;
+}
+
+.activities-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  width: var(--table-mobile-width);
+  margin-inline: auto;
+  margin-bottom: 12px;
+}
+
+.activities-heading h2 {
+  margin: 0 0 10px;
+}
+
+.day-selector {
+  display: grid;
+  gap: 6px;
+  color: var(--color-text-subtle);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.day-selector select {
+  min-width: 190px;
+  padding: 9px 10px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 600;
+}
+
+.day-selector select:focus {
+  outline: var(--outline-focus);
+  border-color: var(--color-primary-action);
+}
+
+.add-activity-button {
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.activity-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 90%;
+  margin-inline: auto;
+  margin-top: 12px;
+}
+
+.empty-activities {
+  width: 90%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 16px;
+  color: var(--color-text-muted);
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+}
+
+.activities-validation-message {
+  width: 90%;
+  box-sizing: border-box;
+  margin: 0 auto 12px;
+  padding: 12px 14px;
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.activities-table-wrap {
+  width: var(--table-mobile-width) !important;
+  margin-inline: auto !important;
+  overflow-x: auto;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+}
+
+.activities-table {
+  width: 100% !important;
+  border-collapse: collapse;
+  color: var(--color-text);
+}
+
+.activities-table th,
+.activities-table td {
+  padding: 13px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border-soft);
+  vertical-align: middle;
+}
+
+.activities-table th {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.activities-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.activities-table td:first-child {
+  width: 130px;
+  white-space: nowrap;
+}
+
+.activities-table td:nth-child(2) {
+  width: 132px;
+  white-space: nowrap;
+}
+
+.activities-table td:last-child {
+  width: 130px;
+  white-space: nowrap;
+}
+
+.activity-time-input,
+.activity-cost-input,
+.activity-text-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+}
+
+.activity-cost-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text);
+  font-weight: 400;
+}
+
+.activity-text-input {
+  min-height: 68px;
+  line-height: 1.4;
+  resize: vertical;
+}
+
+.activity-time-input:focus,
+.activity-cost-input:focus,
+.activity-text-input:focus {
+  outline: var(--outline-focus);
+  border-color: var(--color-primary-action);
+}
+
+.travel-date-input.field-invalid,
+.activity-time-input.field-invalid,
+.activity-cost-input.field-invalid,
+.activity-text-input.field-invalid {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px var(--color-danger-bg);
+}
+
+.activity-readonly-value {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.activity-readonly-description {
+  margin: 0;
+  color: var(--color-text);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.activity-row--deleted {
+  background: var(--color-danger-bg);
+}
+
+.activity-row--deleted input,
+.activity-row--deleted textarea {
+  color: var(--color-danger-text-muted);
+  text-decoration: line-through;
+}
+
+.delete-activity-button {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.restore-activity-button {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+@media (max-width: 760px) {
+  .detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .invite-link-row {
+    grid-template-columns: minmax(0, 1fr) 40px 40px;
+  }
+
+  .travel-details-page {
+    margin: 24px auto;
+    padding: 0 12px;
+  }
+
+  .travel-detail {
+    padding: 16px;
+  }
+
+  .activities-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .activity-buttons {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .danger-zone {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activities-table-wrap {
+    width: 100% !important;
+    overflow: visible;
+    border: 0;
+  }
+
+  .activities-table {
+    display: flex;
+    flex-direction: column;
+    width: 100% !important;
+  }
+
+  .activities-table tbody {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .activities-table thead,
+  .activities-table .cdk-header-row,
+  .activities-table tr[cdk-header-row] {
+    display: none !important;
+  }
+
+  .activities-table tr:not(.cdk-header-row):not([cdk-header-row]) {
+    display: flex !important;
+    flex-direction: column;
+    width: var(--table-mobile-width);
+    box-sizing: border-box;
+    margin-inline: auto;
+    padding: 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-md);
+  }
+
+  .activities-table td {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .activities-table td:first-child,
+  .activities-table td:last-child {
+    width: 100%;
+    white-space: normal;
+  }
+
+  .activities-table td::before {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .activities-table td:nth-child(1)::before {
+    content: "Hora";
+  }
+
+  .activities-table td:nth-child(2)::before {
+    content: "Coste";
+  }
+
+  .activities-table td:nth-child(3)::before {
+    content: "Actividad";
+  }
+
+  .activities-table td:nth-child(4)::before {
+    content: "Acciones";
+  }
+
+  .activities-table td + td {
+    margin-top: 12px;
+  }
+
+  .activity-time-input,
+  .activity-cost-input,
+  .activity-text-input {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .activity-text-input {
+    min-height: 110px;
+  }
+
+  .delete-activity-button,
+  .restore-activity-button {
+    width: 100%;
+    min-height: 44px;
+  }
+}

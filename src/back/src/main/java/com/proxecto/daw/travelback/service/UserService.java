@@ -3,19 +3,24 @@ package com.proxecto.daw.travelback.service;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import com.proxecto.daw.travelback.dto.AuthUserResponse;
 import com.proxecto.daw.travelback.dto.LoginRequest;
 import com.proxecto.daw.travelback.dto.LoginResponse;
+import com.proxecto.daw.travelback.dto.PasswordRecoverRequest;
 import com.proxecto.daw.travelback.dto.ProfileResponse;
 import com.proxecto.daw.travelback.dto.ProfileUpdateRequest;
 import com.proxecto.daw.travelback.dto.RegisterRequest;
 import com.proxecto.daw.travelback.dto.RegisterResponse;
+import com.proxecto.daw.travelback.dto.RolesUpdateRequest;
 import com.proxecto.daw.travelback.exception.LoginException;
 import com.proxecto.daw.travelback.exception.RegisterConflictException;
+import com.proxecto.daw.travelback.exception.ResourceNotFoundException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -29,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private static final String NOMBRE_ROL_PREDETERMINADO = "USUARIO";
+    private static final String NOMBRE_ROL_ADMIN = "ADMIN";
 
     private final JdbcTemplate jdbcTemplate;
     private final JwtService jwtService;
@@ -126,14 +132,35 @@ public class UserService {
     }
 
     @Transactional
+    public void recoverPassword(PasswordRecoverRequest peticion) {
+        String userName = Objects.toString(peticion.userName(), "").trim();
+        String email = Objects.toString(peticion.email(), "").trim().toLowerCase();
+        String hashPassword = codificadorPassword.encode(peticion.newPassword());
+
+        int filasActualizadas = jdbcTemplate.update(
+                """
+                UPDATE usuario
+                SET contrasena = ?
+                WHERE username = ?
+                  AND email = ?
+                """,
+                hashPassword,
+                userName,
+                email
+        );
+
+        if (filasActualizadas == 0) {
+            throw new LoginException(4, "No se encontro un usuario con esos datos.");
+        }
+    }
+
+    @Transactional
     public ProfileResponse updateProfile(String authorization, ProfileUpdateRequest peticion) {
         String userName = jwtService.getUserNameFromAuthorization(authorization);
         String nombre = Objects.toString(peticion.nombre(), "").trim();
         String apellidos = Objects.toString(peticion.apellidos(), "").trim();
         String telefono = Objects.toString(peticion.telefono(), "").trim();
-        Long idPais = peticion.paisId();
-
-        validateCountryId(idPais);
+        Long idPais = getOrCreateCountry(peticion.pais(), peticion.codigoPais(), peticion.prefijoPais());
 
         int filasActualizadas = jdbcTemplate.update(
                 """
@@ -159,15 +186,87 @@ public class UserService {
         return getProfileByUserName(jwtService.getUserNameFromAuthorization(authorization));
     }
 
+    public ProfileResponse getProfileByUserNameForAdmin(String authorization, String userName) {
+        assertAdmin(authorization);
+
+        return getProfileByUserName(userName);
+    }
+
+    public List<String> getRolesForAdmin(String authorization) {
+        assertAdmin(authorization);
+        return getAllRoles();
+    }
+
+    @Transactional
+    public ProfileResponse updateUserRolesForAdmin(String authorization, String userName, RolesUpdateRequest peticion) {
+        assertAdmin(authorization);
+        Long userId = getUserIdByUserNameOrThrow(userName);
+
+        Set<String> rolesSolicitados = new LinkedHashSet<>();
+        rolesSolicitados.add(NOMBRE_ROL_PREDETERMINADO);
+
+        for (String rol : peticion.roles()) {
+            String rolNormalizado = Objects.toString(rol, "").trim().toUpperCase();
+
+            if (!rolNormalizado.isBlank()) {
+                rolesSolicitados.add(rolNormalizado);
+            }
+        }
+
+        List<String> rolesExistentes = getAllRoles();
+        List<String> rolesInvalidos = rolesSolicitados.stream()
+                .filter(rol -> !rolesExistentes.contains(rol))
+                .toList();
+
+        if (!rolesInvalidos.isEmpty()) {
+            throw new IllegalArgumentException("Hay roles no validos: " + String.join(", ", rolesInvalidos));
+        }
+
+        jdbcTemplate.update("DELETE FROM usuario_rol WHERE usuario_id = ?", userId);
+
+        for (String rol : rolesSolicitados) {
+            jdbcTemplate.update(
+                    """
+                    INSERT INTO usuario_rol (usuario_id, rol_id)
+                    SELECT ?, id
+                    FROM rol
+                    WHERE nombre = ?
+                    """,
+                    userId,
+                    rol
+            );
+        }
+
+        return getProfileByUserName(userName);
+    }
+
     public ProfileResponse getProfileByUserName(String userName) {
-        Map<String, Object> filaUsuario = jdbcTemplate.queryForMap(
-                """
-                SELECT id, username, nombre, apellidos, email, telefono, pais_id, fecha_registro
-                FROM usuario
-                WHERE username = ?
-                """,
-                userName
-        );
+        Map<String, Object> filaUsuario;
+
+        try {
+            filaUsuario = jdbcTemplate.queryForMap(
+                    """
+                    SELECT
+                        u.id,
+                        u.username,
+                        u.nombre,
+                        u.apellidos,
+                        u.email,
+                        u.telefono,
+                        u.pais_id,
+                        p.nombre AS pais,
+                        p.codigo AS codigo_pais,
+                        p.prefijo AS prefijo_pais,
+                        u.fecha_registro
+                    FROM usuario u
+                    LEFT JOIN pais p ON p.id = u.pais_id
+                    WHERE u.username = ?
+                    """,
+                    userName
+            );
+        } catch (EmptyResultDataAccessException excepcion) {
+            throw new ResourceNotFoundException("Usuario no encontrado.");
+        }
 
         return new ProfileResponse(
                 ((Number) filaUsuario.get("id")).longValue(),
@@ -177,24 +276,59 @@ public class UserService {
                 Objects.toString(filaUsuario.get("email"), ""),
                 Objects.toString(filaUsuario.get("telefono"), ""),
                 filaUsuario.get("pais_id") == null ? null : ((Number) filaUsuario.get("pais_id")).longValue(),
-                Objects.toString(filaUsuario.get("fecha_registro"), "")
+                Objects.toString(filaUsuario.get("pais"), ""),
+                Objects.toString(filaUsuario.get("codigo_pais"), ""),
+                Objects.toString(filaUsuario.get("prefijo_pais"), ""),
+                Objects.toString(filaUsuario.get("fecha_registro"), ""),
+                getUserRoles(((Number) filaUsuario.get("id")).longValue())
         );
     }
 
-    private void validateCountryId(Long paisId) {
-        if (paisId == null) {
-            return;
+    private Long getOrCreateCountry(String pais, String codigoPais, String prefijoPais) {
+        String countryName = Objects.toString(pais, "").trim();
+        String countryCode = Objects.toString(codigoPais, "").trim().toUpperCase();
+        String phonePrefix = Objects.toString(prefijoPais, "").trim();
+
+        if (countryName.isBlank() || countryCode.isBlank()) {
+            return null;
         }
 
-        Integer contadorPaises = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM paises WHERE id = ?",
-                Integer.class,
-                paisId
+        List<Long> idsByCode = jdbcTemplate.queryForList(
+                "SELECT id FROM pais WHERE codigo = ?",
+                Long.class,
+                countryCode
         );
 
-        if (contadorPaises == null || contadorPaises == 0) {
-            throw new IllegalArgumentException("El pais indicado no existe.");
+        if (!idsByCode.isEmpty()) {
+            return idsByCode.get(0);
         }
+
+        List<Long> idsByName = jdbcTemplate.queryForList(
+                "SELECT id FROM pais WHERE nombre = ?",
+                Long.class,
+                countryName
+        );
+
+        if (!idsByName.isEmpty()) {
+            return idsByName.get(0);
+        }
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement statement = connection.prepareStatement(
+                    """
+                    INSERT INTO pais (nombre, codigo, prefijo)
+                    VALUES (?, ?, ?)
+                    """,
+                    Statement.RETURN_GENERATED_KEYS
+            );
+            statement.setString(1, countryName);
+            statement.setString(2, countryCode);
+            statement.setString(3, phonePrefix);
+            return statement;
+        }, keyHolder);
+
+        return Objects.requireNonNull(keyHolder.getKey(), "No se pudo obtener el id del pais creado.").longValue();
     }
 
     private Long getDefaultRoleId() {
@@ -243,6 +377,46 @@ public class UserService {
                 String.class,
                 idUsuario
         );
+    }
+
+    private List<String> getAllRoles() {
+        return jdbcTemplate.queryForList(
+                "SELECT nombre FROM rol ORDER BY FIELD(nombre, 'USUARIO', 'EMPRESA', 'ADMIN'), nombre",
+                String.class
+        );
+    }
+
+    private Long getUserIdByUserNameOrThrow(String userName) {
+        try {
+            return jdbcTemplate.queryForObject(
+                    "SELECT id FROM usuario WHERE username = ?",
+                    Long.class,
+                    userName
+            );
+        } catch (EmptyResultDataAccessException excepcion) {
+            throw new ResourceNotFoundException("Usuario no encontrado.");
+        }
+    }
+
+    private void assertAdmin(String authorization) {
+        String userName = jwtService.getUserNameFromAuthorization(authorization);
+        Integer count = jdbcTemplate.queryForObject(
+                """
+                SELECT COUNT(*)
+                FROM usuario u
+                INNER JOIN usuario_rol ur ON ur.usuario_id = u.id
+                INNER JOIN rol r ON r.id = ur.rol_id
+                WHERE u.username = ?
+                  AND r.nombre = ?
+                """,
+                Integer.class,
+                userName,
+                NOMBRE_ROL_ADMIN
+        );
+
+        if (count == null || count == 0) {
+            throw new LoginException(4, "Solo un administrador puede acceder a este recurso.");
+        }
     }
 
 }

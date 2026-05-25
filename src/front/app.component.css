@@ -5,6 +5,50 @@
 }
 
 .app-main {
-  flex: 1;
+  width: 100%;
+  flex: 1 0 auto;
   padding:  0;
+}
+
+.scroll-top-button {
+  width: 48px;
+  height: 48px;
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  color: var(--color-surface);
+  background: #007979;
+  box-shadow: var(--shadow-popover);
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.scroll-top-button span {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.scroll-top-button:hover,
+.scroll-top-button:focus-visible {
+  background: var(--color-primary-action);
+  transform: translateY(-2px);
+}
+
+.scroll-top-button:focus-visible {
+  outline: var(--outline-focus);
+}
+
+@media (max-width: 640px) {
+  .scroll-top-button {
+    width: 44px;
+    height: 44px;
+    right: 14px;
+    bottom: 14px;
+  }
 }

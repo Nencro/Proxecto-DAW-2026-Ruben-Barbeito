@@ -1,0 +1,12 @@
+<section class="travel-join-page">
+  @if (cargando) {
+    <div class="join-panel">
+      <app-loading-spinner label="Uniendote al viaje"></app-loading-spinner>
+    </div>
+  } @else if (error) {
+    <div class="join-panel join-panel--error">
+      <p>{{ error }}</p>
+      <a class="app-button" routerLink="/travels">Volver a mis viajes</a>
+    </div>
+  }
+</section>

@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
+    private static final String INVITE_TOKEN_TYPE = "travel-invite";
+
     private final SecretKey claveFirma;
     private final long minutosExpiracion;
 
@@ -37,6 +39,33 @@ public class JwtService {
                 .expiration(Date.from(ahora.plusSeconds(minutosExpiracion * 60)))
                 .signWith(claveFirma)
                 .compact();
+    }
+
+    public String generateTravelInviteToken(Long idViaje, Long idCreador, Instant fechaExpiracion) {
+        return Jwts.builder()
+                .claim("type", INVITE_TOKEN_TYPE)
+                .claim("travelId", idViaje)
+                .claim("creatorId", idCreador)
+                .issuedAt(Date.from(Instant.now()))
+                .expiration(Date.from(fechaExpiracion))
+                .signWith(claveFirma)
+                .compact();
+    }
+
+    public Long getTravelIdFromInviteToken(String token) {
+        Claims claims = getClaims(token);
+
+        if (!INVITE_TOKEN_TYPE.equals(claims.get("type", String.class))) {
+            throw new LoginException(4, "Token invalido.");
+        }
+
+        Number travelId = claims.get("travelId", Number.class);
+
+        if (travelId == null) {
+            throw new LoginException(4, "Token invalido.");
+        }
+
+        return travelId.longValue();
     }
 
     public String getUserNameFromAuthorization(String authorization) {

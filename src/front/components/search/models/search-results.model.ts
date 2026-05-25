@@ -8,6 +8,7 @@ export interface CriteriosBusqueda {
 export interface ResultadoVuelo {
   origen: string;
   destino: string;
+  codigoPaisDestino?: string;
   precio: number | null;
   moneda: string;
   aerolinea: string;

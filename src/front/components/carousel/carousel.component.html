@@ -3,6 +3,7 @@
     @for (diapositiva of diapositivas; track diapositiva.src) {
       <div class="carousel-slide">
         <img [src]="diapositiva.src" [alt]="diapositiva.alt" />
+        <h2 class="carousel-title">{{ diapositiva.titulo }}</h2>
       </div>
     }
   </div>

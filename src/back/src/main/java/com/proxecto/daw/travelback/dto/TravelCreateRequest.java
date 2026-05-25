@@ -2,6 +2,7 @@ package com.proxecto.daw.travelback.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record TravelCreateRequest(
@@ -12,6 +13,10 @@ public record TravelCreateRequest(
         @NotBlank(message = "El pais es obligatorio.")
         @Size(max = 100, message = "El pais no puede superar los 100 caracteres.")
         String pais,
+
+        @NotBlank(message = "El codigo de pais es obligatorio.")
+        @Pattern(regexp = "^[A-Za-z]{2}$", message = "El codigo de pais debe tener formato ISO de 2 letras.")
+        String codigoPais,
 
         @Size(max = 4000, message = "La descripcion no puede superar los 4000 caracteres.")
         String descripcion,

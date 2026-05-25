@@ -1,0 +1,7 @@
+.env
+.env.*
+!.env.example
+assets/env.js
+dist/
+.angular/
+node_modules/

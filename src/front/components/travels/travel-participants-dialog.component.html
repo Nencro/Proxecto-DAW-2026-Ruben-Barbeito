@@ -1,0 +1,54 @@
+<section class="participants-dialog" role="dialog" aria-modal="true" aria-labelledby="participantsTitle">
+  <header class="participants-dialog-header">
+    <div>
+      <span>Participantes</span>
+      <h2 id="participantsTitle">{{ viaje.destino }}</h2>
+      <p>{{ viaje.pais }} ({{ viaje.codigoPais }})</p>
+    </div>
+
+    <button type="button" class="participants-close" aria-label="Cerrar" (click)="cerrar()">x</button>
+  </header>
+
+  @if (cargando) {
+    <div class="participants-state">
+      <app-loading-spinner label="Cargando participantes"></app-loading-spinner>
+    </div>
+  } @else if (error) {
+    <p class="participants-state participants-state--error">{{ error }}</p>
+  } @else {
+    <div class="participants-list">
+      @for (participante of participantes; track participante.id) {
+        <article class="participant-card" [class.participant-card--deleted]="participante.eliminado">
+          <div>
+            <h3>{{ getNombre(participante) }}</h3>
+            <p>{{ participante.userName }} · {{ participante.email }}</p>
+            <span>{{ getRol(participante) }}</span>
+          </div>
+
+          @if (puedeEliminarParticipante(participante)) {
+            @if (participante.eliminado) {
+              <button type="button" class="app-button app-button--soft" (click)="restaurar(participante)">Restaurar</button>
+            } @else {
+              <button type="button" class="app-button app-button--danger" (click)="marcarEliminado(participante)">
+                {{ puedeGestionar ? 'Eliminar' : 'Salir del viaje' }}
+              </button>
+            }
+          }
+        </article>
+      }
+    </div>
+
+    @if (puedeGestionar || puedeSalirDelViaje) {
+      <div class="participants-actions">
+        <button type="button" class="app-button app-button--secondary" [disabled]="guardando" (click)="cerrar()">Cancelar</button>
+        <button type="button" class="app-button" [disabled]="guardando" (click)="guardar()">
+          {{ guardando ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+    } @else {
+      <div class="participants-actions">
+        <button type="button" class="app-button" (click)="cerrar()">Cerrar</button>
+      </div>
+    }
+  }
+</section>

@@ -12,6 +12,13 @@ public record ProfileUpdateRequest(
         @Size(max = 30, message = "El telefono no puede superar los 30 caracteres.")
         String telefono,
 
-        Long paisId
+        @Size(max = 100, message = "El pais no puede superar los 100 caracteres.")
+        String pais,
+
+        @Size(max = 2, message = "El codigo de pais no puede superar los 2 caracteres.")
+        String codigoPais,
+
+        @Size(max = 8, message = "El prefijo del pais no puede superar los 8 caracteres.")
+        String prefijoPais
 ) {
 }
