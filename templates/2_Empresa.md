@@ -255,4 +255,4 @@ A principal vantaxe da aplicación é que non pretende competir directamente coa
 
 Polo tanto, o proxecto é viable, aínda que será necesario controlar os custos iniciais, mellorar progresivamente a aplicación, captar usuarios e buscar colaboracións comerciais que permitan monetizar o servizo sen depender dunha versión premium.
 
-[**<-Anterior**](../../README.md)
+[**<-Anterior**](../README.md)
