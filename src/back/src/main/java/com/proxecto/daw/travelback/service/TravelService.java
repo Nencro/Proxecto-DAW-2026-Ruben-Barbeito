@@ -252,7 +252,7 @@ public class TravelService {
 
         Long paisId = getOrCreateCountry(request.pais(), request.codigoPais());
         Long destinoId = createDestination(request, paisId);
-        Long travelId = createTravelRow(fechaInicio, fechaFin, destinoId, userId);
+        Long travelId = createTravelRow(fechaInicio, fechaFin, destinoId, userId, request.costeBillete());
 
         return getTravelById(userName, travelId);
     }
@@ -537,14 +537,14 @@ public class TravelService {
         return Objects.requireNonNull(keyHolder.getKey(), "No se pudo obtener el id del pais creado.").longValue();
     }
 
-    private Long createTravelRow(LocalDate fechaInicio, LocalDate fechaFin, Long destinoId, Long userId) {
+    private Long createTravelRow(LocalDate fechaInicio, LocalDate fechaFin, Long destinoId, Long userId, BigDecimal costeBillete) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(
                     """
-                    INSERT INTO viaje (fecha_inicio, fecha_fin, destino_id, id_creador)
-                    VALUES (?, ?, ?, ?)
+                    INSERT INTO viaje (fecha_inicio, fecha_fin, destino_id, id_creador, coste_billete)
+                    VALUES (?, ?, ?, ?, ?)
                     """,
                     Statement.RETURN_GENERATED_KEYS
             );
@@ -552,6 +552,7 @@ public class TravelService {
             statement.setObject(2, fechaFin);
             statement.setLong(3, destinoId);
             statement.setLong(4, userId);
+            statement.setBigDecimal(5, normalizeMoney(costeBillete));
             return statement;
         }, keyHolder);
 
@@ -644,6 +645,7 @@ public class TravelService {
                           AND pv_count.usuario_id <> v.id_creador
                     ) AS numero_participantes,
                     CASE
+                        WHEN v.id_creador = usuario_actual.id THEN 'CREADOR'
                         WHEN EXISTS (
                             SELECT 1
                             FROM usuario_rol ur_admin
@@ -651,7 +653,6 @@ public class TravelService {
                             WHERE ur_admin.usuario_id = usuario_actual.id
                               AND r_admin.nombre = 'ADMIN'
                         ) THEN 'ADMIN'
-                        WHEN v.id_creador = usuario_actual.id THEN 'CREADOR'
                         ELSE 'PARTICIPANTE'
                     END AS rol_en_viaje
                 FROM usuario usuario_actual

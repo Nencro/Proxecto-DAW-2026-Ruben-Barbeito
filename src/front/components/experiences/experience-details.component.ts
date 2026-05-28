@@ -71,7 +71,7 @@ export class ExperienceDetailsComponent implements OnInit {
         this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudo cargar la experiencia.';
+        this.error = 'No pudo realizarse la carga de datos.';
         this.cargando = false;
       }
     });
@@ -138,7 +138,7 @@ export class ExperienceDetailsComponent implements OnInit {
         this.imagenInfo = 'Experiencia guardada.';
       },
       error: () => {
-        this.error = 'No se pudo guardar la experiencia.';
+        this.error = 'No pudo completarse la operación.';
         this.guardando = false;
       }
     });
@@ -176,7 +176,7 @@ export class ExperienceDetailsComponent implements OnInit {
     this.api.deleteExperience(this.experience.id, this.auth.getToken()).subscribe({
       next: () => this.router.navigate(['/experiences']),
       error: () => {
-        this.error = 'No se pudo borrar la experiencia.';
+        this.error = 'No pudo completarse la operación.';
         this.borrando = false;
       }
     });

@@ -1,5 +1,8 @@
 package com.proxecto.daw.travelback.dto;
 
+import java.math.BigDecimal;
+
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -25,6 +28,10 @@ public record TravelCreateRequest(
         String fechaInicio,
 
         @NotNull(message = "La fecha de fin es obligatoria.")
-        String fechaFin
+        String fechaFin,
+
+        @NotNull(message = "El coste del billete es obligatorio.")
+        @DecimalMin(value = "0.0", inclusive = true, message = "El coste del billete no puede ser negativo.")
+        BigDecimal costeBillete
 ) {
 }

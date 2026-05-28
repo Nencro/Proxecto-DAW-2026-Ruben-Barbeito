@@ -13,6 +13,7 @@
       <label for="destino">Destino</label>
       <input
         id="destino"
+        #destino="ngModel"
         name="destino"
         type="text"
         maxlength="150"
@@ -30,6 +31,10 @@
         [attr.aria-expanded]="mostrarSugerencias"
         required
       />
+
+      @if (destino.invalid && (destino.dirty || destino.touched)) {
+        <span class="field-error">Introduce un destino valido.</span>
+      }
 
       @if (mostrarSugerencias) {
         <div id="destinoSugerencias" class="destination-suggestions" role="listbox" aria-label="Sugerencias de destino">
@@ -53,6 +58,7 @@
       <label for="pais">País</label>
       <input
         id="pais"
+        #pais="ngModel"
         name="pais"
         type="text"
         maxlength="100"
@@ -70,6 +76,10 @@
         [attr.aria-expanded]="mostrarSugerenciasPais"
         required
       />
+
+      @if (pais.invalid && (pais.dirty || pais.touched)) {
+        <span class="field-error">Selecciona un pais de la lista.</span>
+      }
 
       @if (mostrarSugerenciasPais) {
         <div id="paisSugerencias" class="destination-suggestions" role="listbox" aria-label="Sugerencias de país">
@@ -102,22 +112,50 @@
       Fecha inicio
       <input
         id="fechaInicio"
+        #fechaInicio="ngModel"
         name="fechaInicio"
         type="date"
+        [min]="fechaMinima"
         [(ngModel)]="viaje.fechaInicio"
         required
       />
+      @if (fechaInicio.invalid && (fechaInicio.dirty || fechaInicio.touched)) {
+        <span class="field-error">Selecciona una fecha de inicio valida.</span>
+      }
     </label>
 
     <label class="travel-field" for="fechaFin">
       Fecha fin
       <input
         id="fechaFin"
+        #fechaFin="ngModel"
         name="fechaFin"
         type="date"
+        [min]="viaje.fechaInicio || fechaMinima"
         [(ngModel)]="viaje.fechaFin"
         required
       />
+      @if (fechaFin.invalid && (fechaFin.dirty || fechaFin.touched)) {
+        <span class="field-error">Selecciona una fecha de fin valida.</span>
+      }
+    </label>
+
+    <label class="travel-field" for="costeBillete">
+      Precio de billete
+      <input
+        id="costeBillete"
+        #costeBillete="ngModel"
+        name="costeBillete"
+        type="number"
+        min="0"
+        max="999999.99"
+        step="0.01"
+        [(ngModel)]="viaje.costeBillete"
+        required
+      />
+      @if (costeBillete.invalid && (costeBillete.dirty || costeBillete.touched)) {
+        <span class="field-error">Introduce un precio valido.</span>
+      }
     </label>
 
     @if (error) {

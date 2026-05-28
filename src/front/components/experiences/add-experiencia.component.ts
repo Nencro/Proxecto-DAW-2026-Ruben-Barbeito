@@ -56,7 +56,7 @@ export class AddExperienciaComponent implements OnInit {
         this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudieron cargar tus viajes.';
+        this.error = 'No pudo realizarse la carga de datos.';
         this.cargando = false;
       }
     });
@@ -126,7 +126,7 @@ export class AddExperienciaComponent implements OnInit {
       },
       error: () => {
         estado.guardando = false;
-        estado.error = 'No se pudo añadir la experiencia.';
+        estado.error = 'No pudo completarse la operación.';
       }
     });
   }

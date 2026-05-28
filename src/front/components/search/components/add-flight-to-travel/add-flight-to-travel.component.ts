@@ -1,5 +1,6 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Component, Inject, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ApiService, TravelResponse } from '../../../../services/api.service';
 import { AuthService } from '../../../../services/auth.service';
 import { LoadingSpinnerComponent } from '../../../shared/loading-spinner/loading-spinner.component';
@@ -8,7 +9,7 @@ import { ResultadoVuelo } from '../../models/search-results.model';
 @Component({
   selector: 'app-add-flight-to-travel',
   standalone: true,
-  imports: [LoadingSpinnerComponent],
+  imports: [LoadingSpinnerComponent, RouterLink],
   templateUrl: './add-flight-to-travel.component.html',
   styleUrls: ['./add-flight-to-travel.component.css']
 })
@@ -18,6 +19,8 @@ export class AddFlightToTravelComponent implements OnInit {
   guardandoViajeId: number | null = null;
   error = '';
   codigoPaisDestino = '';
+  tieneViajes = false;
+  necesitaLogin = false;
 
   constructor(
     @Inject(DIALOG_DATA) public readonly vuelo: ResultadoVuelo,
@@ -29,7 +32,7 @@ export class AddFlightToTravelComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.auth.validateSession()) {
-      this.error = 'Inicia sesion para anadir el vuelo a un viaje.';
+      this.necesitaLogin = true;
       return;
     }
 
@@ -48,7 +51,7 @@ export class AddFlightToTravelComponent implements OnInit {
   }
 
   anadirPrecio(viaje: TravelResponse): void {
-    if (!this.vuelo.precio || this.guardandoViajeId) {
+    if (this.vuelo.precio === null || this.guardandoViajeId) {
       return;
     }
 
@@ -65,7 +68,7 @@ export class AddFlightToTravelComponent implements OnInit {
         this.dialogRef.close();
       },
       error: () => {
-        this.error = 'No se pudo anadir el precio del vuelo al viaje.';
+        this.error = 'No pudo completarse la operación.';
         this.guardandoViajeId = null;
       }
     });
@@ -75,6 +78,21 @@ export class AddFlightToTravelComponent implements OnInit {
     return this.vuelo.precio !== null
       ? `${this.vuelo.precio} ${this.vuelo.moneda || 'EUR'}`
       : 'Precio no disponible';
+  }
+
+  getParametrosCrearViaje(): Record<string, string | number> {
+    const parametros: Record<string, string | number> = {
+      destino: this.vuelo.destino || '',
+      codigoPais: this.codigoPaisDestino,
+      fechaInicio: this.formatearFechaConsulta(this.vuelo.salida),
+      fechaFin: this.formatearFechaConsulta(this.vuelo.vuelta || this.vuelo.salida)
+    };
+
+    if (this.vuelo.precio !== null) {
+      parametros['costeBillete'] = this.vuelo.precio;
+    }
+
+    return parametros;
   }
 
   formatearFecha(valor: string): string {
@@ -110,7 +128,7 @@ export class AddFlightToTravelComponent implements OnInit {
         this.cargarViajes();
       },
       error: () => {
-        this.error = 'No se pudo resolver el pais de destino del vuelo.';
+        this.error = 'No pudo realizarse la carga de datos.';
         this.cargando = false;
       }
     });
@@ -120,11 +138,12 @@ export class AddFlightToTravelComponent implements OnInit {
     this.cargando = true;
     this.api.getTravels(this.auth.getToken()).subscribe({
       next: (viajes) => {
+        this.tieneViajes = viajes.length > 0;
         this.viajes = viajes.filter((viaje) => this.esViajeValido(viaje));
         this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudieron cargar tus viajes.';
+        this.error = 'No pudo realizarse la carga de datos.';
         this.cargando = false;
       }
     });
@@ -132,7 +151,7 @@ export class AddFlightToTravelComponent implements OnInit {
 
   private esViajeValido(viaje: TravelResponse): boolean {
     const hoy = this.formatearFechaInput(new Date());
-    return viaje.codigoPais === this.codigoPaisDestino && viaje.fechaInicio >= hoy;
+    return viaje.codigoPais?.toUpperCase() === this.codigoPaisDestino && viaje.fechaInicio >= hoy;
   }
 
   private formatearFechaInput(fecha: Date): string {
@@ -141,5 +160,19 @@ export class AddFlightToTravelComponent implements OnInit {
     const day = String(fecha.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+
+  private formatearFechaConsulta(valor: string): string {
+    if (!valor) {
+      return '';
+    }
+
+    const fecha = new Date(valor);
+
+    if (Number.isNaN(fecha.getTime())) {
+      return valor.slice(0, 10);
+    }
+
+    return this.formatearFechaInput(fecha);
   }
 }

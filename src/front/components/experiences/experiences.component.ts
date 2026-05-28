@@ -46,7 +46,7 @@ export class ExperiencesComponent implements OnInit {
         this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudieron cargar las experiencias.';
+        this.error = 'No pudo realizarse la carga de datos.';
         this.cargando = false;
       }
     });

@@ -187,7 +187,7 @@ export class ExperienceCreateComponent implements OnInit {
         this.router.navigate(['/experiences']);
       },
       error: () => {
-        this.error = 'No se pudo crear la experiencia.';
+        this.error = 'No pudo completarse la operación.';
         this.enviando = false;
       }
     });

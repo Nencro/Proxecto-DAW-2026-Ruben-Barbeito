@@ -13,12 +13,22 @@
     <div class="add-flight-state">
       <app-loading-spinner label="Cargando viajes"></app-loading-spinner>
     </div>
+  } @else if (necesitaLogin) {
+    <p class="add-flight-state">
+      <a class="create-travel-link" routerLink="/login" (click)="cerrar()">Inicia sesión</a> para anadir el vuelo a un viaje.
+    </p>
   } @else if (error) {
     <p class="add-flight-state add-flight-state--error">{{ error }}</p>
-  } @else if (!vuelo.precio) {
-    <p class="add-flight-state">Este vuelo no tiene precio disponible.</p>
+  } @else if (!tieneViajes) {
+    <p class="add-flight-state">
+      No tienes viajes creados. <a class="create-travel-link" routerLink="/travels/new" [queryParams]="getParametrosCrearViaje()" (click)="cerrar()">Crealo ya</a>.
+    </p>
   } @else if (!viajes.length) {
-    <p class="add-flight-state">No tienes viajes futuros al pais de destino de este vuelo.</p>
+    <p class="add-flight-state">
+      No tienes viajes futuros al pais de destino de este vuelo. <a class="create-travel-link" routerLink="/travels/new" [queryParams]="getParametrosCrearViaje()" (click)="cerrar()">Crealo ya</a>.
+    </p>
+  } @else if (vuelo.precio === null) {
+    <p class="add-flight-state">Este vuelo no tiene precio disponible.</p>
   } @else {
     <div class="travel-options">
       @for (viaje of viajes; track viaje.id) {

@@ -61,6 +61,16 @@
   color: var(--color-danger);
 }
 
+.create-travel-link {
+  color: var(--color-primary);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.create-travel-link:hover {
+  text-decoration: underline;
+}
+
 .travel-options {
   display: grid;
   gap: 14px;

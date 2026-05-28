@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService, DuffelReferenceItem, RestCountryResponse, TravelCreateRequest } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -32,9 +32,11 @@ export class TravelCreateComponent implements OnInit {
     codigoPais: '',
     descripcion: '',
     fechaInicio: '',
-    fechaFin: ''
+    fechaFin: '',
+    costeBillete: 0
   };
 
+  readonly fechaMinima = this.formatearFechaInput(new Date());
   enviando = false;
   cargandoSugerencias = false;
   mostrarSugerencias = false;
@@ -50,11 +52,21 @@ export class TravelCreateComponent implements OnInit {
   constructor(
     private readonly api: ApiService,
     private readonly auth: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {
   }
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.viaje.destino = params.get('destino') || this.viaje.destino;
+      this.viaje.codigoPais = (params.get('codigoPais') || this.viaje.codigoPais || '').toUpperCase();
+      this.viaje.fechaInicio = params.get('fechaInicio') || this.viaje.fechaInicio;
+      this.viaje.fechaFin = params.get('fechaFin') || this.viaje.fechaFin;
+      this.viaje.costeBillete = this.getPrecioConsulta(params.get('costeBillete'), this.viaje.costeBillete);
+      this.aplicarPaisDesdeCodigo();
+    });
+
     this.api.getRestCountries().subscribe({
       next: (paises) => {
         this.countries = paises
@@ -72,6 +84,7 @@ export class TravelCreateComponent implements OnInit {
         this.countriesByCode = new Map(
           this.countries.map((pais) => [pais.code, pais.name])
         );
+        this.aplicarPaisDesdeCodigo();
       },
       error: () => {
         this.countries = [];
@@ -163,14 +176,25 @@ export class TravelCreateComponent implements OnInit {
 
   crearViaje(): void {
     this.error = '';
+    this.viaje.costeBillete = this.getPrecioValido(this.viaje.costeBillete);
 
     if (!this.viaje.destino.trim() || !this.viaje.pais.trim() || !this.viaje.codigoPais?.trim() || !this.viaje.fechaInicio || !this.viaje.fechaFin) {
       this.error = 'Completa destino, país, código de país y fechas para crear el viaje.';
       return;
     }
 
+    if (this.viaje.fechaInicio < this.fechaMinima) {
+      this.error = 'La fecha de inicio no puede ser anterior a hoy.';
+      return;
+    }
+
     if (this.viaje.fechaFin < this.viaje.fechaInicio) {
       this.error = 'La fecha de fin no puede ser anterior a la fecha de inicio.';
+      return;
+    }
+
+    if (!Number.isFinite(this.viaje.costeBillete) || this.viaje.costeBillete < 0) {
+      this.error = 'El precio del billete no puede ser negativo.';
       return;
     }
 
@@ -182,7 +206,8 @@ export class TravelCreateComponent implements OnInit {
       codigoPais: this.viaje.codigoPais?.trim().toUpperCase(),
       descripcion: this.viaje.descripcion.trim(),
       fechaInicio: this.viaje.fechaInicio,
-      fechaFin: this.viaje.fechaFin
+      fechaFin: this.viaje.fechaFin,
+      costeBillete: this.viaje.costeBillete
     }, this.auth.getToken()).subscribe({
       next: () => {
         this.router.navigate(['/travels']);
@@ -232,6 +257,49 @@ export class TravelCreateComponent implements OnInit {
 
   private formatearPais(nombre: string, codigo: string): string {
     return `${nombre} (${codigo})`;
+  }
+
+  private aplicarPaisDesdeCodigo(): void {
+    const codigoPais = this.viaje.codigoPais?.trim().toUpperCase();
+
+    if (!codigoPais || this.viaje.pais || !this.countriesByCode.size) {
+      return;
+    }
+
+    const pais = this.countriesByCode.get(codigoPais);
+
+    if (!pais) {
+      return;
+    }
+
+    this.viaje.pais = pais;
+    this.paisBusqueda = this.formatearPais(pais, codigoPais);
+  }
+
+  private getPrecioConsulta(valor: string | null, respaldo: number): number {
+    if (valor === null || valor.trim() === '') {
+      return respaldo;
+    }
+
+    return this.getPrecioValido(Number(valor));
+  }
+
+  private getPrecioValido(valor: number): number {
+    const precio = Number(valor);
+
+    if (!Number.isFinite(precio) || precio < 0) {
+      return 0;
+    }
+
+    return Math.round(precio * 100) / 100;
+  }
+
+  private formatearFechaInput(fecha: Date): string {
+    const year = fecha.getFullYear();
+    const month = String(fecha.getMonth() + 1).padStart(2, '0');
+    const day = String(fecha.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 
   private normalizarTexto(valor: string): string {

@@ -115,6 +115,7 @@ export interface TravelCreateRequest {
   descripcion: string;
   fechaInicio: string;
   fechaFin: string;
+  costeBillete: number;
 }
 
 export interface TravelUpdateRequest {

@@ -259,7 +259,7 @@ export class TravelSearchComponent implements OnInit, OnDestroy {
         }
       },
       error: () => {
-        this.errorReferencias = 'No se pudieron cargar los aeropuertos de Duffel.';
+        this.errorReferencias = 'No pudo realizarse la carga de datos.';
       }
     });
   }
@@ -292,7 +292,7 @@ export class TravelSearchComponent implements OnInit, OnDestroy {
         }
       },
       error: () => {
-        this.errorReferencias = 'No se pudieron cargar los aeropuertos de Duffel.';
+        this.errorReferencias = 'No pudo realizarse la carga de datos.';
       }
     });
   }

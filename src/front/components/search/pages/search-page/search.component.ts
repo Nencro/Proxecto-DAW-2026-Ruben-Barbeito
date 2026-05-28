@@ -62,7 +62,7 @@ export class SearchComponent {
         this.resultados = this.normalizarResultados(respuesta);
       },
       error: () => {
-        this.errorResultados = 'No se pudieron cargar los vuelos de Duffel.';
+        this.errorResultados = 'No pudo realizarse la carga de datos.';
         this.cargandoResultados = false;
       },
       complete: () => {

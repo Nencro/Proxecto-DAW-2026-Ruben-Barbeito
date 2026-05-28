@@ -73,6 +73,6 @@ public class ApiExceptionHandler {
     @ExceptionHandler(RestClientResponseException.class)
     public ResponseEntity<ApiErrorResponse> handleRestClientResponse(RestClientResponseException excepcion) {
         return ResponseEntity.status(excepcion.getStatusCode())
-                .body(ApiErrorResponse.withDetail(1, "Error al consultar Duffel.", excepcion.getResponseBodyAsString()));
+                .body(ApiErrorResponse.of(1, "No pudo realizarse la carga de datos."));
     }
 }
