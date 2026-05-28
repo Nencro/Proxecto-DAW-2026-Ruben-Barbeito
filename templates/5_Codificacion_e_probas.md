@@ -114,4 +114,4 @@ Problemas atopados e solucionados:
 
 Como conclusion, a aplicacion quedou funcional nas súas partes principais e preparada para seguir mellorando con novas probas automatizadas, probas de integracion e despregue en contornos reais.
 
-[**<-Anterior**](../../README.md)
+[**<-Anterior**](../README.md)
