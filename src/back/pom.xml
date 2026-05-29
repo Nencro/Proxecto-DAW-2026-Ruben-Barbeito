@@ -17,6 +17,14 @@
     <name>travel-back</name>
     <description>Backend Spring Boot para el proyecto DAW</description>
 
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0 or later</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <java.version>21</java.version>
     </properties>

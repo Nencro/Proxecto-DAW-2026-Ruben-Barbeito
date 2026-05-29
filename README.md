@@ -1,64 +1,142 @@
-# Proxecto fin de ciclo
+# ExploraMas
 
-- [Proxecto fin de ciclo](#proxecto-fin-de-ciclo)
-  - [Taboleiro do proyecto](#taboleiro-do-proyecto)
+- [ExploraMas](#exploramas)
+  - [Estado do proxecto](#estado-do-proxecto)
   - [Descrición](#descrición)
-  - [Instalación / Posta en marcha](#instalación--posta-en-marcha)
+  - [Tecnoloxías](#tecnoloxías)
+  - [Instalación / posta en marcha](#instalación--posta-en-marcha)
   - [Uso](#uso)
   - [Sobre o autor](#sobre-o-autor)
   - [Licenza](#licenza)
-  - [Índice](#índice)
+  - [Índice da documentación](#índice-da-documentación)
   - [Guía de contribución](#guía-de-contribución)
-  - [Links](#links)
+  - [Ligazóns](#ligazóns)
 
-> *EXPLICACIÓN*: Este mento será a "*páxina de aterrizaxe*" do teu proxecto. Será ou primeiro que vexan vos que se interesen por el. Cúida a sua redacción con todo ou mimo. Elimina posteriormente todas as lineas "EXPLICACIÓN*" cando creas finalizada a súa redacción.
-> Podes acompañar á redacción deste ficheiro con imaxes ou gifs, pero non abuses deles.
+## Estado do proxecto
 
-## Taboleiro do proyecto
-
-> *EXPLICACIÓN:* neste punto indica se o proyecto está en fase de desenrolo ou finalizado.
+ExploraMas é un proxecto de fin de ciclo en fase de desenvolvemento avanzado. A aplicación conta cun frontend Angular, unha API REST con Spring Boot, autenticación mediante token, xestión de usuarios, viaxes, experiencias e integración con servizos externos para a busca de voos e datos de países.
 
 ## Descrición
 
-> *EXPLICACIÓN*: Realiza unha breve descrición do proxecto. Non menos de 100 palabras e non máis de 300. Resalta o fundamental *coas túas propias palabras**. Utiliza unha linguaxe correcta, *pero natural**, que o entenda todo o mundo, mesmo e en especial, as persoas que non teñan un coñecemento técnico avanzado. Pode ser un estracto ou resumo de apartados que xa contemples noutros ficheiros.
-> Descrición básica das ferramentas/tecnoloxías/linguaxes de programación,... empregados.
+ExploraMas é unha aplicación web para organizar viaxes dunha forma sinxela. O obxectivo é que unha persoa usuaria poida crear os seus propios plans de viaxe, indicar destino, datas, custo do billete, actividades e participantes, mantendo toda a información nun único lugar.
 
-## Instalación / Posta en marcha
+A plataforma tamén permite consultar experiencias turísticas publicadas por usuarios con rol de empresa ou administración. Ademais, a aplicación incorpora un buscador de voos conectado coa API de Duffel para ampliar as opcións dispoñibles durante a planificación.
 
-> *EXPLICACIÓN*: Neste apartado describe con toda precisión e a poder ser coa maior simplicidade/facilidade posible, como poñer en marcha a túa aplicación para probala (nun ambiente local). Valorarase moi positivamente que este proceso sexa o máis fácil posible, cunha simple instrución (p. e. un script de instalación, descarga e posta en marcha dun contedor,...).
->
+O proxecto está dividido en dúas partes principais: unha aplicación cliente desenvolvida con Angular e unha API REST desenvolvida con Spring Boot. A persistencia realízase nunha base de datos MySQL, que pode levantarse en local mediante Docker Compose, despregarse nunha máquina Ubuntu Server ou localizarse nun servizo externo compatible, como unha base de datos xestionada na nube.
+
+## Tecnoloxías
+
+- Angular 17.
+- TypeScript.
+- Spring Boot 3.
+- Java 21.
+- Maven.
+- MySQL 8.
+- Docker Compose.
+- Nginx.
+- AWS EC2 e AWS Amplify para o despregue.
+- Duffel API para a busca de voos.
+- RestCountries API para datos de países.
+
+## Instalación / posta en marcha
+
+Requisitos principais:
+
+- Java 21.
+- Maven.
+- Node.js 20 ou superior.
+- npm.
+- Docker e Docker Compose.
+- MySQL 8 ou contedor MySQL.
+
+Clonar o repositorio:
+
+```bash
+git clone <url-do-repositorio>
+cd Proxecto-DAW-2026-Ruben-Barbeito
+```
+
+Configurar o backend:
+
+```bash
+cd src/back
+cp .env.example .env
+docker compose up -d
+mvn spring-boot:run
+```
+
+Configurar o frontend noutra terminal:
+
+```bash
+cd src/front
+cp .env.example .env
+npm install
+npm start
+```
+
+A aplicación queda dispoñible normalmente en:
+
+```text
+http://localhost:4200
+```
+
+A guía completa de instalación local, instalación nunha máquina virtual Ubuntu Server e despregue en AWS está documentada en [Implantación](templates/6_Implantación.md).
 
 ## Uso
 
-> *EXPLICACIÓN*: É este apartado describe brevemente como se usará a aplicación Web do proxecto. Describe o uso da interface web *só o uso** (a modo de sumario) *dos aspectos máis relevantes do seu funcionamento** (máxima brevidade, coma se fose un anuncio reclamo ou comercial).
->
+Un usuario anónimo pode consultar experiencias e acceder ao rexistro ou ao inicio de sesión. Un usuario rexistrado pode crear viaxes, consultar os seus detalles, organizar actividades por días, engadir o custo dun voo e xestionar participantes. Os usuarios con rol `EMPRESA` poden crear e xestionar as súas propias experiencias turísticas. Os usuarios con rol `ADMIN` poden administrar usuarios e roles.
+
+Fluxo principal de uso:
+
+1. Rexistrarse ou iniciar sesión.
+2. Crear unha viaxe indicando destino, país e datas.
+3. Buscar voos e engadir o custo do billete á viaxe.
+4. Engadir actividades ou experiencias ao itinerario.
+5. Invitar participantes ou consultar os detalles da viaxe.
 
 ## Sobre o autor
 
-> *EXPLICACIÓN*: Realiza unha breve descrición de quen es (perfil profesional), os teus puntos fortes, ou tecnoloxías que máis dominas... a motivación do proxecto, tendo sobre todo en conta un nicho de mercado sen explotar.. *Non máis de 200 palabras**. Indica a forma fiable de contactar contigo durante o proceso de creación do proxecto.
+Proxecto desenvolvido por Rubén Barbeito como proxecto de fin de ciclo de Desenvolvemento de Aplicacións Web. O proxecto combina desenvolvemento frontend, backend, base de datos, despregue e documentación técnica, cun enfoque práctico orientado á creación dunha aplicación web completa.
 
 ## Licenza
 
-> *EXPLICACIÓN*: É requisito INDISPENSABLE o licenciar explicitamente o proxecto software. Recoméndase licenciar con GNU Free mentation License Version 1.3*. Crear un ficheiro `LICENSE` na raiz do repo, co teu ficheiro de licenza. Lembra que se empregas unha licenza de software libre estás a autorizar a derivación da túa obra baixo a mesma licenza que elixas, podendo dar continuidade, p. e. outro alumno, para continuar o teu proxecto noutro curso.
+O código fonte de ExploraMas distribúese baixo a licenza GNU General Public License v3.0 ou posterior. O texto da licenza está dispoñible no ficheiro [LICENSE](LICENSE).
 
-## Índice
+A documentación do proxecto distribúese baixo a GNU Free Documentation License v1.3 ou posterior, sen seccións invariantes nin textos de portada ou contraportada. O texto aplicable está dispoñible en [LICENSE-DOCUMENTATION](LICENSE-DOCUMENTATION).
 
-> *EXPLICACIÓN*: Simplemente indexa ordenadamente todo o tey proxecto.
+As librarías, frameworks e servizos externos utilizados manteñen as súas propias licenzas. O resumo das principais dependencias pode consultarse en [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
 
-1. [Anteproyecto](templates/1_Anteproxecto.md)
+## Índice da documentación
+
+1. [Anteproxecto](templates/1_Anteproxecto.md)
 2. [Empresa](templates/2_Empresa.md)
 3. [Análise](templates/3_Analise.md)
 4. [Deseño](templates/4_Deseño.md)
 5. [Codificación e probas](templates/5_Codificacion_e_probas.md)
 6. [Implantación](templates/6_Implantación.md)
 7. [Referencias](templates/7_Referencias.md)
-8. [Incidencias](templates/8_Incidencias.md)
 
 ## Guía de contribución
 
-> EXPLICACIÓN*: Tratándose dun proxecto de software libre, é moi importante que expoñas como se pode contribuír co teu proxecto. Algúns exemplos disto son realizar novas funcionalidades, corrección e/o optimización do código, realización de tests automatizados, novas interfaces de integración, desenvolvemento de plugins etc. Se o máis conciso que poidas.
+As contribucións poden realizarse mediante melloras no código, corrección de erros, ampliación de probas, melloras na documentación ou novas funcionalidades. Recoméndase traballar nunha rama separada, describir claramente os cambios realizados e comprobar que o frontend e o backend compilan antes de integrar modificacións.
 
-## Links
+Comprobacións recomendadas:
 
-> EXPLICACIÓN*: Ligazóns externas e descipciones destas ligazóns que creas conveniente indicar aquí. Xeralmente xa van estar integrados coa túa mentación, pero se requires realizar unha listaxe deles, leste é o lugar.
->
+```bash
+cd src/front
+npx tsc -p tsconfig.app.json --noEmit
+```
+
+```bash
+cd src/back
+mvn test
+```
+
+## Ligazóns
+
+- [Documentación de Angular](https://angular.dev/)
+- [Documentación de Spring Boot](https://spring.io/projects/spring-boot)
+- [MySQL](https://www.mysql.com/)
+- [Docker](https://www.docker.com/)
+- [Duffel API](https://duffel.com/docs)
+- [RestCountries](https://restcountries.com/)
