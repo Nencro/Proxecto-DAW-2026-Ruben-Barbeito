@@ -18,244 +18,214 @@ flowchart LR
 subgraph Clientes["Capa de Clientes"]
     C1[Usuario Anónimo]
     C2[Usuario Registrado]
-    C3[Administrador]
+    C3[Usuario Empresa]
+    C4[Administrador]
 end
 
 %% ===== FRONTEND =====
-subgraph Frontend["Frontend (Angular)"]
-    F1[Aplicación Web Angular]
+subgraph Amplify["AWS Amplify"]
+    F1[Frontend Angular]
+    F2[Configuración runtime assets/env.js]
 end
 
-%% ===== BACKEND =====
-subgraph Backend["Backend (Spring Boot)"]
+%% ===== EC2 =====
+subgraph EC2["Amazon EC2 - Ubuntu Server"]
 
-    subgraph API["Capa API"]
+    subgraph Nginx["Nginx"]
+        N1[Proxy inverso /api]
+    end
+
+    subgraph Backend["Backend Spring Boot"]
         B1[API REST]
-    end
-
-    subgraph APP["Capa de Aplicación"]
         B2[Servicio de Usuarios]
-        B3[Servicio de Destinos]
-        B4[Servicio de Viajes]
+        B3[Servicio de Viajes]
+        B4[Servicio de Experiencias]
+        B5[Servicio de Vuelos]
     end
 
-    subgraph DB["Capa de Base de Datos"]
-        D1[(Usuarios)]
-        D2[(Destinos)]
-        D3[(Viajes)]
+    subgraph Datos["Base de datos en EC2"]
+        D1[(MySQL 8 - exploramas)]
     end
 end
 
-%% ===== AWS =====
-subgraph AWS["Servicios AWS"]
-    S1[(Amazon RDS - MySQL)]
-    S2[(Amazon S3 - Imágenes)]
-    S3[(EC2 - Servidor)]
+%% ===== APIS EXTERNAS =====
+subgraph Externas["APIs externas"]
+    X1[Duffel API - Búsqueda de vuelos]
+    X2[RestCountries API - Datos de países]
 end
 
-%% ===== FLUJO =====
+%% ===== FLUJOS =====
 C1 --> F1
 C2 --> F1
 C3 --> F1
+C4 --> F1
 
-F1 --> B1
+F1 --> F2
+F1 -->|HTTP/HTTPS FRONT_API_BASE_URL| N1
+N1 --> B1
 
 B1 --> B2
 B1 --> B3
 B1 --> B4
+B1 --> B5
 
 B2 --> D1
-B3 --> D2
-B4 --> D3
+B3 --> D1
+B4 --> D1
 
-D1 --> S1
-D2 --> S1
-D3 --> S1
-
-B3 --> S2
-
-B1 --> S3
+B5 --> X1
+F1 --> X2
 
 %% ===== COLORES =====
 style Clientes fill:#FFE4D6,stroke:#333,stroke-width:2px
-style Frontend fill:#D6EAF8,stroke:#333,stroke-width:2px
+style Amplify fill:#D6EAF8,stroke:#333,stroke-width:2px
+style EC2 fill:#E8F8F5,stroke:#333,stroke-width:2px
+style Nginx fill:#FCF3CF,stroke:#333
 style Backend fill:#E8F8F5,stroke:#333,stroke-width:2px
-style API fill:#FCF3CF,stroke:#333
-style APP fill:#D5F5E3,stroke:#333
-style DB fill:#FADBD8,stroke:#333
-style AWS fill:#FEF9E7,stroke:#333,stroke-width:2px
+style Datos fill:#FADBD8,stroke:#333
+style Externas fill:#FEF9E7,stroke:#333,stroke-width:2px
 ```
 
 ## 2- Casos de uso
 ```mermaid
 flowchart TB
 
-%% ===== SISTEMA (ARRIBA) =====
+%% ===== SISTEMA =====
 subgraph Sistema["Sistema ExploraMas"]
-    U1((Buscar destinos))
-    U2((Ver detalles))
-    U3((Registrarse))
-    U4((Iniciar sesión))
-    U5((Perfil))
-    U6((Viajes))
-    U7((Admin usuarios))
-    U8((Gestionar contenido))
+    U1((Acceso y perfil))
+    U2((Consulta publica))
+    U3((Viajes))
+    U4((Experiencias))
+    U5((Administracion))
 end
 
-%% ===== ACTORES (ABAJO) =====
+%% ===== ACTORES =====
 A1[Usuario Anónimo]
 A2[Usuario Registrado]
-A3[Administrador]
+A3[Usuario Empresa]
+A4[Administrador]
 
 %% ===== RELACIONES =====
-A1 --> U1
 A1 --> U2
-A1 --> U3
 
 A2 --> U1
-A2 --> U2
-A2 --> U5
-A2 --> U6
+A2 --> U3
 A2 --> U4
 
-A3 --> U7
-A3 --> U8
+A3 --> U4
+
+A4 --> U5
 
 %% ===== COLORES =====
 style Sistema fill:#E8F8F5,stroke:#333,stroke-width:2px
 
 style A1 fill:#FFCDD2,stroke:#333
 style A2 fill:#BBDEFB,stroke:#333
-style A3 fill:#C8E6C9,stroke:#333
-
-%% ===== FLECHAS =====
-linkStyle 0 stroke:#E53935,stroke-width:2px
-linkStyle 1 stroke:#E53935,stroke-width:2px
-linkStyle 2 stroke:#E53935,stroke-width:2px
-
-linkStyle 3 stroke:#1E88E5,stroke-width:2px
-linkStyle 4 stroke:#1E88E5,stroke-width:2px
-linkStyle 5 stroke:#1E88E5,stroke-width:2px
-linkStyle 6 stroke:#1E88E5,stroke-width:2px
-linkStyle 7 stroke:#1E88E5,stroke-width:2px
-
-linkStyle 8 stroke:#43A047,stroke-width:2px
-linkStyle 9 stroke:#43A047,stroke-width:2px
+style A3 fill:#FFF9C4,stroke:#333
+style A4 fill:#C8E6C9,stroke:#333
 ```
+
+Nota: os usuarios con rol `EMPRESA` e `ADMIN` son sempre usuarios rexistrados, polo que tamen poden iniciar sesion, xestionar o seu perfil e acceder ás funcionalidades xerais dun usuario rexistrado. O usuario anonimo so pode consultar contido publico, como experiencias, e non ten acceso á xestion de perfil.
 
 
 ## 3- Diagrama de Base de Datos
 ### 3-1 Modelo entidad/relacion
 ```mermaid
-graph TD
-
-%% ENTIDADES
-U[USUARIO]
-R[ROL]
-V[VIAJE]
-D[LOCALIZACION]
-I[ITINERARIO]
-E[EXPERIENCIA]
-
-%% RELACIONES
-Rel1{TIENE_ROL}
-Rel2{CREA}
-Rel3{PARTICIPA}
-Rel4{TIENE}
-Rel5{INCLUYE}
-Rel6{TIENE}
-
-%% RELACIONES CON CARDINALIDAD
-U ---|N| Rel1
-Rel1 ---|N| R
-
-U ---|1| Rel2
-Rel2 ---|N| V
-
-U ---|N| Rel3
-Rel3 ---|N| V
-
-V ---|N| Rel4
-Rel4 ---|1| D
-
-V ---|1| Rel5
-Rel5 ---|N| I
-
-D ---|1| Rel6
-Rel6 ---|N| E
-
-%% COLORES ENTIDADES
-style U fill:#D6EAF8,stroke:#333,stroke-width:2px
-style R fill:#D6EAF8,stroke:#333,stroke-width:2px
-style V fill:#D6EAF8,stroke:#333,stroke-width:2px
-style D fill:#D6EAF8,stroke:#333,stroke-width:2px
-style I fill:#D6EAF8,stroke:#333,stroke-width:2px
-style E fill:#D6EAF8,stroke:#333,stroke-width:2px
-
-%% COLORES RELACIONES
-style Rel1 fill:#F9E79F,stroke:#333,stroke-width:2px
-style Rel2 fill:#F9E79F,stroke:#333,stroke-width:2px
-style Rel3 fill:#F9E79F,stroke:#333,stroke-width:2px
-style Rel4 fill:#F9E79F,stroke:#333,stroke-width:2px
-style Rel5 fill:#F9E79F,stroke:#333,stroke-width:2px
-style Rel6 fill:#F9E79F,stroke:#333,stroke-width:2px
-```
-### 3-3 Modelo relacional
-```mermaid
 erDiagram
-    ROL ||--o{ USUARIO_ROL : tiene
-    USUARIO ||--o{ USUARIO_ROL : asignado
-    USUARIO ||--o{ PARTICIPANTE_VIAJE : participa
-    VIAJE ||--o{ PARTICIPANTE_VIAJE : incluye
-    USUARIO ||--o{ VIAJE : crea
-    DESTINO ||--o{ VIAJE : pertenece
-    VIAJE ||--o{ ITINERARIO : contiene
+    PAISES ||--o{ USUARIOS : "pais de residencia"
+    PAISES ||--o{ DESTINOS : "contiene"
+    PAISES ||--o{ EXPERIENCIAS : "ubica"
 
-    ROL {
-        int id PK
-        string nombre
+    USUARIOS_REGISTRADOS ||--o{ VIAJES : "crean planes personales"
+    USUARIOS_REGISTRADOS ||--o{ PARTICIPACIONES : "participan"
+    VIAJES ||--o{ PARTICIPACIONES : "incluyen usuarios"
+    DESTINOS ||--o{ VIAJES : "son destino de"
+    VIAJES ||--o{ ITINERARIOS : "contienen"
+
+    ADMINISTRADORES ||--o{ USUARIOS : "gestionan"
+    EMPRESAS ||--o{ EXPERIENCIAS : "crean"
+    ADMINISTRADORES ||--o{ EXPERIENCIAS : "crean"
+
+    USUARIOS ||--|| USUARIOS_REGISTRADOS : "especializacion"
+    USUARIOS_REGISTRADOS ||--o| EMPRESAS : "puede ser"
+    USUARIOS_REGISTRADOS ||--o| ADMINISTRADORES : "puede ser"
+
+    USUARIOS {
+        BIGINT id
+        VARCHAR username
+        VARCHAR nombre
+        VARCHAR apellidos
+        VARCHAR email
+        VARCHAR telefono
+        DATE fecha_registro
     }
 
-    USUARIO {
-        int id PK
-        string nombre
-        string apellidos
-        string email UK
-        string contrasena
+    USUARIOS_REGISTRADOS {
+        BIGINT usuario_id
+        VARCHAR password_cifrada
     }
 
-    USUARIO_ROL {
-        int usuario_id FK
-        int rol_id FK
+    EMPRESAS {
+        BIGINT usuario_id
     }
 
-    DESTINO {
-        int id PK
-        string nombre
-        string descripcion
-        string pais
+    ADMINISTRADORES {
+        BIGINT usuario_id
     }
 
-    VIAJE {
-        int id PK
-        date fecha_inicio
-        date fecha_fin
-        int destino_id FK
-        int id_creador FK
+    PAISES {
+        BIGINT id
+        VARCHAR nombre
+        CHAR codigo
+        VARCHAR prefijo
     }
 
-    PARTICIPANTE_VIAJE {
-        int usuario_id FK
-        int viaje_id FK
+    DESTINOS {
+        BIGINT id
+        VARCHAR nombre
+        TEXT descripcion
     }
 
-    ITINERARIO {
-        int id PK
-        date fecha
-        string descripcion
-        int viaje_id FK
+    VIAJES {
+        BIGINT id
+        DATE fecha_inicio
+        DATE fecha_fin
+        DECIMAL coste_billete
+    }
+
+    PARTICIPACIONES {
+        BIGINT usuario_id
+        BIGINT viaje_id
+    }
+
+    ITINERARIOS {
+        BIGINT id
+        DATE fecha
+        TIME hora
+        DECIMAL coste
+        TEXT descripcion
+    }
+
+    EXPERIENCIAS {
+        BIGINT id
+        VARCHAR nombre
+        VARCHAR localidad
+        TEXT descripcion
+        INT tamanio_minimo
+        INT tamanio_maximo
+        INT duracion_minutos
+        DECIMAL precio
+        BLOB imagen
     }
 ```
+
+Nota: neste proxecto os `VIAJES` non son paquetes comerciais creados pola administracion, senon plans persoais que crea un usuario rexistrado para organizar datas, destino, billete, actividades e participantes. As `EXPERIENCIAS` son propostas independentes publicadas por usuarios empresa ou administradores; poden consultarse e engadirse como actividade a un plan de viaxe, pero non pertencen obrigatoriamente a un unico viaxe.
+
+No modelo conceptual non se representa `ROL` como entidade principal, porque os tipos `EMPRESAS` e `ADMINISTRADORES` se entenden como especializacions de `USUARIOS_REGISTRADOS`. No modelo relacional si pode aparecer unha taboa de roles para implementar esta especializacion de forma flexible na base de datos.
+
+### 3-3 Modelo relacional
+
+![Modelo relacional da base de datos](../doc/img/bd.png)
 
 ## 4- Deseño de interface de usuarios
 
