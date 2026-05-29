@@ -245,3 +245,213 @@ VALUES
 ON DUPLICATE KEY UPDATE
   codigo = VALUES(codigo),
   prefijo = VALUES(prefijo);
+
+INSERT INTO experiencia (
+  nombre,
+  localidad,
+  descripcion,
+  tamanio_minimo,
+  tamanio_maximo,
+  duracion_minutos,
+  precio,
+  pais_id,
+  id_creador,
+  imagen,
+  imagen_tipo
+)
+SELECT
+  'Ruta historica por el centro de Madrid',
+  'Madrid',
+  'Recorrido guiado por los puntos mas representativos del centro de Madrid, incluyendo plazas, calles historicas y monumentos principales.',
+  2,
+  20,
+  150,
+  24.99,
+  p.id,
+  u.id,
+  NULL,
+  NULL
+FROM pais p
+INNER JOIN usuario u ON u.username = 'empresa'
+WHERE p.codigo = 'ES'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM experiencia e
+    WHERE e.nombre = 'Ruta historica por el centro de Madrid'
+      AND e.localidad = 'Madrid'
+  );
+
+INSERT INTO experiencia (
+  nombre,
+  localidad,
+  descripcion,
+  tamanio_minimo,
+  tamanio_maximo,
+  duracion_minutos,
+  precio,
+  pais_id,
+  id_creador,
+  imagen,
+  imagen_tipo
+)
+SELECT
+  'Paseo gastronomico por Lisboa',
+  'Lisboa',
+  'Experiencia para descubrir sabores tradicionales portugueses en mercados, cafeterias y pequenos locales del centro de Lisboa.',
+  2,
+  12,
+  180,
+  39.50,
+  p.id,
+  u.id,
+  NULL,
+  NULL
+FROM pais p
+INNER JOIN usuario u ON u.username = 'empresa'
+WHERE p.codigo = 'PT'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM experiencia e
+    WHERE e.nombre = 'Paseo gastronomico por Lisboa'
+      AND e.localidad = 'Lisboa'
+  );
+
+INSERT INTO experiencia (
+  nombre,
+  localidad,
+  descripcion,
+  tamanio_minimo,
+  tamanio_maximo,
+  duracion_minutos,
+  precio,
+  pais_id,
+  id_creador,
+  imagen,
+  imagen_tipo
+)
+SELECT
+  'Tour nocturno por Paris',
+  'Paris',
+  'Visita guiada por zonas emblematicas de Paris al atardecer, pensada para conocer la ciudad iluminada y sus lugares mas fotografiados.',
+  2,
+  18,
+  120,
+  32.00,
+  p.id,
+  u.id,
+  NULL,
+  NULL
+FROM pais p
+INNER JOIN usuario u ON u.username = 'empresa'
+WHERE p.codigo = 'FR'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM experiencia e
+    WHERE e.nombre = 'Tour nocturno por Paris'
+      AND e.localidad = 'Paris'
+  );
+
+INSERT INTO experiencia (
+  nombre,
+  localidad,
+  descripcion,
+  tamanio_minimo,
+  tamanio_maximo,
+  duracion_minutos,
+  precio,
+  pais_id,
+  id_creador,
+  imagen,
+  imagen_tipo
+)
+SELECT
+  'Clase de pasta fresca en Roma',
+  'Roma',
+  'Taller practico para aprender a preparar pasta fresca italiana con explicaciones paso a paso y degustacion final.',
+  2,
+  10,
+  150,
+  45.00,
+  p.id,
+  u.id,
+  NULL,
+  NULL
+FROM pais p
+INNER JOIN usuario u ON u.username = 'empresa'
+WHERE p.codigo = 'IT'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM experiencia e
+    WHERE e.nombre = 'Clase de pasta fresca en Roma'
+      AND e.localidad = 'Roma'
+  );
+
+INSERT INTO experiencia (
+  nombre,
+  localidad,
+  descripcion,
+  tamanio_minimo,
+  tamanio_maximo,
+  duracion_minutos,
+  precio,
+  pais_id,
+  id_creador,
+  imagen,
+  imagen_tipo
+)
+SELECT
+  'Excursion urbana por Londres',
+  'Londres',
+  'Ruta a pie por zonas conocidas de Londres con paradas en monumentos, barrios historicos y puntos de interes cultural.',
+  2,
+  25,
+  180,
+  29.00,
+  p.id,
+  u.id,
+  NULL,
+  NULL
+FROM pais p
+INNER JOIN usuario u ON u.username = 'empresa'
+WHERE p.codigo = 'GB'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM experiencia e
+    WHERE e.nombre = 'Excursion urbana por Londres'
+      AND e.localidad = 'Londres'
+  );
+
+INSERT INTO experiencia (
+  nombre,
+  localidad,
+  descripcion,
+  tamanio_minimo,
+  tamanio_maximo,
+  duracion_minutos,
+  precio,
+  pais_id,
+  id_creador,
+  imagen,
+  imagen_tipo
+)
+SELECT
+  'Introduccion a la cultura japonesa en Tokio',
+  'Tokio',
+  'Actividad guiada para conocer costumbres japonesas, templos urbanos y recomendaciones practicas para moverse por Tokio.',
+  1,
+  12,
+  150,
+  36.00,
+  p.id,
+  u.id,
+  NULL,
+  NULL
+FROM pais p
+INNER JOIN usuario u ON u.username = 'empresa'
+WHERE p.codigo = 'JP'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM experiencia e
+    WHERE e.nombre = 'Introduccion a la cultura japonesa en Tokio'
+      AND e.localidad = 'Tokio'
+  );

@@ -3,6 +3,8 @@
 - [FASE DE IMPLANTACION](#fase-de-implantacion)
   - [1- Manual tecnico](#1--manual-tecnico)
     - [1.1- Instalacion](#11--instalacion)
+      - [1.1.1- Instalacion en AWS EC2 y Amplify](#111--instalacion-en-aws-ec2-y-amplify)
+      - [1.1.2- Instalacion local en una maquina virtual Ubuntu Server](#112--instalacion-local-en-una-maquina-virtual-ubuntu-server)
     - [1.2- Administracion do sistema](#12--administracion-do-sistema)
   - [2- Manual de usuario](#2--manual-de-usuario)
   - [3- Melloras futuras](#3--melloras-futuras)
@@ -20,7 +22,7 @@ ExploraMas esta dividida en dous proxectos principais:
 
 Requisitos recomendados:
 
-- Java 17 ou superior.
+- Java 21 ou superior.
 - Maven.
 - Node.js e npm.
 - MySQL 8 ou unha base de datos compatible, como TiDB.
@@ -119,34 +121,163 @@ http://localhost:4200
 npx tsc -p tsconfig.app.json --noEmit
 ```
 
-Configuracion da maquina Ubuntu en AWS:
+#### 1.1.1- Instalacion en AWS EC2 y Amplify
 
-Para a implantacion en producion pódese empregar unha instancia EC2 con Ubuntu Server LTS. Unha configuracion inicial suficiente para o proxecto seria unha instancia `t3.small` ou similar, xa que a base de datos esta nun servizo externo e a maquina executaria principalmente Nginx e a API de Spring Boot.
+Esta instalacion separa el proyecto en dos partes:
 
-No grupo de seguridade de AWS deben abrirse so os portos necesarios:
+- Backend Spring Boot en una instancia Amazon EC2 con Ubuntu Server.
+- Frontend Angular en AWS Amplify.
 
-- `22`: SSH, restrinxido ao enderezo IP do administrador.
-- `80`: HTTP, aberto para redireccionar a HTTPS.
-- `443`: HTTPS, aberto para servir a aplicacion.
+Arquitectura del despliegue:
 
-Non se deben abrir publicamente os portos `8080`, `3306` nin `4000`. O porto `8080` queda so para comunicacion interna entre Nginx e Spring Boot, e a conexion coa base de datos externa faise desde a aplicacion usando as credenciais do ficheiro `.env`.
+```text
+Usuario
+   |
+   v
+AWS Amplify - Frontend Angular
+   |
+   | Peticiones HTTP/HTTPS a FRONT_API_BASE_URL
+   v
+Amazon EC2 - Backend Spring Boot
+   |
+   | JDBC
+   v
+MySQL / TiDB
+```
 
-Paquetes basicos da maquina:
+Preparacion de la instancia EC2:
+
+1. Crear una instancia EC2 con Ubuntu Server LTS.
+2. Usar una instancia `t3.small` o similar para un despliegue basico.
+3. Configurar el grupo de seguridad con los puertos necesarios:
+
+- `22`: SSH, restringido a la IP del administrador.
+- `80`: HTTP, si se usa Nginx o Certbot.
+- `443`: HTTPS, recomendado para produccion.
+- `8080`: solo si se expone directamente el backend. Lo recomendable es no abrirlo y usar Nginx como proxy.
+- `3306`: no debe abrirse publicamente. La base de datos debe ser local a la maquina, privada o externa segura.
+
+Instalar paquetes en EC2:
 
 ```bash
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y nginx openjdk-17-jre git curl
+sudo apt install -y git curl unzip ca-certificates openjdk-21-jdk maven nginx
 ```
 
-Estrutura recomendada na maquina:
+Instalar Docker y Docker Compose desde el repositorio oficial de Docker:
 
-```text
-/var/www/exploramas        -> frontend Angular compilado
-/opt/exploramas/back       -> backend Spring Boot e ficheiro .env
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo ${UBUNTU_CODENAME:-$VERSION_CODENAME}) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo usermod -aG docker $USER
 ```
 
-O backend pode executarse como servizo de sistema. Un exemplo de unidade `systemd` seria:
+Despues de ejecutar `usermod`, cerrar sesion SSH y volver a entrar para que se apliquen los permisos de Docker.
+
+Clonar el proyecto:
+
+```bash
+git clone <url-do-repositorio>
+cd Proxecto-DAW-2026-Ruben-Barbeito
+```
+
+Configurar la base de datos:
+
+Entrar en la carpeta del backend:
+
+```bash
+cd src/back
+```
+
+Crear el fichero `.env` a partir del ejemplo si existe:
+
+```bash
+cp .env.example .env
+```
+
+Si no existe `.env.example`, crear el fichero manualmente:
+
+```bash
+touch .env
+```
+
+Abrir el fichero:
+
+```bash
+nano .env
+```
+
+Si se quiere usar MySQL dentro de la propia EC2, pegar o modificar estos valores:
+
+```env
+MYSQL_ROOT_PASSWORD=contrasinal-root
+MYSQL_DATABASE=exploramas
+MYSQL_USER=daw
+MYSQL_PASSWORD=contrasinal-daw
+MYSQL_PORT=3306
+
+SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/exploramas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+SPRING_DATASOURCE_USERNAME=daw
+SPRING_DATASOURCE_PASSWORD=contrasinal-daw
+```
+
+Levantar MySQL desde `src/back`:
+
+```bash
+docker compose up -d
+```
+
+Si se usa una base de datos externa, como TiDB Cloud o Amazon RDS, no es necesario levantar el contenedor MySQL. En ese caso se deben configurar estas variables con los datos del proveedor dentro del mismo fichero `.env`:
+
+```env
+SPRING_DATASOURCE_URL=jdbc:mysql://host:porto/exploramas?useSSL=true&requireSSL=true&serverTimezone=UTC
+SPRING_DATASOURCE_USERNAME=usuario
+SPRING_DATASOURCE_PASSWORD=contrasinal
+```
+
+Configurar el resto de variables del backend:
+
+```env
+SERVER_PORT=8080
+JWT_SECRET=clave-secreta-de-polo-menos-32-caracteres
+JWT_EXPIRATION_MINUTES=120
+DUFFEL_API_BASE_URL=https://api.duffel.com
+DUFFEL_TOKEN=token-de-duffel
+DUFFEL_VERSION=v2
+CORS_ALLOWED_ORIGINS=https://dominio-de-amplify.amplifyapp.com
+```
+
+Para guardar en `nano`, pulsar `Ctrl + O`, confirmar con `Enter` y salir con `Ctrl + X`.
+
+Compilar el backend:
+
+```bash
+mvn clean package -DskipTests
+```
+
+Crear una carpeta de despliegue:
+
+```bash
+sudo mkdir -p /opt/exploramas/back
+sudo cp target/travel-back-0.0.1-SNAPSHOT.jar /opt/exploramas/back/app.jar
+sudo cp .env /opt/exploramas/back/.env
+sudo chown -R ubuntu:ubuntu /opt/exploramas/back
+```
+
+Crear el servicio `systemd` en `/etc/systemd/system/exploramas-back.service`:
+
+Abrir el fichero del servicio:
+
+```bash
+sudo nano /etc/systemd/system/exploramas-back.service
+```
+
+Pegar este contenido:
 
 ```ini
 [Unit]
@@ -166,7 +297,9 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
-Despois de crear o ficheiro en `/etc/systemd/system/exploramas-back.service`, activaríase con:
+Para guardar en `nano`, pulsar `Ctrl + O`, confirmar con `Enter` y salir con `Ctrl + X`.
+
+Activar el servicio:
 
 ```bash
 sudo systemctl daemon-reload
@@ -175,27 +308,440 @@ sudo systemctl start exploramas-back
 sudo systemctl status exploramas-back
 ```
 
-Configuracion de Nginx:
+Configurar Nginx como proxy del backend:
 
-Nginx encárgase de servir o frontend Angular e de reenviar as chamadas `/api` ao backend Spring Boot. Deste xeito, Spring Boot non queda exposto directamente a internet.
+Crear el fichero de configuracion:
 
-Exemplo de configuracion en `/etc/nginx/sites-available/exploramas`:
+```bash
+sudo nano /etc/nginx/sites-available/exploramas-api
+```
+
+Pegar este contenido:
 
 ```nginx
 server {
     listen 80;
-    server_name dominio-exemplo.com www.dominio-exemplo.com;
+    server_name api.dominio-exemplo.com;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location ~ /\.(env|git) {
+        deny all;
+    }
+}
+```
+
+Para guardar en `nano`, pulsar `Ctrl + O`, confirmar con `Enter` y salir con `Ctrl + X`.
+
+Activar la configuracion:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/exploramas-api /etc/nginx/sites-enabled/exploramas-api
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+Para HTTPS se recomienda usar Certbot cuando el dominio apunte a la instancia:
+
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d api.dominio-exemplo.com
+```
+
+Despliegue del frontend en AWS Amplify:
+
+1. Entrar en AWS Amplify.
+2. Crear una nueva aplicacion desde el repositorio.
+3. Seleccionar la rama que se quiere desplegar.
+4. Indicar como carpeta de aplicacion `src/front`.
+5. Configurar las variables de entorno:
+
+```env
+FRONT_API_BASE_URL=https://api.dominio-exemplo.com/api
+FRONT_REST_COUNTRIES_URL=https://restcountries.com/v3.1/all?fields=name,cca2,translations,flag,idd
+```
+
+Como el proyecto genera `assets/env.js` desde el fichero `.env`, la configuracion de build de Amplify debe crear ese fichero antes de compilar. Un ejemplo de `amplify.yml` seria:
+
+```yaml
+version: 1
+applications:
+  - appRoot: src/front
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+            - printf "FRONT_API_BASE_URL=$FRONT_API_BASE_URL\nFRONT_REST_COUNTRIES_URL=$FRONT_REST_COUNTRIES_URL\n" > .env
+        build:
+          commands:
+            - npm run build
+      artifacts:
+        baseDirectory: dist/browser
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+```
+
+Despues del primer despliegue en Amplify hay que copiar el dominio generado por Amplify y anadirlo en el backend:
+
+Entrar en la carpeta donde esta el `.env` de despliegue y abrirlo:
+
+```bash
+cd /opt/exploramas/back
+nano .env
+```
+
+```env
+CORS_ALLOWED_ORIGINS=https://dominio-de-amplify.amplifyapp.com
+```
+
+Guardar con `Ctrl + O`, confirmar con `Enter` y salir con `Ctrl + X`. Luego se reinicia el backend:
+
+```bash
+sudo systemctl restart exploramas-back
+```
+
+Comprobaciones finales en AWS:
+
+```bash
+sudo systemctl status exploramas-back
+sudo journalctl -u exploramas-back -n 100
+curl https://api.dominio-exemplo.com/api/experiences
+```
+
+Tambien se debe abrir la URL de Amplify en el navegador y comprobar:
+
+- Registro e inicio de sesion.
+- Carga de experiencias.
+- Busqueda de vuelos.
+- Creacion y detalle de viajes.
+
+#### 1.1.2- Instalacion local en una maquina virtual Ubuntu Server
+
+Esta instalacion permite ejecutar todo el proyecto en una maquina virtual Ubuntu Server dentro del equipo local. Es util para pruebas, demostraciones o despliegues en una red interna.
+
+Arquitectura local:
+
+```text
+Navegador del equipo anfitrion
+   |
+   | http://IP-DE-LA-VM
+   v
+Nginx en Ubuntu Server - Frontend Angular compilado
+   |
+   | http://localhost:8080/api
+   v
+Spring Boot en la misma VM
+   |
+   | jdbc:mysql://localhost:3306/exploramas
+   v
+MySQL en Docker Compose
+```
+
+Requisitos de la maquina virtual:
+
+- Ubuntu Server LTS.
+- Al menos 2 CPU, 4 GB de RAM y 20 GB de disco para trabajar con comodidad.
+- Red en modo puente o NAT con redireccion de puertos.
+- Acceso SSH desde el equipo anfitrion.
+
+Preparar el acceso por SSH:
+
+Antes de instalar el resto de dependencias es recomendable activar SSH en la maquina virtual para poder administrarla desde el terminal del equipo anfitrion.
+
+Dentro de la maquina virtual:
+
+```bash
+sudo apt update
+sudo apt install openssh-server -y
+sudo systemctl enable ssh
+sudo systemctl start ssh
+sudo systemctl status ssh
+```
+
+El servicio debe aparecer como `active (running)`. Despues se obtiene la IP de la maquina virtual:
+
+```bash
+ip a
+```
+
+Desde el terminal del equipo anfitrion se realiza la conexion:
+
+```bash
+ssh exploramas@IP-DE-LA-VM
+```
+
+Si el usuario de Ubuntu Server no se llama `exploramas`, se debe cambiar por el usuario real de la maquina.
+
+Instalar paquetes desde la conexion SSH:
+
+```bash
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y git curl unzip ca-certificates openjdk-21-jdk maven nginx
+```
+
+Instalar Docker y Docker Compose desde el repositorio oficial de Docker:
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo ${UBUNTU_CODENAME:-$VERSION_CODENAME}) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo usermod -aG docker $USER
+```
+
+Instalar Node.js 20:
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+Cerrar sesion y volver a entrar para aplicar los permisos de Docker.
+
+Clonar el repositorio:
+
+```bash
+git clone <url-do-repositorio>
+cd Proxecto-DAW-2026-Ruben-Barbeito
+```
+
+Configurar `src/back/.env` para usar MySQL local:
+
+Desde la raiz del proyecto, entrar en la carpeta del backend:
+
+```bash
+cd src/back
+```
+
+Si existe un fichero de ejemplo, se puede copiar como base:
+
+```bash
+cp .env.example .env
+```
+
+Si no existe `.env.example`, se crea directamente el fichero:
+
+```bash
+touch .env
+```
+
+Abrir el fichero para editarlo:
+
+```bash
+nano .env
+```
+
+Pegar o modificar el contenido con estos valores:
+
+```env
+SERVER_PORT=8080
+
+MYSQL_ROOT_PASSWORD=root
+MYSQL_DATABASE=exploramas
+MYSQL_USER=daw
+MYSQL_PASSWORD=daw123
+MYSQL_PORT=3306
+
+SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/exploramas?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+SPRING_DATASOURCE_USERNAME=daw
+SPRING_DATASOURCE_PASSWORD=daw123
+
+JWT_SECRET=clave-secreta-de-polo-menos-32-caracteres
+JWT_EXPIRATION_MINUTES=120
+DUFFEL_API_BASE_URL=https://api.duffel.com
+DUFFEL_TOKEN=token-de-duffel
+DUFFEL_VERSION=v2
+CORS_ALLOWED_ORIGINS=http://IP-DE-LA-VM,http://IP-DE-LA-VM:4200
+```
+
+Para guardar en `nano`, pulsar `Ctrl + O`, confirmar con `Enter` y salir con `Ctrl + X`.
+
+Nota sobre Duffel:
+
+Para que funcione el buscador de vuelos es necesario crear una cuenta en Duffel:
+
+1. Entrar en `https://duffel.com` y crear una cuenta.
+2. Acceder al panel de desarrollador.
+3. Crear o copiar un token de API desde la seccion de claves o access tokens.
+4. Usar ese valor en `DUFFEL_TOKEN`.
+
+La URL base de la API de Duffel se mantiene normalmente con este valor:
+
+```env
+DUFFEL_API_BASE_URL=https://api.duffel.com
+```
+
+La version de la API se indica en:
+
+```env
+DUFFEL_VERSION=v2
+```
+
+Si Duffel cambia la version recomendada o el endpoint base, debe actualizarse en el `.env` siguiendo la documentacion oficial de Duffel.
+
+Levantar la base de datos:
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+Compilar y ejecutar el backend:
+
+```bash
+mvn clean package -DskipTests
+java -jar target/travel-back-0.0.1-SNAPSHOT.jar
+```
+
+Nota: el comando `java -jar target/travel-back-0.0.1-SNAPSHOT.jar` ejecuta el backend en primer plano. Mientras este activo, el terminal queda ocupado mostrando los logs de Spring Boot. Para salir de esa pantalla y parar el backend se pulsa `Ctrl + C`.
+
+Para dejar el backend como servicio permanente, copiar el `.jar` y el `.env`:
+
+```bash
+sudo mkdir -p /opt/exploramas/back
+sudo cp target/travel-back-0.0.1-SNAPSHOT.jar /opt/exploramas/back/app.jar
+sudo cp .env /opt/exploramas/back/.env
+sudo chown -R $USER:$USER /opt/exploramas/back
+```
+
+Crear `/etc/systemd/system/exploramas-back.service`:
+
+Abrir el fichero del servicio:
+
+```bash
+sudo nano /etc/systemd/system/exploramas-back.service
+```
+
+Pegar este contenido:
+
+```ini
+[Unit]
+Description=ExploraMas Spring Boot Backend
+After=network.target docker.service
+
+[Service]
+User=ubuntu
+WorkingDirectory=/opt/exploramas/back
+EnvironmentFile=/opt/exploramas/back/.env
+ExecStart=/usr/bin/java -jar /opt/exploramas/back/app.jar
+SuccessExitStatus=143
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Si el usuario de la VM no se llama `ubuntu`, hay que cambiar `User=ubuntu` por el usuario correcto. Para consultar el usuario actual se puede usar:
+
+```bash
+whoami
+```
+
+Para guardar en `nano`, pulsar `Ctrl + O`, confirmar con `Enter` y salir con `Ctrl + X`.
+
+Activar el servicio:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable exploramas-back
+sudo systemctl start exploramas-back
+sudo systemctl status exploramas-back
+```
+
+Comandos utiles para administrar el backend:
+
+```bash
+sudo systemctl stop exploramas-back
+sudo systemctl restart exploramas-back
+sudo systemctl status exploramas-back
+sudo journalctl -u exploramas-back -f
+```
+
+Configurar el frontend:
+
+```bash
+cd ../front
+npm ci
+```
+
+Editar `src/front/.env`:
+
+Si existe un fichero de ejemplo, copiarlo:
+
+```bash
+cp .env.example .env
+```
+
+Si no existe, crear el fichero:
+
+```bash
+touch .env
+```
+
+Abrir el fichero:
+
+```bash
+nano .env
+```
+
+Pegar o modificar el contenido:
+
+```env
+FRONT_API_BASE_URL=http://IP-DE-LA-VM/api
+FRONT_REST_COUNTRIES_URL=https://restcountries.com/v3.1/all?fields=name,cca2,translations,flag,idd
+```
+
+Para guardar en `nano`, pulsar `Ctrl + O`, confirmar con `Enter` y salir con `Ctrl + X`.
+
+Compilar Angular:
+
+```bash
+npm run build
+```
+
+Publicar el frontend con Nginx:
+
+```bash
+sudo mkdir -p /var/www/exploramas
+sudo rm -rf /var/www/exploramas/*
+sudo cp -r dist/browser/* /var/www/exploramas/
+sudo chown -R www-data:www-data /var/www/exploramas
+sudo find /var/www/exploramas -type d -exec chmod 755 {} \;
+sudo find /var/www/exploramas -type f -exec chmod 644 {} \;
+```
+
+Crear `/etc/nginx/sites-available/exploramas`:
+
+Abrir el fichero de configuracion de Nginx:
+
+```bash
+sudo nano /etc/nginx/sites-available/exploramas
+```
+
+Pegar este contenido:
+
+```nginx
+server {
+    listen 80;
+    server_name _;
 
     root /var/www/exploramas;
     index index.html;
-
-    server_tokens off;
-    client_max_body_size 10M;
-
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
 
     location / {
         try_files $uri $uri/ /index.html;
@@ -204,78 +750,56 @@ server {
     location /api/ {
         proxy_pass http://127.0.0.1:8080/api/;
         proxy_http_version 1.1;
-
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-
-        proxy_connect_timeout 10s;
-        proxy_send_timeout 60s;
-        proxy_read_timeout 60s;
-    }
-
-    location ~* \.(env|log|sql|bak|config|properties|yml|yaml)$ {
-        deny all;
-    }
-
-    location ~ /\. {
-        deny all;
     }
 }
 ```
 
-Activacion da configuracion:
+Para guardar en `nano`, pulsar `Ctrl + O`, confirmar con `Enter` y salir con `Ctrl + X`.
+
+Activar la web:
 
 ```bash
+sudo rm -f /etc/nginx/sites-enabled/default
 sudo ln -s /etc/nginx/sites-available/exploramas /etc/nginx/sites-enabled/exploramas
 sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-Para HTTPS recoméndase empregar Certbot. Unha vez o dominio apunte á instancia:
+Comprobaciones finales en la VM:
 
 ```bash
-sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d dominio-exemplo.com -d www.dominio-exemplo.com
-```
-
-Cando HTTPS funcione correctamente, pódese engadir a cabeceira HSTS:
-
-```nginx
-add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-```
-
-Tamén se pode engadir limitacion basica de peticions para reducir ataques de forza bruta ou abuso da API:
-
-```nginx
-limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
-limit_req_zone $binary_remote_addr zone=login_limit:10m rate=3r/m;
-```
-
-E dentro do bloque `server`:
-
-```nginx
-location /api/auth/login {
-    limit_req zone=login_limit burst=5 nodelay;
-    proxy_pass http://127.0.0.1:8080/api/auth/login;
-}
-
-location /api/ {
-    limit_req zone=api_limit burst=30 nodelay;
-    proxy_pass http://127.0.0.1:8080/api/;
-}
-```
-
-Comprobacions finais da implantacion:
-
-```bash
-sudo nginx -t
-sudo systemctl status nginx
+cd ../back
+docker compose ps
 sudo systemctl status exploramas-back
-curl -I https://dominio-exemplo.com
-curl https://dominio-exemplo.com/api/experiences
+sudo systemctl status nginx
+curl http://localhost:8080/api/experiences
+curl http://localhost/api/experiences
 ```
+
+Desde el equipo anfitrion se accede con:
+
+```text
+http://IP-DE-LA-VM
+```
+
+Si se quiere arrancar Angular en modo desarrollo en vez de usar Nginx:
+
+```bash
+cd src/front
+npm start -- --host 0.0.0.0
+```
+
+En ese caso el frontend queda disponible en:
+
+```text
+http://IP-DE-LA-VM:4200
+```
+
+Y `CORS_ALLOWED_ORIGINS` debe incluir `http://IP-DE-LA-VM:4200`.
 
 Usuarios iniciais:
 
@@ -428,4 +952,4 @@ Posibles melloras para version posteriores:
 - Engadir logs estruturados e monitorizacion.
 - Permitir que os participantes comenten ou voten actividades dentro dun viaxe.
 
-[**<-Anterior**](../../README.md)
+[**<-Anterior**](../README.md)
