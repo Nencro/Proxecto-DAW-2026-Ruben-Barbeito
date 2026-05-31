@@ -85,6 +85,13 @@ Probas funcionais realizadas:
 - Listado, filtrado, creacion, edicion e borrado de experiencias.
 - Engadir experiencias a viaxes futuros do mesmo pais.
 
+Usuarios empregados nas probas:
+
+- `admin@exploramas.com`: usuario administrador, empregado para comprobar o acceso a vistas restrinxidas e a xestion de roles.
+- `empresa@exploramas.com`: usuario con rol de empresa, empregado para comprobar a creacion e xestion de experiencias.
+- `user@exploramas.com`: usuario normal, empregado para comprobar rexistro, login, perfil, viaxes, invitacions e participacion en viaxes.
+- Usuarios creados manualmente durante as probas, para verificar rexistros novos, erros por email repetido e funcionamento con distintas contas.
+
 Probas tecnicas realizadas:
 
 - Compilacion do front:
@@ -104,6 +111,15 @@ mvn -q -DskipTests compile
 - Comprobacion de que os tokens caducados eliminan o estado de sesion.
 - Comprobacion de que os ficheiros `.env` quedan ignorados por Git.
 - Comprobacion visual da interface en vista escritorio e mobil.
+
+Probas de seguridade realizadas:
+
+- Revisouse o comportamento dos formularios introducindo datos inesperados ou maliciosos.
+- Empregouse a IA de GitHub Copilot como apoio para propoñer posibles intentos de ataque controlados.
+- Probouse a introducion de cadeas relacionadas con cross-site scripting (XSS), como etiquetas HTML ou scripts, nos campos de texto da aplicacion.
+- Probouse a introducion de cadeas relacionadas con SQL injection nos formularios de login, rexistro, busqueda e creacion de contido.
+- Comprobouse que os formularios validan os datos antes de envialos e que o backend traballa con DTOs, validacions e consultas controladas mediante JPA, reducindo o risco de execucion directa de SQL introducido polo usuario.
+- Tamén se revisaron accesos sen autenticacion, tokens caducados e permisos insuficientes para confirmar que a API responde con erros controlados.
 
 Problemas atopados e solucionados:
 
