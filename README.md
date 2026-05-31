@@ -16,6 +16,9 @@
 
 ExploraMas é un proxecto de fin de ciclo en fase de desenvolvemento avanzado. A aplicación conta cun frontend Angular, unha API REST con Spring Boot, autenticación mediante token, xestión de usuarios, viaxes, experiencias e integración con servizos externos para a busca de voos e datos de países.
 
+Pódese visitar unha version despregada da paxina [aqui](https://staging.d28z49kx6xmyng.amplifyapp.com/).
+
+
 ## Descrición
 
 ExploraMas é unha aplicación web para organizar viaxes dunha forma sinxela. O obxectivo é que unha persoa usuaria poida crear os seus propios plans de viaxe, indicar destino, datas, custo do billete, actividades e participantes, mantendo toda a información nun único lugar.
