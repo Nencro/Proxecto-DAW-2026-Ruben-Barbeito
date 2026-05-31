@@ -16,11 +16,8 @@
 
 ExploraMas é un proxecto de fin de ciclo en fase de desenvolvemento avanzado. A aplicación conta cun frontend Angular, unha API REST con Spring Boot, autenticación mediante token, xestión de usuarios, viaxes, experiencias e integración con servizos externos para a busca de voos e datos de países.
 
-Pódese visitar unha version despregada da paxina en:
+Pódese visitar unha version despregada da paxina [aqui](https://staging.d28z49kx6xmyng.amplifyapp.com/).
 
-```text
-https://staging.d28z49kx6xmyng.amplifyapp.com/
-```
 
 ## Descrición
 
