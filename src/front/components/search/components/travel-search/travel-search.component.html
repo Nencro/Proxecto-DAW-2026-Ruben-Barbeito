@@ -11,7 +11,7 @@
         id="origenTexto"
         name="origenTexto"
         class="select-search-input"
-        placeholder="Madrid"
+        placeholder="Ej. Madrid"
         autocomplete="off"
         [(ngModel)]="textoOrigen"
         (focus)="abrirPanel('origen')"
@@ -38,7 +38,7 @@
           @if (cargandoOrigen) {
             <p class="select-option-empty">Buscando aeropuertos...</p>
           } @else if (errorOrigen) {
-            <p id="origenReferenciaError" class="select-option-empty select-option-error">{{ errorOrigen }}</p>
+            <p class="select-option-empty select-option-error">{{ errorOrigen }}</p>
           } @else {
             @for (aeropuerto of aeropuertosOrigen; track getTrackReferencia(aeropuerto, $index)) {
             <button
@@ -66,7 +66,7 @@
         id="destinoTexto"
         name="destinoTexto"
         class="select-search-input"
-        placeholder="Madrid"
+        placeholder="Ej. Madrid"
         autocomplete="off"
         [(ngModel)]="textoDestino"
         (focus)="abrirPanel('destino')"
@@ -93,7 +93,7 @@
           @if (cargandoDestino) {
             <p class="select-option-empty">Buscando aeropuertos...</p>
           } @else if (errorDestino) {
-            <p id="destinoReferenciaError" class="select-option-empty select-option-error">{{ errorDestino }}</p>
+            <p class="select-option-empty select-option-error">{{ errorDestino }}</p>
           } @else {
             @for (aeropuerto of aeropuertosDestino; track getTrackReferencia(aeropuerto, $index)) {
             <button
@@ -138,13 +138,16 @@
     </button>
   </form>
 
-  @if (getMensajesErrorFormulario().length) {
-    <div id="travelSearchErrors" class="search-form-errors" aria-live="polite">
+  <div id="travelSearchErrors" class="search-form-errors" aria-live="polite">
+    @if (getMensajesErrorFormulario().length) {
       @for (mensaje of getMensajesErrorFormulario(); track mensaje) {
         <p class="reference-status reference-status-error">{{ mensaje }}</p>
       }
-    </div>
-  }
+    }
+  </div>
+
+  <p id="origenReferenciaError" class="visually-hidden">{{ errorOrigen }}</p>
+  <p id="destinoReferenciaError" class="visually-hidden">{{ errorDestino }}</p>
 
   @if (cargandoReferencias) {
     <p class="reference-status">Cargando datos...</p>

@@ -20,6 +20,10 @@ ExploraMas esta dividida en dous proxectos principais:
 - `src/back`: API REST desenvolvida con Spring Boot.
 - `src/front`: aplicacion cliente desenvolvida con Angular.
 
+> **Importante sobre Duffel**
+>
+> Para que funcione o buscador de voos e necesario crear unha conta en Duffel e obter un token de API. Ese token debe configurarse na variable `DUFFEL_TOKEN` do ficheiro `.env` do backend ou do despregue correspondente.
+
 Requisitos recomendados:
 
 - Docker e Docker Compose para levantar a aplicacion completa con contedores.
@@ -239,7 +243,7 @@ Amazon EC2 - Backend Spring Boot
    |
    | JDBC
    v
-MySQL / TiDB
+MySQL en contenedor Docker dentro de EC2
 ```
 
 Preparacion de la instancia EC2:
@@ -327,14 +331,6 @@ Levantar MySQL desde `src/back`:
 
 ```bash
 docker compose up -d
-```
-
-Si se usa una base de datos externa, como TiDB Cloud o Amazon RDS, no es necesario levantar el contenedor MySQL. En ese caso se deben configurar estas variables con los datos del proveedor dentro del mismo fichero `.env`:
-
-```env
-SPRING_DATASOURCE_URL=jdbc:mysql://host:porto/exploramas?useSSL=true&requireSSL=true&serverTimezone=UTC
-SPRING_DATASOURCE_USERNAME=usuario
-SPRING_DATASOURCE_PASSWORD=contrasinal
 ```
 
 Configurar el resto de variables del backend:
@@ -615,60 +611,6 @@ Clonar el repositorio:
 git clone <url-do-repositorio>
 cd Proxecto-DAW-2026-Ruben-Barbeito
 ```
-
-Levantar el proyecto completo con contenedores:
-
-```bash
-cd docker
-cp .env.example .env
-nano .env
-```
-
-En `docker/.env` hay que revisar la configuracion de MySQL, JWT, Duffel, CORS y la URL del backend usada por el frontend:
-
-```env
-MYSQL_ROOT_PASSWORD=root
-MYSQL_DATABASE=exploramas
-MYSQL_USER=daw
-MYSQL_PASSWORD=daw123
-MYSQL_PORT=3306
-
-JWT_SECRET=change-me-with-at-least-32-characters
-DUFFEL_API_BASE_URL=https://api.duffel.com
-DUFFEL_TOKEN=token-de-duffel
-CORS_ALLOWED_ORIGINS=http://IP-DE-LA-VM:4200
-FRONT_API_BASE_URL=http://IP-DE-LA-VM:8080/api
-```
-
-Para guardar en `nano`, pulsar `Ctrl + O`, confirmar con `Enter` y salir con `Ctrl + X`.
-
-Arrancar los contenedores:
-
-```bash
-docker compose up -d --build
-docker compose ps
-```
-
-Con esta opcion el frontend se consulta desde el equipo anfitrion en:
-
-```text
-http://IP-DE-LA-VM:4200
-```
-
-El backend queda disponible en:
-
-```text
-http://IP-DE-LA-VM:8080/api
-```
-
-Para ver logs o detener la aplicacion:
-
-```bash
-docker compose logs -f
-docker compose down
-```
-
-Si se prefiere ejecutar el backend, frontend y Nginx de forma manual, se pueden seguir los pasos siguientes.
 
 Configurar `src/back/.env` para usar MySQL local:
 
@@ -960,31 +902,15 @@ O script `init.sql` crea os roles base da aplicacion:
 - `EMPRESA`
 - `ADMIN`
 
-Tamén pode incluir usuarios iniciais para probas, como un usuario administrador e un usuario empresa. As contrasinais gardadas na base de datos deben estar cifradas con BCrypt.
+Tamén crea estes usuarios de proba:
 
-Estrutura xeral de despregue:
+| Usuario | Email | Contrasinal | Roles |
+|---|---|---|---|
+| `admin` | `admin@exploramas.com` | `admin123` | `ADMIN` |
+| `empresa` | `empresa@exploramas.com` | `empresa123` | `USUARIO`, `EMPRESA` |
+| `user` | `user@exploramas.com` | `user123` | `USUARIO` |
 
-```text
-Navegador
-   |
-   | HTTP
-   v
-Angular Frontend
-   |
-   | REST / JSON
-   v
-Spring Boot API
-   |
-   | JDBC
-   v
-MySQL / TiDB
-
-Spring Boot API
-   |
-   | HTTPS
-   v
-Duffel API / RestCountries
-```
+As contrasinais gardanse na base de datos cifradas con BCrypt.
 
 ### 1.2- Administracion do sistema
 
@@ -1097,9 +1023,7 @@ Posibles melloras para version posteriores:
 - Engadir paxinacion real nos listados de experiencias e viaxes.
 - Mellorar a busqueda de voos con filtros por prezo, escala, aeroliña e horario.
 - Engadir reservas reais de experiencias.
-- Crear panel de administracion completo.
 - Engadir internacionalizacion da interface.
-- Crear despregue automatizado con Docker e CI/CD.
 - Engadir logs estruturados e monitorizacion.
 - Permitir que os participantes comenten ou voten actividades dentro dun viaxe.
 

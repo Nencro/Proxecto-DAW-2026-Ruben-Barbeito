@@ -11,15 +11,6 @@
   text-align: center;
 }
 
-.experiences-header span {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--color-accent);
-  font-size: 13px;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
 .experiences-header h1 {
   margin: 0 0 12px;
   color: var(--color-text);
