@@ -1,0 +1,197 @@
+<section class="profile-page">
+  <div *ngIf="perfilNoEncontrado; else perfilEncontrado" class="profile-not-found">
+    <h1>Usuario no encontrado</h1>
+    <p>{{ mensajeErrorPerfil }}</p>
+  </div>
+
+  <ng-template #perfilEncontrado>
+  <form class="profile-card" (ngSubmit)="saveProfile()" #formularioPerfil="ngForm">
+    <aside class="profile-summary">
+      <div class="profile-avatar" aria-hidden="true">
+        <span class="profile-avatar__head"></span>
+        <span class="profile-avatar__body"></span>
+      </div>
+
+      <div class="profile-greeting">
+        <h1>Hola, {{ nombreMostrado }}</h1>
+        <p class="profile-username" *ngIf="userNameMostrado">&#64;{{ userNameMostrado }}</p>
+        <span>{{ miembroDesde }}</span>
+      </div>
+    </aside>
+
+    <div class="profile-fields">
+      <label class="profile-field" for="profileUsername">
+        Username
+        <span class="profile-input">
+          <input
+            id="profileUsername"
+            type="text"
+            name="userName"
+            autocomplete="username"
+            placeholder="username"
+            [(ngModel)]="userName"
+            disabled
+            required
+          />
+        </span>
+      </label>
+
+      <label class="profile-field" for="profileName">
+        Nombre
+        <span class="profile-input">
+          <input
+            id="profileName"
+            type="text"
+            name="nombre"
+            autocomplete="given-name"
+            placeholder="Carlos Javier"
+            [(ngModel)]="nombre"
+            [disabled]="!editando"
+            minlength="2"
+            maxlength="100"
+            pattern="^[A-Za-zÀ-ÿ]+(?:[ '\-][A-Za-zÀ-ÿ]+)*$"
+            title="Introduce un nombre válido."
+          />
+          <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
+        </span>
+      </label>
+
+      <label class="profile-field" for="profileSurname">
+        Apellidos
+        <span class="profile-input">
+          <input
+            id="profileSurname"
+            type="text"
+            name="apellidos"
+            autocomplete="family-name"
+            placeholder="Catano Dominguez"
+            [(ngModel)]="apellidos"
+            [disabled]="!editando"
+            maxlength="150"
+            pattern="^[A-Za-zÀ-ÿ]+(?:[ '\-][A-Za-zÀ-ÿ]+)*$"
+            title="Introduce apellidos válidos."
+          />
+          <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
+        </span>
+      </label>
+
+      <label class="profile-field" for="profileEmail">
+        Email
+        <span class="profile-input">
+          <input
+            id="profileEmail"
+            type="email"
+            name="email"
+            autocomplete="email"
+            placeholder="correo@correo.com"
+            [ngModel]="emailMostrado"
+            disabled
+            required
+          />
+        </span>
+      </label>
+
+      <label class="profile-field" for="profilePhone">
+        Telefono
+        <span class="profile-input profile-phone-input">
+          <span class="profile-phone-prefix">{{ prefijoPais || '+--' }}</span>
+          <input
+            id="profilePhone"
+            type="tel"
+            name="telefono"
+            autocomplete="tel"
+            placeholder="666 666 666"
+            [(ngModel)]="telefono"
+            [disabled]="!editando"
+            pattern="^[0-9+\(\)\s\-]{7,20}$"
+            title="Introduce un teléfono válido."
+          />
+          <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
+        </span>
+      </label>
+
+      <label class="profile-field profile-country-field" for="profileCountry">
+        País
+        <span class="profile-input">
+          <input
+            id="profileCountry"
+            name="pais"
+            type="text"
+            autocomplete="country-name"
+            placeholder="Espana (ES)"
+            [(ngModel)]="paisBusqueda"
+            (ngModelChange)="buscarPaises()"
+            (focus)="buscarPaises()"
+            (blur)="ocultarSugerenciasPais()"
+            [disabled]="!editando"
+            pattern="^[A-Za-zÀ-ÿ'\- ]+ \([A-Z]{2}\)$"
+            title="Selecciona un país de la lista, por ejemplo España (ES)."
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls="profileCountrySuggestions"
+            [attr.aria-expanded]="mostrarSugerenciasPais"
+          />
+          <img *ngIf="editando" class="profile-edit" src="assets/icons-editar.svg" alt="" aria-hidden="true" />
+        </span>
+
+        <div *ngIf="mostrarSugerenciasPais" id="profileCountrySuggestions" class="country-suggestions" role="listbox" aria-label="Sugerencias de país">
+          <button
+            *ngFor="let paisDisponible of sugerenciasPais"
+            type="button"
+            class="country-suggestion"
+            role="option"
+            (mousedown)="seleccionarPais(paisDisponible)"
+          >
+            <span>{{ paisDisponible.name }}</span>
+            <small>{{ paisDisponible.code }} · {{ paisDisponible.phonePrefix || 'Sin prefijo' }}</small>
+          </button>
+
+          <p *ngIf="!sugerenciasPais.length" class="country-suggestion-status">No hay coincidencias.</p>
+        </div>
+      </label>
+
+      <section *ngIf="adminMode" class="profile-roles">
+        <h2>Roles del usuario</h2>
+        <p>El rol USUARIO es el rol base y no se puede eliminar.</p>
+
+        <div class="profile-role-list">
+          <label *ngFor="let rol of rolesDisponibles" class="profile-role-option">
+            <input
+              type="checkbox"
+              [attr.aria-label]="'Rol ' + rol"
+              [checked]="tieneRol(rol)"
+              [disabled]="rol === 'USUARIO' || guardandoRoles"
+              (change)="alternarRol(rol, $any($event.target).checked)"
+            />
+            {{ rol }}
+          </label>
+        </div>
+
+        <button class="profile-button app-button app-button--primary" type="button" (click)="guardarRoles()" [disabled]="guardandoRoles">
+          {{ guardandoRoles ? 'Guardando...' : 'Guardar roles' }}
+        </button>
+
+        <p *ngIf="mensajeRoles" class="profile-role-message">{{ mensajeRoles }}</p>
+        <p *ngIf="errorRoles" class="profile-role-error">{{ errorRoles }}</p>
+      </section>
+
+      <button *ngIf="!editando && puedeEditarPerfil" class="profile-button app-button app-button--primary" type="button" (click)="activarEdicion()">
+        Editar
+      </button>
+
+      <div class="profile-actions" *ngIf="editando && puedeEditarPerfil">
+        <button class="profile-button app-button app-button--secondary" type="button" (click)="cancelarEdicion()" [disabled]="guardando">
+          Cancelar
+        </button>
+        <button class="profile-button app-button app-button--primary" type="submit" [disabled]="!formularioPerfil.valid || guardando">
+          Guardar
+        </button>
+      </div>
+
+      <button *ngIf="puedeEditarPerfil" class="logout-button app-button app-button--danger" type="button" (click)="logout()">
+        Cerrar sesión
+      </button>
+    </div>
+  </form>
+  </ng-template>
+</section>

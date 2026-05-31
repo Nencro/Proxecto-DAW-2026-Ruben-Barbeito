@@ -59,6 +59,10 @@ export interface ConfirmDialogData {
       .confirm-dialog-actions {
         flex-direction: column;
       }
+
+      .confirm-dialog-actions .app-button--danger {
+        order: -1;
+      }
     }
   `]
 })

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../../../services/api.service';
-import { TravelSearchComponent } from '../../../travel-search/travel-search.component';
+import { TravelSearchComponent } from '../../components/travel-search/travel-search.component';
 import { FlightResultsComponent } from '../../components/flight-results/flight-results.component';
 import {
   CriteriosBusqueda,

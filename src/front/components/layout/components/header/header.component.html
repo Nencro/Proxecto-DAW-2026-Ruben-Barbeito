@@ -1,0 +1,88 @@
+<header class="app-header">
+  <a class="brand" routerLink="/" aria-label="ExploraMas inicio">
+    <img class="brand-logo" src="assets/logo_exploramas.png" alt="ExploraMas" />
+  </a>
+
+  <div class="header-actions">
+    @if (autenticado) {
+    <form class="compact-search" aria-label="Buscar viajes" (ngSubmit)="search()">
+      <label class="compact-field">
+        <span class="visually-hidden">Buscar</span>
+        <input type="text" name="textoBusqueda" placeholder="Buscar" [(ngModel)]="textoBusqueda" />
+      </label>
+
+      <button class="compact-search-button" type="submit" aria-label="Buscar">
+        <img src="assets/lupa.svg" alt="" aria-hidden="true" />
+      </button>
+    </form>
+    }
+
+    <nav class="header-nav" aria-label="Navegacion principal">
+      <a class="header-link" routerLink="/experiences">Experiencias</a>
+
+      @if (autenticado) {
+        <a class="my-travels-link" routerLink="/travels">Mis Viajes</a>
+        @if (esAdministrador) {
+          <a class="header-link" routerLink="/profile/search">Usuarios</a>
+        }
+        <div class="profile-menu">
+          <button
+            class="user-button"
+            type="button"
+            aria-label="Abrir opciones de perfil"
+            [attr.aria-expanded]="perfilMenuAbierto"
+            aria-haspopup="menu"
+            aria-controls="profileMenu"
+            (click)="alternarMenuPerfil()"
+          >
+            <span class="user-button__icon" aria-hidden="true">
+              <span class="user-button__head"></span>
+              <span class="user-button__body"></span>
+            </span>
+            <span class="user-button__name">{{ nombreUsuario }}</span>
+          </button>
+
+          @if (perfilMenuAbierto) {
+            <div id="profileMenu" class="profile-dropdown" role="menu">
+              <a routerLink="/profile" role="menuitem" (click)="cerrarMenuPerfil()">Ver perfil</a>
+              <button type="button" role="menuitem" (click)="logout()">Cerrar sesión</button>
+            </div>
+          }
+        </div>
+      } @else {
+        <a class="login-link" routerLink="/register">Registro</a>
+        <a class="login-link" routerLink="/login">Login</a>
+      }
+    </nav>
+  </div>
+
+  <button
+    type="button"
+    class="mobile-menu-button"
+    aria-label="Abrir menu"
+    [attr.aria-expanded]="menuMovilAbierto"
+    (click)="alternarMenuMovil()"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  @if (menuMovilAbierto) {
+    <nav class="mobile-menu" aria-label="Menu movil">
+      @if (autenticado) {
+        @if (esAdministrador) {
+          <a routerLink="/profile/search" (click)="cerrarMenuMovil()">Usuarios</a>
+        }
+        <a routerLink="/travels" (click)="cerrarMenuMovil()">Mis Viajes</a>
+        <a routerLink="/experiences" (click)="cerrarMenuMovil()">Experiencias</a>
+        <a routerLink="/profile" (click)="cerrarMenuMovil()">Perfil</a>
+        <button type="button" class="mobile-menu-logout" aria-label="Cerrar sesión" (click)="logout()">Cerrar sesión</button>
+      } @else {
+        <a routerLink="/experiences" (click)="cerrarMenuMovil()">Experiencias</a>
+        <a routerLink="/register" (click)="cerrarMenuMovil()">Registro</a>
+        <a routerLink="/login" (click)="cerrarMenuMovil()">Login</a>
+      }
+    </nav>
+  }
+</header>

@@ -1,0 +1,156 @@
+<div class="travel-search-container">
+  <form
+    (ngSubmit)="handleSubmit()"
+    #formularioViaje="ngForm"
+    class="travel-search-bar"
+  >
+    <div class="search-field" [class.search-field-error]="campoVueloInvalido('origen')" cdkOverlayOrigin #origenOrigin="cdkOverlayOrigin">
+      <label for="origenTexto">Origen</label>
+      <input
+        type="text"
+        id="origenTexto"
+        name="origenTexto"
+        class="select-search-input"
+        placeholder="Madrid"
+        autocomplete="off"
+        [(ngModel)]="textoOrigen"
+        (focus)="abrirPanel('origen')"
+        (keydown)="reiniciarCampoSeleccionado('origen')"
+        (input)="buscarOpciones('origen')"
+        (blur)="cerrarPanel()"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="origenOpciones"
+        aria-describedby="travelSearchErrors origenReferenciaError"
+        [attr.aria-expanded]="panelAbierto === 'origen'"
+        [attr.aria-invalid]="campoVueloInvalido('origen') ? 'true' : null"
+        required
+      />
+      <input type="hidden" name="origen" [(ngModel)]="datosBusqueda.origen" required />
+
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="origenOrigin"
+        [cdkConnectedOverlayOpen]="panelAbierto === 'origen'"
+        [cdkConnectedOverlayWidth]="origenOrigin.elementRef.nativeElement.offsetWidth"
+      >
+        <div id="origenOpciones" class="select-options-panel" role="listbox" aria-label="Aeropuertos de origen">
+          @if (cargandoOrigen) {
+            <p class="select-option-empty">Buscando aeropuertos...</p>
+          } @else if (errorOrigen) {
+            <p id="origenReferenciaError" class="select-option-empty select-option-error">{{ errorOrigen }}</p>
+          } @else {
+            @for (aeropuerto of aeropuertosOrigen; track getTrackReferencia(aeropuerto, $index)) {
+            <button
+              type="button"
+              class="select-option"
+              role="option"
+              (mousedown)="seleccionarAeropuerto('origen', aeropuerto)"
+            >
+              {{ getEtiquetaReferencia(aeropuerto) }}
+            </button>
+            } @empty {
+              <p class="select-option-empty">Sin resultados</p>
+            }
+          }
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field" [class.search-field-error]="campoVueloInvalido('destino')" cdkOverlayOrigin #destinoOrigin="cdkOverlayOrigin">
+      <label for="destinoTexto">Destino</label>
+      <input
+        type="text"
+        id="destinoTexto"
+        name="destinoTexto"
+        class="select-search-input"
+        placeholder="Madrid"
+        autocomplete="off"
+        [(ngModel)]="textoDestino"
+        (focus)="abrirPanel('destino')"
+        (keydown)="reiniciarCampoSeleccionado('destino')"
+        (input)="buscarOpciones('destino')"
+        (blur)="cerrarPanel()"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="destinoOpciones"
+        aria-describedby="travelSearchErrors destinoReferenciaError"
+        [attr.aria-expanded]="panelAbierto === 'destino'"
+        [attr.aria-invalid]="campoVueloInvalido('destino') ? 'true' : null"
+        required
+      />
+      <input type="hidden" name="destino" [(ngModel)]="datosBusqueda.destino" required />
+
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="destinoOrigin"
+        [cdkConnectedOverlayOpen]="panelAbierto === 'destino'"
+        [cdkConnectedOverlayWidth]="destinoOrigin.elementRef.nativeElement.offsetWidth"
+      >
+        <div id="destinoOpciones" class="select-options-panel" role="listbox" aria-label="Aeropuertos de destino">
+          @if (cargandoDestino) {
+            <p class="select-option-empty">Buscando aeropuertos...</p>
+          } @else if (errorDestino) {
+            <p id="destinoReferenciaError" class="select-option-empty select-option-error">{{ errorDestino }}</p>
+          } @else {
+            @for (aeropuerto of aeropuertosDestino; track getTrackReferencia(aeropuerto, $index)) {
+            <button
+              type="button"
+              class="select-option"
+              role="option"
+              (mousedown)="seleccionarAeropuerto('destino', aeropuerto)"
+            >
+              {{ getEtiquetaReferencia(aeropuerto) }}
+            </button>
+            } @empty {
+              <p class="select-option-empty">Sin resultados</p>
+            }
+          }
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field" [class.search-field-error]="campoVueloInvalido('fechaIda')">
+      <label for="fechaIda">Ida</label>
+      <input type="date" id="fechaIda" name="fechaIda" [(ngModel)]="datosBusqueda.fechaIda" (ngModelChange)="marcarCampo('fechaIda')" [attr.aria-invalid]="campoVueloInvalido('fechaIda') ? 'true' : null" aria-describedby="travelSearchErrors" required />
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field" [class.search-field-error]="campoVueloInvalido('fechaVuelta')">
+      <label for="fechaVuelta">Vuelta</label>
+      <input type="date" id="fechaVuelta" name="fechaVuelta" [(ngModel)]="datosBusqueda.fechaVuelta" (ngModelChange)="marcarCampo('fechaVuelta')" [attr.aria-invalid]="campoVueloInvalido('fechaVuelta') ? 'true' : null" aria-describedby="travelSearchErrors" />
+    </div>
+
+    <div class="field-divider"></div>
+
+    <div class="search-field" [class.search-field-error]="campoVueloInvalido('viajeros')">
+      <label for="viajeros">Pasajeros</label>
+      <input type="number" id="viajeros" name="viajeros" min="1" [(ngModel)]="datosBusqueda.viajeros" (ngModelChange)="marcarCampo('viajeros')" [attr.aria-invalid]="campoVueloInvalido('viajeros') ? 'true' : null" aria-describedby="travelSearchErrors" required />
+    </div>
+
+    <button type="submit" class="search-button app-button app-button--search">
+      Buscar
+    </button>
+  </form>
+
+  @if (getMensajesErrorFormulario().length) {
+    <div id="travelSearchErrors" class="search-form-errors" aria-live="polite">
+      @for (mensaje of getMensajesErrorFormulario(); track mensaje) {
+        <p class="reference-status reference-status-error">{{ mensaje }}</p>
+      }
+    </div>
+  }
+
+  @if (cargandoReferencias) {
+    <p class="reference-status">Cargando datos...</p>
+  }
+
+  @if (errorReferencias) {
+    <p class="reference-status reference-status-error">{{ errorReferencias }}</p>
+  }
+</div>

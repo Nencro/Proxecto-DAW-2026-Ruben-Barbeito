@@ -1,0 +1,146 @@
+<section class="help-page">
+  <form
+    class="help-panel contact-form"
+    #formularioEmpresa="ngForm"
+    novalidate
+    (ngSubmit)="enviar(formularioEmpresa.valid)"
+  >
+    <span class="help-kicker">Empresas</span>
+    <h1>Trabaja con nosotros</h1>
+    <p>
+      Cuéntanos los detalles basicos de tu empresa y de las experiencias que quieres
+      ofrecer en ExploraMas.
+    </p>
+
+    <label>
+      Nombre de la empresa
+      <input
+        type="text"
+        name="empresa"
+        #empresaCtrl="ngModel"
+        [(ngModel)]="empresa"
+        required
+        minlength="2"
+        maxlength="150"
+        pattern="^[A-Za-zÀ-ÿ0-9&.,'\- ]{2,150}$"
+        title="Introduce un nombre de empresa valido."
+        [class.field-invalid]="empresaCtrl.invalid && (empresaCtrl.touched || intentoEnviar)"
+      />
+      @if (empresaCtrl.invalid && (empresaCtrl.touched || intentoEnviar)) {
+        <span class="field-error">Introduce el nombre de la empresa.</span>
+      }
+    </label>
+
+    <label>
+      Persona de contacto
+      <input
+        type="text"
+        name="personaContacto"
+        #personaContactoCtrl="ngModel"
+        [(ngModel)]="personaContacto"
+        required
+        minlength="2"
+        maxlength="120"
+        pattern="^[A-Za-zÀ-ÿ]+(?:[ '\-][A-Za-zÀ-ÿ]+)*$"
+        title="Introduce una persona de contacto valida."
+        [class.field-invalid]="personaContactoCtrl.invalid && (personaContactoCtrl.touched || intentoEnviar)"
+      />
+      @if (personaContactoCtrl.invalid && (personaContactoCtrl.touched || intentoEnviar)) {
+        <span class="field-error">Introduce una persona de contacto.</span>
+      }
+    </label>
+
+    <label>
+      Email
+      <input
+        type="email"
+        name="email"
+        #emailCtrl="ngModel"
+        [(ngModel)]="email"
+        required
+        email
+        [class.field-invalid]="emailCtrl.invalid && (emailCtrl.touched || intentoEnviar)"
+      />
+      @if (emailCtrl.invalid && (emailCtrl.touched || intentoEnviar)) {
+        <span class="field-error">Introduce un email valido.</span>
+      }
+    </label>
+
+    <label>
+      Telefono
+      <input
+        type="tel"
+        name="telefono"
+        #telefonoCtrl="ngModel"
+        [(ngModel)]="telefono"
+        required
+        pattern="^[0-9+\(\)\s\-]{7,20}$"
+        [class.field-invalid]="telefonoCtrl.invalid && (telefonoCtrl.touched || intentoEnviar)"
+      />
+      @if (telefonoCtrl.invalid && (telefonoCtrl.touched || intentoEnviar)) {
+        <span class="field-error">Introduce un telefono valido.</span>
+      }
+    </label>
+
+    <label>
+      Pais donde opera
+      <input
+        type="text"
+        name="pais"
+        #paisCtrl="ngModel"
+        [(ngModel)]="pais"
+        required
+        minlength="2"
+        maxlength="100"
+        pattern="^[A-Za-zÀ-ÿ]+(?:[ '\-][A-Za-zÀ-ÿ]+)*$"
+        title="Introduce un pais valido."
+        [class.field-invalid]="paisCtrl.invalid && (paisCtrl.touched || intentoEnviar)"
+      />
+      @if (paisCtrl.invalid && (paisCtrl.touched || intentoEnviar)) {
+        <span class="field-error">Introduce el pais donde opera la empresa.</span>
+      }
+    </label>
+
+    <label>
+      Tipo de experiencia
+      <input
+        type="text"
+        name="tipoExperiencia"
+        #tipoExperienciaCtrl="ngModel"
+        placeholder="Rutas, visitas guiadas, aventura..."
+        [(ngModel)]="tipoExperiencia"
+        required
+        minlength="3"
+        maxlength="120"
+        pattern="^[A-Za-zÀ-ÿ0-9,.'\- ]{3,120}$"
+        title="Indica un tipo de experiencia valido."
+        [class.field-invalid]="tipoExperienciaCtrl.invalid && (tipoExperienciaCtrl.touched || intentoEnviar)"
+      />
+      @if (tipoExperienciaCtrl.invalid && (tipoExperienciaCtrl.touched || intentoEnviar)) {
+        <span class="field-error">Indica el tipo de experiencia.</span>
+      }
+    </label>
+
+    <label>
+      Descripcion de la propuesta
+      <textarea
+        name="descripcion"
+        #descripcionCtrl="ngModel"
+        rows="5"
+        [(ngModel)]="descripcion"
+        required
+        minlength="20"
+        [class.field-invalid]="descripcionCtrl.invalid && (descripcionCtrl.touched || intentoEnviar)"
+      ></textarea>
+      @if (descripcionCtrl.invalid && (descripcionCtrl.touched || intentoEnviar)) {
+        <span class="field-error">Describe la propuesta con al menos 20 caracteres.</span>
+      }
+    </label>
+
+    <button class="app-button help-action" type="submit">Enviar propuesta</button>
+
+    @if (enviado) {
+      <p class="help-success">Propuesta preparada. Revisaremos la informacion de tu empresa.</p>
+    }
+  </form>
+</section>

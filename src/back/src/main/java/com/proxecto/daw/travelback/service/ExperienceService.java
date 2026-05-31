@@ -80,8 +80,8 @@ public class ExperienceService {
         String userName = jwtService.getUserNameFromAuthorization(authorization);
         Long creatorId = getUserId(userName);
 
-        if (!hasAnyRole(creatorId, List.of("EMPRESA", "ADMIN"))) {
-            throw new LoginException(4, "Solo usuarios empresa o administradores pueden crear experiencias.");
+        if (!hasAnyRole(creatorId, List.of("EMPRESA"))) {
+            throw new LoginException(4, "Solo usuarios empresa pueden crear experiencias.");
         }
 
         if (request.tamanioMaximo() < request.tamanioMinimo()) {

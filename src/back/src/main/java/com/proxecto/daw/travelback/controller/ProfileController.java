@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,6 +38,14 @@ public class ProfileController {
             @PathVariable String userName
     ) {
         return servicioUsuarios.getProfileByUserNameForAdmin(authorization, userName);
+    }
+
+    @GetMapping("/search")
+    public List<ProfileResponse> searchProfiles(
+            @RequestHeader("Authorization") String authorization,
+            @RequestParam(defaultValue = "") String query
+    ) {
+        return servicioUsuarios.searchProfilesForAdmin(authorization, query);
     }
 
     @GetMapping("/roles")

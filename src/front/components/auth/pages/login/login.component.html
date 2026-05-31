@@ -1,0 +1,59 @@
+<section class="login-page">
+  <form class="login-card" (ngSubmit)="handleSubmit()" #formularioLogin="ngForm" novalidate>
+    <div class="login-heading">
+      <h1>Login</h1>
+      <p>Accede a tu cuenta de ExploraMas.</p>
+    </div>
+
+    <label class="login-field" [class.login-field-error]="campoInvalido('email')" for="email">
+      Email
+      <input
+        id="email"
+        type="email"
+        name="email"
+        autocomplete="email"
+        placeholder="tu@email.com"
+        [(ngModel)]="email"
+        (ngModelChange)="marcarCampo('email')"
+        (blur)="marcarCampo('email')"
+        [attr.aria-invalid]="campoInvalido('email') ? 'true' : null"
+        aria-describedby="emailError"
+        required
+      />
+      <span id="emailError" class="field-error" [class.field-error-visible]="campoInvalido('email')">
+        {{ getErrorCampo('email') || ' ' }}
+      </span>
+    </label>
+
+    <label class="login-field" [class.login-field-error]="campoInvalido('password')" for="password">
+      Contraseña
+      <input
+        id="password"
+        type="password"
+        name="password"
+        autocomplete="current-password"
+        placeholder="Tu contraseña"
+        [(ngModel)]="password"
+        (ngModelChange)="marcarCampo('password')"
+        (blur)="marcarCampo('password')"
+        [attr.aria-invalid]="campoInvalido('password') ? 'true' : null"
+        aria-describedby="passwordError"
+        required
+      />
+      <span id="passwordError" class="field-error" [class.field-error-visible]="campoInvalido('password')">
+        {{ getErrorCampo('password') || ' ' }}
+      </span>
+    </label>
+
+    @if (mensajeError) {
+      <p class="login-error">{{ mensajeError }}</p>
+    }
+
+    <button class="login-button app-button app-button--primary" type="submit" [disabled]="enviando">
+      {{ enviando ? 'Entrando...' : 'Entrar' }}
+    </button>
+
+    <a class="recover-link" routerLink="/password/recover">¿Quieres recuperar tu contraseña?</a>
+    <a class="back-link" routerLink="/">Volver al buscador</a>
+  </form>
+</section>

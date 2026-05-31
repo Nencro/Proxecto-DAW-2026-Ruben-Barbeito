@@ -91,7 +91,7 @@ export interface DuffelFlightSearchParams {
   page?: number;
 }
 
-export type TravelRole = 'CREADOR' | 'PARTICIPANTE' | 'ADMIN';
+export type TravelRole = 'CREADOR' | 'PARTICIPANTE';
 
 export interface TravelResponse {
   id: number;
@@ -204,6 +204,11 @@ export class ApiService {
 
   getProfileByUserName(userName: string, token?: string | null): Observable<ProfileResponse> {
     return this.get<ProfileResponse>(`/profile/${encodeURIComponent(userName)}`, token);
+  }
+
+  searchProfiles(query = '', token?: string | null): Observable<ProfileResponse[]> {
+    const params = new HttpParams().set('query', query.trim());
+    return this.get<ProfileResponse[]>(`/profile/search?${params.toString()}`, token);
   }
 
   getRoles(token?: string | null): Observable<string[]> {

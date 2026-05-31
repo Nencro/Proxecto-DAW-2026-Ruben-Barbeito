@@ -74,6 +74,22 @@ npm install
 npm start
 ```
 
+Tamén se pode levantar a aplicación completa con contedores Docker desde a carpeta `docker`:
+
+```bash
+cd docker
+cp .env.example .env
+docker compose up --build
+```
+
+Neste caso quedan dispoñibles:
+
+```text
+Frontend: http://localhost:4200
+Backend:  http://localhost:8080
+MySQL:    localhost:3306
+```
+
 A aplicación queda dispoñible normalmente en:
 
 ```text

@@ -1,0 +1,39 @@
+<section class="help-page">
+  <form class="help-panel contact-form" #formularioContacto="ngForm" (ngSubmit)="enviar(formularioContacto)">
+    <span class="help-kicker">Contacto</span>
+    <h1>Hablemos de tu viaje</h1>
+    <p>
+      Cuéntanos que necesitas y te ayudaremos a encontrar la mejor forma de seguir avanzando.
+    </p>
+
+    <label>
+      Nombre
+      <input
+        type="text"
+        name="nombre"
+        minlength="2"
+        maxlength="120"
+        pattern="^[A-Za-zÀ-ÿ]+(?:[ '\-][A-Za-zÀ-ÿ]+)*$"
+        title="Introduce un nombre valido."
+        [(ngModel)]="nombre"
+        required
+      />
+    </label>
+
+    <label>
+      Email
+      <input type="email" name="email" [(ngModel)]="email" required />
+    </label>
+
+    <label>
+      Mensaje
+      <textarea name="mensaje" rows="5" [(ngModel)]="mensaje" required></textarea>
+    </label>
+
+    <button class="app-button help-action" type="submit">Enviar mensaje</button>
+
+    @if (enviado) {
+      <p class="help-success">Mensaje preparado. Gracias por contactar con ExploraMas.</p>
+    }
+  </form>
+</section>

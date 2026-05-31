@@ -47,14 +47,7 @@ public class TravelService {
                 getTravelsSql("""
                 WHERE usuario_actual.username = ?
                   AND (
-                      EXISTS (
-                          SELECT 1
-                          FROM usuario_rol ur_admin
-                          INNER JOIN rol r_admin ON r_admin.id = ur_admin.rol_id
-                          WHERE ur_admin.usuario_id = usuario_actual.id
-                            AND r_admin.nombre = 'ADMIN'
-                      )
-                      OR v.id_creador = usuario_actual.id
+                      v.id_creador = usuario_actual.id
                       OR EXISTS (
                           SELECT 1
                           FROM participante_viaje pv
@@ -648,11 +641,10 @@ public class TravelService {
                         WHEN v.id_creador = usuario_actual.id THEN 'CREADOR'
                         WHEN EXISTS (
                             SELECT 1
-                            FROM usuario_rol ur_admin
-                            INNER JOIN rol r_admin ON r_admin.id = ur_admin.rol_id
-                            WHERE ur_admin.usuario_id = usuario_actual.id
-                              AND r_admin.nombre = 'ADMIN'
-                        ) THEN 'ADMIN'
+                            FROM participante_viaje pv_rol
+                            WHERE pv_rol.viaje_id = v.id
+                              AND pv_rol.usuario_id = usuario_actual.id
+                        ) THEN 'PARTICIPANTE'
                         ELSE 'PARTICIPANTE'
                     END AS rol_en_viaje
                 FROM usuario usuario_actual
@@ -687,7 +679,7 @@ public class TravelService {
     }
 
     private boolean canManageTravel(TravelResponse travel) {
-        return "CREADOR".equals(travel.rolEnViaje()) || "ADMIN".equals(travel.rolEnViaje());
+        return "CREADOR".equals(travel.rolEnViaje());
     }
 
     private BigDecimal normalizeMoney(BigDecimal value) {

@@ -1,0 +1,62 @@
+<section class="profile-search-page">
+  <header class="profile-search-header">
+    <div>
+      <h1>Usuarios</h1>
+      <p>Busca usuarios por nombre de usuario y consulta sus roles.</p>
+    </div>
+  </header>
+
+  <form class="profile-search-form" role="search" (ngSubmit)="buscarUsuarios()">
+    <label for="busquedaUsuarios">
+      Nombre de usuario
+      <input
+        id="busquedaUsuarios"
+        name="busquedaUsuarios"
+        type="search"
+        placeholder="Buscar por username"
+        autocomplete="off"
+        [(ngModel)]="busqueda"
+        (ngModelChange)="buscarConRetraso()"
+      />
+    </label>
+
+    <button class="app-button" type="submit" [disabled]="cargando">
+      {{ cargando ? 'Buscando...' : 'Buscar' }}
+    </button>
+  </form>
+
+  @if (error) {
+    <p class="profile-search-error">{{ error }}</p>
+  }
+
+  @if (cargando) {
+    <div class="profile-search-loading">
+      <app-loading-spinner label="Cargando usuarios"></app-loading-spinner>
+    </div>
+  } @else if (usuarios.length) {
+    <div class="profile-search-table-wrap">
+      <table class="profile-search-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Roles</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of usuarios; track getUserName(usuario)) {
+            <tr tabindex="0" (click)="abrirPerfil(usuario)" (keydown.enter)="abrirPerfil(usuario)">
+              <td>
+                <strong>{{ getUserName(usuario) }}</strong>
+              </td>
+              <td>{{ getNombreCompleto(usuario) }}</td>
+              <td>{{ getRoles(usuario) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (busquedaRealizada) {
+    <p class="profile-search-state">No se encontraron usuarios.</p>
+  }
+</section>

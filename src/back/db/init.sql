@@ -197,6 +197,30 @@ FROM usuario u
 INNER JOIN rol r ON r.nombre IN ('USUARIO', 'EMPRESA')
 WHERE u.username = 'empresa';
 
+INSERT INTO usuario (username, nombre, apellidos, email, telefono, contrasena)
+VALUES (
+  'user',
+  'Usuario',
+  'Base',
+  'user@exploramas.com',
+  '',
+  '$2a$10$4gQxPCMXlILwT3vZJKtyveC.94xvx/auQI3vnaYFYpLIGtP1aa3Jm'
+)
+ON DUPLICATE KEY UPDATE
+  nombre = VALUES(nombre),
+  apellidos = VALUES(apellidos),
+  telefono = VALUES(telefono),
+  contrasena = CASE
+    WHEN contrasena LIKE '$2a$%' OR contrasena LIKE '$2b$%' OR contrasena LIKE '$2y$%' THEN contrasena
+    ELSE VALUES(contrasena)
+  END;
+
+INSERT IGNORE INTO usuario_rol (usuario_id, rol_id)
+SELECT u.id, r.id
+FROM usuario u
+INNER JOIN rol r ON r.nombre = 'USUARIO'
+WHERE u.username = 'user';
+
 INSERT INTO pais (nombre, codigo, prefijo)
 VALUES
   ('Alemania', 'DE', '+49'),

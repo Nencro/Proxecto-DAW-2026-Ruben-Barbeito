@@ -22,11 +22,9 @@ ExploraMas esta dividida en dous proxectos principais:
 
 Requisitos recomendados:
 
-- Java 21 ou superior.
-- Maven.
-- Node.js e npm.
-- MySQL 8 ou unha base de datos compatible, como TiDB.
-- Docker, opcional, para levantar a base de datos local.
+- Docker e Docker Compose para levantar a aplicacion completa con contedores.
+- Java 21 ou superior, Maven, Node.js e npm se se quere executar o proxecto sen contedores.
+- MySQL 8 ou unha base de datos compatible, como TiDB, se se usa unha base externa.
 - Git.
 
 Pasos para preparar o proxecto:
@@ -38,7 +36,106 @@ git clone <url-do-repositorio>
 cd Proxecto-DAW-2026-Ruben-Barbeito
 ```
 
-2. Configurar o back.
+2. Levantar a aplicacion completa con Docker Compose.
+
+Toda a configuracion de contedores esta na carpeta `docker`. Este metodo levanta:
+
+- `exploramas-front`: frontend Angular servido con Nginx.
+- `exploramas-back`: backend Spring Boot.
+- `exploramas-mysql`: base de datos MySQL inicializada con `src/back/db/init.sql`.
+
+Desde a raiz do proxecto, entrar na carpeta de Docker:
+
+```bash
+cd docker
+```
+
+Crear o ficheiro de variables de contorno:
+
+```bash
+cp .env.example .env
+```
+
+Abrir o ficheiro para configuralo:
+
+```bash
+nano .env
+```
+
+Valores principais:
+
+```env
+SERVER_PORT=8080
+
+MYSQL_ROOT_PASSWORD=root
+MYSQL_DATABASE=exploramas
+MYSQL_USER=daw
+MYSQL_PASSWORD=daw123
+MYSQL_PORT=3306
+
+JWT_SECRET=change-me-with-at-least-32-characters
+JWT_EXPIRATION_MINUTES=120
+
+DUFFEL_API_BASE_URL=https://api.duffel.com
+DUFFEL_TOKEN=token-de-duffel
+DUFFEL_VERSION=v2
+
+CORS_ALLOWED_ORIGINS=http://localhost:4200
+FRONT_API_BASE_URL=http://localhost:8080/api
+FRONT_REST_COUNTRIES_URL=https://restcountries.com/v3.1/all?fields=name,cca2,translations,flag,idd
+```
+
+Para gardar en `nano`, pulsar `Ctrl + O`, confirmar con `Enter` e sair con `Ctrl + X`.
+
+Arrancar os contedores:
+
+```bash
+docker compose up --build
+```
+
+Se se quere deixar a aplicacion executando en segundo plano:
+
+```bash
+docker compose up -d --build
+```
+
+Comprobar o estado:
+
+```bash
+docker compose ps
+```
+
+Ver logs:
+
+```bash
+docker compose logs -f
+```
+
+Parar os contedores:
+
+```bash
+docker compose down
+```
+
+Se ademais se quere eliminar o volume da base de datos:
+
+```bash
+docker compose down -v
+```
+
+A aplicacion queda dispoñible en:
+
+```text
+Frontend: http://localhost:4200
+Backend:  http://localhost:8080/api
+MySQL:    localhost:3306
+```
+
+3. Execucion local sen contedores.
+
+Se se quere executar cada parte manualmente para desenvolvemento, pódense seguir estes pasos.
+
+4. Configurar o back.
 
 No directorio `src/back` debe existir un ficheiro `.env`. O repositorio inclue un exemplo en `src/back/.env.example`.
 
@@ -57,7 +154,7 @@ DUFFEL_VERSION=v2
 CORS_ALLOWED_ORIGINS=http://localhost:4200
 ```
 
-3. Crear ou inicializar a base de datos.
+5. Crear ou inicializar a base de datos.
 
 O script de creacion esta en:
 
@@ -73,7 +170,7 @@ docker compose up -d
 
 Se se usa TiDB ou outra base externa, hai que executar manualmente o contido de `init.sql` sobre a base de datos correspondente.
 
-4. Arrancar o back.
+6. Arrancar o back.
 
 Desde `src/back`:
 
@@ -87,7 +184,7 @@ Tamén se pode comprobar que compila con:
 mvn -q -DskipTests compile
 ```
 
-5. Configurar o front.
+7. Configurar o front.
 
 No directorio `src/front` debe existir un ficheiro `.env`. O repositorio inclue un exemplo en `src/front/.env.example`.
 
@@ -100,7 +197,7 @@ FRONT_REST_COUNTRIES_URL=https://restcountries.com/v3.1/all?fields=name,cca2,tra
 
 Antes de arrancar, o proxecto xera automaticamente `assets/env.js` usando o script `scripts/write-env.js`. Este ficheiro non debe subirse ao repositorio.
 
-6. Instalar dependencias e arrancar o front.
+8. Instalar dependencias e arrancar o front.
 
 Desde `src/front`:
 
@@ -115,7 +212,7 @@ A aplicacion quedara dispoñible normalmente en:
 http://localhost:4200
 ```
 
-7. Comprobar compilacion do front.
+9. Comprobar compilacion do front.
 
 ```bash
 npx tsc -p tsconfig.app.json --noEmit
@@ -518,6 +615,60 @@ Clonar el repositorio:
 git clone <url-do-repositorio>
 cd Proxecto-DAW-2026-Ruben-Barbeito
 ```
+
+Levantar el proyecto completo con contenedores:
+
+```bash
+cd docker
+cp .env.example .env
+nano .env
+```
+
+En `docker/.env` hay que revisar la configuracion de MySQL, JWT, Duffel, CORS y la URL del backend usada por el frontend:
+
+```env
+MYSQL_ROOT_PASSWORD=root
+MYSQL_DATABASE=exploramas
+MYSQL_USER=daw
+MYSQL_PASSWORD=daw123
+MYSQL_PORT=3306
+
+JWT_SECRET=change-me-with-at-least-32-characters
+DUFFEL_API_BASE_URL=https://api.duffel.com
+DUFFEL_TOKEN=token-de-duffel
+CORS_ALLOWED_ORIGINS=http://IP-DE-LA-VM:4200
+FRONT_API_BASE_URL=http://IP-DE-LA-VM:8080/api
+```
+
+Para guardar en `nano`, pulsar `Ctrl + O`, confirmar con `Enter` y salir con `Ctrl + X`.
+
+Arrancar los contenedores:
+
+```bash
+docker compose up -d --build
+docker compose ps
+```
+
+Con esta opcion el frontend se consulta desde el equipo anfitrion en:
+
+```text
+http://IP-DE-LA-VM:4200
+```
+
+El backend queda disponible en:
+
+```text
+http://IP-DE-LA-VM:8080/api
+```
+
+Para ver logs o detener la aplicacion:
+
+```bash
+docker compose logs -f
+docker compose down
+```
+
+Si se prefiere ejecutar el backend, frontend y Nginx de forma manual, se pueden seguir los pasos siguientes.
 
 Configurar `src/back/.env` para usar MySQL local:
 

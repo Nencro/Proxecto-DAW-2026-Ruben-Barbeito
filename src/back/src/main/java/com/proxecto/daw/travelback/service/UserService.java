@@ -197,6 +197,53 @@ public class UserService {
         return getAllRoles();
     }
 
+    public List<ProfileResponse> searchProfilesForAdmin(String authorization, String query) {
+        assertAdmin(authorization);
+
+        String busqueda = "%" + Objects.toString(query, "").trim().toLowerCase() + "%";
+
+        return jdbcTemplate.query(
+                """
+                SELECT
+                    u.id,
+                    u.username,
+                    u.nombre,
+                    u.apellidos,
+                    u.email,
+                    u.telefono,
+                    u.pais_id,
+                    p.nombre AS pais,
+                    p.codigo AS codigo_pais,
+                    p.prefijo AS prefijo_pais,
+                    u.fecha_registro
+                FROM usuario u
+                LEFT JOIN pais p ON p.id = u.pais_id
+                WHERE LOWER(u.username) LIKE ?
+                ORDER BY u.username
+                LIMIT 50
+                """,
+                (resultado, indice) -> {
+                    Long idUsuario = resultado.getLong("id");
+
+                    return new ProfileResponse(
+                            idUsuario,
+                            Objects.toString(resultado.getString("username"), ""),
+                            Objects.toString(resultado.getString("nombre"), ""),
+                            Objects.toString(resultado.getString("apellidos"), ""),
+                            Objects.toString(resultado.getString("email"), ""),
+                            Objects.toString(resultado.getString("telefono"), ""),
+                            resultado.getObject("pais_id") == null ? null : resultado.getLong("pais_id"),
+                            Objects.toString(resultado.getString("pais"), ""),
+                            Objects.toString(resultado.getString("codigo_pais"), ""),
+                            Objects.toString(resultado.getString("prefijo_pais"), ""),
+                            Objects.toString(resultado.getString("fecha_registro"), ""),
+                            getUserRoles(idUsuario)
+                    );
+                },
+                busqueda
+        );
+    }
+
     @Transactional
     public ProfileResponse updateUserRolesForAdmin(String authorization, String userName, RolesUpdateRequest peticion) {
         assertAdmin(authorization);

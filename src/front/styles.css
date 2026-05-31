@@ -23,6 +23,8 @@
   --color-primary-strong: #063766;
   --color-primary-action: #0b72c8;
   --color-primary-hover-bg: #f2f8fd;
+  --color-secondary-action: #9a5700;
+  --color-secondary-action-hover: #754100;
   --color-border: #d8e3ef;
   --color-border-soft: #e5edf5;
   --color-border-muted: #d6dbe3;
@@ -176,11 +178,11 @@ img {
 }
 
 .app-button--secondary {
-  background: var(--color-disabled);
+  background: var(--color-secondary-action);
 }
 
 .app-button--secondary:hover:not(:disabled) {
-  background: var(--color-text-muted);
+  background: var(--color-secondary-action-hover);
 }
 
 .app-button--danger {
@@ -285,4 +287,185 @@ img {
 .app-icon-button:disabled {
   cursor: not-allowed;
   opacity: 0.65;
+}
+
+.back-link {
+  display: inline-flex;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.field-error {
+  color: var(--color-danger);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.login-field:focus-within .field-error-visible,
+.register-field:focus-within .field-error,
+.contact-form label:focus-within .field-error,
+.travel-field:focus-within .field-error,
+.search-field:focus-within .field-error {
+  visibility: hidden;
+}
+
+.form-error,
+.form-info,
+.form-actions {
+  grid-column: 1 / -1;
+}
+
+.form-error,
+.form-info {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.form-error {
+  color: var(--color-danger);
+}
+
+.form-info {
+  color: var(--color-success);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-actions .app-button,
+.delete-action .app-button {
+  width: 180px;
+}
+
+.state-message {
+  padding: 22px;
+  color: var(--color-text-subtle);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.state-message--error {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+}
+
+.loading-panel {
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.country-suggestions {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  display: grid;
+  gap: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 6px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popover);
+}
+
+.country-suggestion {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  padding: 10px;
+  color: var(--color-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.country-suggestion:hover,
+.country-suggestion:focus {
+  background: var(--color-surface-soft);
+  outline: none;
+}
+
+.country-suggestion span {
+  font-weight: 800;
+}
+
+.country-suggestion small,
+.country-suggestion-status {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.country-suggestion-status {
+  margin: 0;
+  padding: 10px;
+}
+
+.danger-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 16px;
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+}
+
+.danger-zone h2 {
+  margin: 0 0 6px;
+  color: var(--color-danger);
+  font-size: 18px;
+}
+
+.danger-zone p {
+  margin: 0;
+  color: var(--color-danger-text-muted);
+  font-weight: 700;
+}
+
+.delete-action {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+@media (max-width: 760px) {
+  .danger-zone {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .delete-action {
+    justify-content: stretch;
+  }
+
+  .delete-action .app-button {
+    width: 100%;
+  }
+
+  .form-actions .app-button {
+    width: 100%;
+  }
 }
